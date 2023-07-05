@@ -73,6 +73,7 @@ def load_environment():
             newbug = PhysicalObject('Bug ' + str(i), x, y, r_bug)
             if not any([check_collision(newbug, phobject) for phobject in phobjects]):
                 phobjects.append(newbug)
+                bugs.append(newbug)
                 print(newbug.name, 'placed!')
                 placing = False
             else:

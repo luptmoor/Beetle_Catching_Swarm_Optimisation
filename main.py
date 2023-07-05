@@ -133,13 +133,13 @@ for t in range(tmax+1):
     collision_loop()
 
     if not bugs:
-        evaluate(1, t)
+        score = evaluate(1, t)
         break
     if not drones:
-        evaluate(2, t)
+        score = evaluate(2, t)
         break
     if t >= tmax:
-        evaluate(3, t)
+        score = evaluate(3, t)
         break
 
 

@@ -1,0 +1,66 @@
+import numpy as np
+
+# Global Parameters
+
+width = 1200  # px
+height = 800  # px
+scale = 20  # px/m
+
+r_tree = 0.15
+r_drone = 0
+r_drone_vision = 0
+r_bug_vision = 0
+
+tree_min_dist = 1.00
+
+n_trees = 10
+n_drones = 0
+n_bugs = 0
+
+# Lists
+phobjects = [None]
+
+
+def px(d):
+    return (d * scale) // 1
+
+
+# Physical Object Class
+class PhysicalObject:
+    def __init__(self, name, x, y, r_col):
+        self.name = name
+        self.x = x
+        self.y = y
+        self.r_col = r_col
+
+
+def check_collision(obj1, obj2, margin=0):
+    if obj1 is None or obj2 is None:
+        return False
+
+    if np.sqrt((obj1.x - obj2.x) ** 2 + (obj1.y - obj2.y) ** 2) <= obj1.r_col + obj2.r_col + margin:
+        return True
+    else:
+        return False
+
+
+def load_environment():
+    global phobjects
+
+    # Place trees
+    for i in range(n_trees):
+        placing = True
+        while placing:
+            x = (np.random.random() * width - (r_tree + tree_min_dist)) //1
+            y = (np.random.random() * height - (r_tree + tree_min_dist)) //1
+
+            newtree = PhysicalObject('Tree ' + str(i), x, y, r_tree)
+            if not any([check_collision(newtree, phobject, px(tree_min_dist)) for phobject in phobjects]):
+                phobjects.append(newtree)
+                print(newtree.name, 'placed!')
+                placing = False
+            else:
+                pass
+
+
+load_environment()

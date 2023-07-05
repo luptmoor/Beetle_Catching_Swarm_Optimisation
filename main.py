@@ -1,29 +1,28 @@
 import numpy as np
 
 # Global Parameters
+width = 1200  # px,  24 m
+height = 800  # px,  16 m
+launchpad_frac = 0.3
 
-width = 1200  # px
-height = 800  # px
+n_trees = 25
+r_tree = 20  # px, 40 cm
+tree_min_dist = 50  # px, 1 m
 
-r_tree = 30
-r_drone = 0
-r_drone_vision = 0
-r_bug = 0
-r_bug_vision = 0
+n_drones = 10
+r_drone = 13  # px, 26 cm
+r_drone_vision = 200  # px, 4 m
 
-tree_min_dist = 50
+n_bugs = 20
+r_bug = 1  # px, 2 cm
+r_bug_vision = 80  # px, 1.60 m
 
-n_trees = 10
-n_drones = 0
-n_bugs = 25
-
-tmax = 300
+tmax = 180
 
 # Lists
 phobjects = []
 drones = []
 bugs = []
-
 
 
 # Physical Object Class
@@ -52,8 +51,8 @@ def load_environment():
     for i in range(n_trees):
         placing = True
         while placing:
-            x = np.random.random() * (width - 2*(r_tree + tree_min_dist)) + (r_tree + tree_min_dist) //1
-            y = np.random.random() * (height - 2*(r_tree + tree_min_dist)) + (r_tree + tree_min_dist) //1
+            x = np.random.random() * (width - 2 * (r_tree + tree_min_dist)) + (r_tree + tree_min_dist) // 1
+            y = np.random.random() * (height - 2 * (r_tree + tree_min_dist)) + (r_tree + tree_min_dist) // 1
 
             newtree = PhysicalObject('Tree ' + str(i), x, y, r_tree)
             if not any([check_collision(newtree, phobject, tree_min_dist) for phobject in phobjects]):
@@ -64,13 +63,13 @@ def load_environment():
                 pass
 
     # Place bugs
-    for i in range(n_bugs):
+    for j in range(n_bugs):
         placing = True
         while placing:
             x = (np.random.random() * width) // 1
             y = (np.random.random() * height) // 1
 
-            newbug = PhysicalObject('Bug ' + str(i), x, y, r_bug)
+            newbug = PhysicalObject('Bug ' + str(j), x, y, r_bug)
             if not any([check_collision(newbug, phobject) for phobject in phobjects]):
                 phobjects.append(newbug)
                 bugs.append(newbug)
@@ -78,6 +77,22 @@ def load_environment():
                 placing = False
             else:
                 pass
+
+        # Place drones
+        for k in range(n_drones):
+            placing = True
+            while placing:
+                x = (np.random.random() * width * launchpad_frac) // 1
+                y = (np.random.random() * height * launchpad_frac) // 1
+
+                newdrone = PhysicalObject('Drone ' + str(k), x, y, r_drone)
+                if not any([check_collision(newdrone, phobject) for phobject in phobjects]):
+                    phobjects.append(newdrone)
+                    drones.append(newdrone)
+                    print(newdrone.name, 'placed!')
+                    placing = False
+                else:
+                    pass
 
 
 def collision_loop():
@@ -107,4 +122,3 @@ load_environment()
 for t in range(tmax):
     print(t)
     collision_loop()
-

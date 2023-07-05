@@ -78,21 +78,21 @@ def load_environment():
             else:
                 pass
 
-        # Place drones
-        for k in range(n_drones):
-            placing = True
-            while placing:
-                x = (np.random.random() * width * launchpad_frac) // 1
-                y = (np.random.random() * height * launchpad_frac) // 1
+    # Place drones
+    for k in range(n_drones):
+        placing = True
+        while placing:
+            x = (np.random.random() * width * launchpad_frac) // 1
+            y = (np.random.random() * height * launchpad_frac) // 1
 
-                newdrone = PhysicalObject('Drone ' + str(k), x, y, r_drone)
-                if not any([check_collision(newdrone, phobject) for phobject in phobjects]):
-                    phobjects.append(newdrone)
-                    drones.append(newdrone)
-                    print(newdrone.name, 'placed!')
-                    placing = False
-                else:
-                    pass
+            newdrone = PhysicalObject('Drone ' + str(k), x, y, r_drone)
+            if not any([check_collision(newdrone, phobject) for phobject in phobjects]):
+                phobjects.append(newdrone)
+                drones.append(newdrone)
+                print(newdrone.name, 'placed!')
+                placing = False
+            else:
+                pass
 
 
 def collision_loop():
@@ -117,8 +117,30 @@ def collision_loop():
                     drones.remove(drone)
                     phobjects.remove(drone)
 
+def evaluate(mode, t):
+    if mode == 1:
+        return t - 450
+    if mode == 2:
+        return 450 - t
+    if mode == 3:
+        return 300 * len(drones) / n_drones - 150
 
 load_environment()
-for t in range(tmax):
+
+for t in range(tmax+1):
     print(t)
+
     collision_loop()
+
+    if not bugs:
+        evaluate(1, t)
+        break
+    if not drones:
+        evaluate(2, t)
+        break
+    if t >= tmax:
+        evaluate(3, t)
+        break
+
+
+

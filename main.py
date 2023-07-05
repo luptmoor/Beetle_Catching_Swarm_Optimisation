@@ -4,15 +4,14 @@ import numpy as np
 
 width = 1200  # px
 height = 800  # px
-scale = 20  # px/m
 
-r_tree = 0.15
+r_tree = 30
 r_drone = 0
 r_drone_vision = 0
 r_bug = 0
 r_bug_vision = 0
 
-tree_min_dist = 1.00
+tree_min_dist = 50
 
 n_trees = 10
 n_drones = 0
@@ -21,9 +20,6 @@ n_bugs = 25
 # Lists
 phobjects = []
 
-
-def px(d):
-    return (d * scale) // 1
 
 
 # Physical Object Class
@@ -52,11 +48,11 @@ def load_environment():
     for i in range(n_trees):
         placing = True
         while placing:
-            x = (np.random.random() * width - (r_tree + tree_min_dist)) //1
-            y = (np.random.random() * height - (r_tree + tree_min_dist)) //1
+            x = np.random.random() * (width - 2*(r_tree + tree_min_dist)) + (r_tree + tree_min_dist) //1
+            y = np.random.random() * (height - 2*(r_tree + tree_min_dist)) + (r_tree + tree_min_dist) //1
 
             newtree = PhysicalObject('Tree ' + str(i), x, y, r_tree)
-            if not any([check_collision(newtree, phobject, px(tree_min_dist)) for phobject in phobjects]):
+            if not any([check_collision(newtree, phobject, tree_min_dist) for phobject in phobjects]):
                 phobjects.append(newtree)
                 print(newtree.name, 'placed!')
                 placing = False

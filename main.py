@@ -106,3 +106,4 @@ load_environment()
 for t in range(tmax):
     print(t)
     collision_loop()
+

@@ -79,6 +79,29 @@ def load_environment():
                 pass
 
 
+def collision_loop():
+    """
+    loops over drones and checks for collisions with other phobjects.
+    note: instances need to be the same in drones list and phobjects list!
+    :return: void
+    """
+    for drone in drones:
+        for phobject in phobjects:
+            if check_collision(drone, phobject):
+                print('Collision between ', drone.name, 'and', phobject.name)
+                if phobject in drones:
+                    drones.remove(drone)
+                    drones.remove(phobject)
+                    phobjects.remove(drone)
+                    phobjects.remove(phobject)
+                elif phobject in bugs:
+                    bugs.remove(phobject)
+                    phobjects.remove(phobject)
+                else:
+                    drones.remove(drone)
+                    phobjects.remove(drone)
+
+
 load_environment()
 for t in range(tmax):
     print(t)

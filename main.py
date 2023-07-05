@@ -9,16 +9,17 @@ scale = 20  # px/m
 r_tree = 0.15
 r_drone = 0
 r_drone_vision = 0
+r_bug = 0
 r_bug_vision = 0
 
 tree_min_dist = 1.00
 
 n_trees = 10
 n_drones = 0
-n_bugs = 0
+n_bugs = 25
 
 # Lists
-phobjects = [None]
+phobjects = []
 
 
 def px(d):
@@ -58,6 +59,21 @@ def load_environment():
             if not any([check_collision(newtree, phobject, px(tree_min_dist)) for phobject in phobjects]):
                 phobjects.append(newtree)
                 print(newtree.name, 'placed!')
+                placing = False
+            else:
+                pass
+
+    # Place bugs
+    for i in range(n_bugs):
+        placing = True
+        while placing:
+            x = (np.random.random() * width) // 1
+            y = (np.random.random() * height) // 1
+
+            newbug = PhysicalObject('Bug ' + str(i), x, y, r_bug)
+            if not any([check_collision(newbug, phobject) for phobject in phobjects]):
+                phobjects.append(newbug)
+                print(newbug.name, 'placed!')
                 placing = False
             else:
                 pass

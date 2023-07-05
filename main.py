@@ -17,8 +17,12 @@ n_trees = 10
 n_drones = 0
 n_bugs = 25
 
+tmax = 300
+
 # Lists
 phobjects = []
+drones = []
+bugs = []
 
 
 
@@ -76,3 +80,6 @@ def load_environment():
 
 
 load_environment()
+for t in range(tmax):
+    print(t)
+    collision_loop()

@@ -1,11 +1,17 @@
 import matplotlib.pyplot as plt
 
-from notmain import PhysicalObject, dXmax_bug, r_bug_vision
+from PhysicalObject import *
+
 import numpy as np
 
 tree_land_prob = 0.15
 escape_prob = 0.80
 lift_prob = 0.10
+
+n_bugs = 20
+r_bug = 1  # px, 2 cm
+r_bug_vision = 80  # px, 1.60 m
+dXmax_bug = 90 / 57.3  # rad / timestep
 
 bug_speed = 2
 
@@ -91,32 +97,32 @@ class Bug(PhysicalObject):
 
 
 ######## Verification ###############
-
-tree = PhysicalObject('Tree', 10, 10, 20)
-bug = Bug("Bug", 50, 50, 1, mode='tree')
-dt = 1
-xs = []
-ys = []
-running = True
-
-while running:
-    bug.advance(dt)
-    xs.append(bug.x)
-    ys.append(bug.y)
-    cue = str(input('Cue: '))
-
-    if cue =='q':
-        running = False
-    elif not cue == 'c':
-        x = int(input('x: '))
-        y = int(input('y: '))
-
-        bug.processVisual(cue, x, y)
-    else:
-        pass
-
-plt.scatter(xs, ys)
-plt.show()
-
-
-
+#
+# tree = PhysicalObject('Tree', 10, 10, 20)
+# bug = Bug("Bug", 50, 50, 1, mode='tree')
+# dt = 1
+# xs = []
+# ys = []
+# running = True
+#
+# while running:
+#     bug.advance(dt)
+#     xs.append(bug.x)
+#     ys.append(bug.y)
+#     cue = str(input('Cue: '))
+#
+#     if cue =='q':
+#         running = False
+#     elif not cue == 'c':
+#         x = int(input('x: '))
+#         y = int(input('y: '))
+#
+#         bug.processVisual(cue, x, y)
+#     else:
+#         pass
+#
+# plt.scatter(xs, ys)
+# plt.show()
+#
+#
+#

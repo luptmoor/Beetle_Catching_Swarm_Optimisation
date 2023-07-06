@@ -53,13 +53,27 @@ class Bug(PhysicalObject):
                 self.mode = 'idle'
 
 
-        # Heading periodicity and integration
+        # Heading periodicity
         if self.heading >= 2 * np.pi:
             self.heading -= 2 * np.pi
         elif self.heading < 0:
             self.heading += 2 * np.pi
+
+        # Integration
         self.x = int(round(self.x + self.speed * np.cos(self.heading) * dt, 0))
         self.y = int(round(self.y + self.speed * np.sin(self.heading) * dt, 0))
+
+        # Position periodicity
+        if self.x > width:
+            self.x -= width
+        if self.x < 0:
+            self.x += width
+
+        if self.y > height:
+            self.y -= height
+        if self.y < 0:
+            self.y += height
+
         print(self.name, '@', self.x, self.y, '(heading: ', round(self.heading * 57.3, 1), ') in mode:', self.mode)
 
     def processVisual(self, cue, x, y):

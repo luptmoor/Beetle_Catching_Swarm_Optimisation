@@ -1,9 +1,9 @@
 import matplotlib.pyplot as plt
 
-from main import PhysicalObject, dXmax_bug, r_bug_vision
+from notmain import PhysicalObject, dXmax_bug, r_bug_vision
 import numpy as np
 
-tree_land_prob = 0.66
+tree_land_prob = 0.15
 escape_prob = 0.80
 lift_prob = 0.10
 
@@ -29,7 +29,6 @@ class Bug(PhysicalObject):
         self.speed = speed
         self.r_vis = r_vis
         self.mode = mode
-        self.tree_cooldown = 0
 
         print(self.name, 'in', self.mode, 'mode created')
 
@@ -48,13 +47,11 @@ class Bug(PhysicalObject):
         # Bug idles (v)
         if self.mode == 'idle':
             self.heading += np.random.random() * 2 * dXmax_bug - dXmax_bug
-            self.tree_cooldown = max(self.tree_cooldown - 1, 0)
 
         # Bug sits on tree (v)
         elif self.mode == 'tree':
             self.speed = 0
             if np.random.random() < lift_prob:
-                self.tree_cooldown = 15
                 self.speed = bug_speed
                 self.mode = 'idle'
 
@@ -70,20 +67,21 @@ class Bug(PhysicalObject):
 
     def processVisual(self, cue, x, y):
 
-        # Bug sees a new tree (v)
-        if self.mode == 'idle' and cue == 'tree' and self.tree_cooldown == 0:
-            if np.random.random() < tree_land_prob:
-                self.mode = 'land'
-            else:
-                self.tree_cooldown = 10
+        # Bug sees a new tree only while idling (v)
+        if self.mode == 'idle' and cue == 'tree' and np.random.random() < tree_land_prob:
+            self.mode = 'land'
 
         # Bug sees a drone already identified (v)
         elif self.mode == 'land' and cue == 'tree':
             self.heading = np.arctan2(y - self.y, x - self.x)  # attracting heading
 
-        # Bug sees a new drone (v)
-        elif self.mode == 'idle' and cue == 'drone' and np.random.random() < escape_prob:
+        # Bug sees a new drone while idling or landing (v)
+        elif (self.mode == 'idle' or self.mode == 'land') and cue == 'drone' and np.random.random() < escape_prob:
             self.mode = 'escape'
+
+        # Bug sees a new drone while sitting on tree -> first goes to idle (and then likely escape)
+        elif self.mode == 'tree' and cue == 'drone' and np.random.random() < escape_prob:
+            self.mode = 'idle'
 
         # Bug sees a drone already identified (v)
         elif self.mode == 'escape' and cue == 'drone':

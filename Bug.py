@@ -1,19 +1,10 @@
 import matplotlib.pyplot as plt
 
 from PhysicalObject import *
-
+from settings import *
 import numpy as np
 
-tree_land_prob = 0.15
-escape_prob = 0.80
-lift_prob = 0.10
 
-n_bugs = 20
-r_bug = 1  # px, 2 cm
-r_bug_vision = 80  # px, 1.60 m
-dXmax_bug = 90 / 57.3  # rad / timestep
-
-bug_speed = 2
 
 
 

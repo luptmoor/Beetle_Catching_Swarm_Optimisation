@@ -122,15 +122,17 @@ if True:
 
         # Bug simulation
         for bug in bugs:
-            bug.advance(dt)
             for tree in trees:
                 if check_collision(bug, tree):
                     bug.mode = 'tree'
                 if check_vision(bug, tree):
                     bug.processVisual('tree', tree.x, tree.y)
+            bug.advance(dt)
+
             for drone in drones:
                 if check_vision(bug, drone):
                     bug.processVisual('drone', drone.x, drone.y)
+
 
         visuals.update(trees, bugs)
         # Drone simulation

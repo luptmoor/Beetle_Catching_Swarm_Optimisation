@@ -26,6 +26,7 @@ class Bug(PhysicalObject):
         self.speed = speed
         self.r_vis = r_vis
         self.mode = mode
+        self.tree_cooldown = 0
 
         print(self.name, 'in', self.mode, 'mode created')
 
@@ -48,8 +49,10 @@ class Bug(PhysicalObject):
         # Bug sits on tree (v)
         elif self.mode == 'tree':
             self.speed = 0
+            self.heading += np.pi  # make bug face outwards
             if np.random.random() < lift_prob:
                 self.speed = bug_speed
+                self.tree_cooldown = 15
                 self.mode = 'idle'
 
 
@@ -74,17 +77,26 @@ class Bug(PhysicalObject):
         if self.y < 0:
             self.y += height
 
+        self.tree_cooldown = np.max(self.tree_cooldown - 1, 0)
+
         print(self.name, '@', self.x, self.y, '(heading: ', round(self.heading * 57.3, 1), ') in mode:', self.mode)
 
     def processVisual(self, cue, x, y):
 
         # Bug sees a new tree only while idling (v)
-        if self.mode == 'idle' and cue == 'tree' and np.random.random() < tree_land_prob:
+        if self.mode == 'idle' and cue == 'tree' and np.random.random() < tree_land_prob and not self.tree_cooldown == 0:
             self.mode = 'land'
 
-        # Bug sees a drone already identified (v)
+        # Bug sees a tree already identified (v)
         elif self.mode == 'land' and cue == 'tree':
             self.heading = np.arctan2(y - self.y, x - self.x)  # attracting heading
+
+        # Bug sees the tree it is sitting on, turns away to start
+        elif self.mode == 'tree' and cue == 'tree':
+            self.heading = np.arctan2(self.y - y, self.x - x) + np.pi  # repelling heading
+
+
+
 
         # Bug sees a new drone while idling or landing (v)
         elif (self.mode == 'idle' or self.mode == 'land') and cue == 'drone' and np.random.random() < escape_prob:
@@ -96,7 +108,7 @@ class Bug(PhysicalObject):
 
         # Bug sees a drone already identified (v)
         elif self.mode == 'escape' and cue == 'drone':
-            self.heading = np.arctan2(self.y - y, self.x - x)  # opposing heading
+            self.heading = np.arctan2(self.y - y, self.x - x)  # repelling heading
 
 
 

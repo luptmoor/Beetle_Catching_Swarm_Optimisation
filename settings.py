@@ -10,12 +10,12 @@ r_tree = 20  # px, 40 cm
 tree_min_dist = 50  # px, 1 m
 
 # Bugs
-n_bugs = 20
+n_bugs = 10
 r_bug = 3  # px, 2 cm
 r_bug_vision = 80  # px, 1.60 m
-dXmax_bug = 90 / 57.3  # rad / timestep
-bug_speed = 8
-tree_land_prob = 0.10
+dXmax_bug = 60 / 57.3  # rad / timestep
+bug_speed = 10
+tree_land_prob = 0.05
 escape_prob = 0.80
 lift_prob = 0.15
 
@@ -36,7 +36,11 @@ green = (0, 130, 20)
 brown = (117, 60, 26)
 grey = (128, 128, 128)
 red = (180, 0, 0)
+yellow = (255, 255, 0)
+orange = (255, 134, 0)
+pink = (255, 0, 255)
 
+bug_colours = {'idle': red, 'land': orange, 'tree': yellow, 'escape': pink}
 
 
 

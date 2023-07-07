@@ -31,7 +31,7 @@ class Visuals:
 
         # Draw all bugs
         for bug in bugs:
-            pygame.draw.circle(self.screen, red, (bug.x, bug.y), bug.r_col)
+            pygame.draw.circle(self.screen, bug_colours[bug.mode], (bug.x, bug.y), bug.r_col)
 
 
         pygame.display.flip()

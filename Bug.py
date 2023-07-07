@@ -26,7 +26,6 @@ class Bug(PhysicalObject):
         self.speed = speed
         self.r_vis = r_vis
         self.mode = mode
-        self.tree_cooldown = 0
 
         print(self.name, 'in', self.mode, 'mode created')
 
@@ -52,7 +51,6 @@ class Bug(PhysicalObject):
             self.heading += np.pi  # make bug face outwards
             if np.random.random() < lift_prob:
                 self.speed = bug_speed
-                self.tree_cooldown = 15
                 self.mode = 'idle'
 
 
@@ -77,14 +75,13 @@ class Bug(PhysicalObject):
         if self.y < 0:
             self.y += height
 
-        self.tree_cooldown = np.max(self.tree_cooldown - 1, 0)
 
         print(self.name, '@', self.x, self.y, '(heading: ', round(self.heading * 57.3, 1), ') in mode:', self.mode)
 
     def processVisual(self, cue, x, y):
 
         # Bug sees a new tree only while idling (v)
-        if self.mode == 'idle' and cue == 'tree' and np.random.random() < tree_land_prob and not self.tree_cooldown == 0:
+        if self.mode == 'idle' and cue == 'tree' and np.random.random() < tree_land_prob:
             self.mode = 'land'
 
         # Bug sees a tree already identified (v)

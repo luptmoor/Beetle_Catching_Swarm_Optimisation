@@ -75,20 +75,20 @@ def load_environment():
                 pass
 
     # Place drones
-    for k in range(n_drones):
-        placing = True
-        while placing:
-            x = (np.random.random() * width * launchpad_frac) // 1
-            y = (np.random.random() * height * launchpad_frac) // 1
-
-            newdrone = PhysicalObject('Drone ' + str(k), x, y, r_drone)
-            if not any([check_collision(newdrone, phobject) for phobject in phobjects]):
-                phobjects.append(newdrone)
-                drones.append(newdrone)
-                print(newdrone.name, 'placed!')
-                placing = False
-            else:
-                pass
+    # for k in range(n_drones):
+    #     placing = True
+    #     while placing:
+    #         x = (np.random.random() * width * launchpad_frac) // 1
+    #         y = (np.random.random() * height * launchpad_frac) // 1
+    #
+    #         newdrone = PhysicalObject('Drone ' + str(k), x, y, r_drone)
+    #         if not any([check_collision(newdrone, phobject) for phobject in phobjects]):
+    #             phobjects.append(newdrone)
+    #             drones.append(newdrone)
+    #             print(newdrone.name, 'placed!')
+    #             placing = False
+    #         else:
+    #             pass
 
 
 # def collision_loop():
@@ -127,11 +127,13 @@ if True:
                     bug.mode = 'tree'
                 if check_vision(bug, tree):
                     bug.processVisual('tree', tree.x, tree.y)
-            bug.advance(dt)
 
             for drone in drones:
                 if check_vision(bug, drone):
                     bug.processVisual('drone', drone.x, drone.y)
+
+            bug.advance(dt)
+
 
 
         visuals.update(trees, bugs)
@@ -153,12 +155,12 @@ if True:
         #                 phobjects.remove(drone)
 
         # End conditions
-        if not bugs:
-            score = evaluate(1, t)
-            break
-        if not drones:
-            score = evaluate(2, t)
-            break
+        # if not bugs:
+        #     score = evaluate(1, t)
+        #     break
+        # if not drones:
+        #     score = evaluate(2, t)
+        #     break
         if t >= tmax:
             score = evaluate(3, t)
             break

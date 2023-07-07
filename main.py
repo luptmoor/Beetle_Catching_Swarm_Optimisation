@@ -75,20 +75,20 @@ def load_environment():
                 pass
 
     # Place drones
-    # for k in range(n_drones):
-    #     placing = True
-    #     while placing:
-    #         x = (np.random.random() * width * launchpad_frac) // 1
-    #         y = (np.random.random() * height * launchpad_frac) // 1
-    #
-    #         newdrone = PhysicalObject('Drone ' + str(k), x, y, r_drone)
-    #         if not any([check_collision(newdrone, phobject) for phobject in phobjects]):
-    #             phobjects.append(newdrone)
-    #             drones.append(newdrone)
-    #             print(newdrone.name, 'placed!')
-    #             placing = False
-    #         else:
-    #             pass
+    for k in range(n_drones):
+        placing = True
+        while placing:
+            x = (np.random.random() * width * launchpad_frac) // 1
+            y = (np.random.random() * height * launchpad_frac) // 1
+
+            newdrone = PhysicalObject('Drone ' + str(k), x, y, r_drone)
+            if not any([check_collision(newdrone, phobject) for phobject in phobjects]):
+                phobjects.append(newdrone)
+                drones.append(newdrone)
+                print(newdrone.name, 'placed!')
+                placing = False
+            else:
+                pass
 
 
 # def collision_loop():
@@ -129,14 +129,17 @@ if True:
                     bug.processVisual('tree', tree.x, tree.y)
 
             for drone in drones:
+                # if not any([check_vision(bug, drone) for drone in drones]):
+                #     bug.processVisual('none')
                 if check_vision(bug, drone):
                     bug.processVisual('drone', drone.x, drone.y)
+
 
             bug.advance(dt)
 
 
 
-        visuals.update(trees, bugs)
+        visuals.update(trees, bugs, drones)
         # Drone simulation
         # for drone in drones:
         #     for phobject in phobjects:

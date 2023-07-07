@@ -78,7 +78,7 @@ class Bug(PhysicalObject):
 
         print(self.name, '@', self.x, self.y, '(heading: ', round(self.heading * 57.3, 1), ') in mode:', self.mode)
 
-    def processVisual(self, cue, x, y):
+    def processVisual(self, cue, x=0, y=0):
 
         # Bug sees a new tree only while idling (v)
         if self.mode == 'idle' and cue == 'tree' and np.random.random() < tree_land_prob:
@@ -92,7 +92,8 @@ class Bug(PhysicalObject):
         elif self.mode == 'tree' and cue == 'tree':
             self.heading = np.arctan2(self.y - y, self.x - x) + np.pi  # repelling heading
 
-
+        elif cue == 'none':
+            self.mode = 'idle'
 
 
         # Bug sees a new drone while idling or landing (v)

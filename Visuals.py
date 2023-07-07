@@ -32,7 +32,7 @@ class Visuals:
         # Draw all bugs
         for bug in bugs:
             pygame.draw.circle(self.screen, bug_colours[bug.mode], (bug.x, bug.y), bug.r_col)
-            #pygame.draw.circle(self.screen, bug_colours[bug.mode], (bug.x, bug.y), bug.r_vis, 1)  # visual fields
+            pygame.draw.circle(self.screen, bug_colours[bug.mode], (bug.x, bug.y), bug.r_vis, 1)  # visual fields
 
         for drone in drones:
             pygame.draw.circle(self.screen, grey, (drone.x, drone.y), drone.r_col)

@@ -7,15 +7,15 @@ launchpad_frac = 0.3
 
 n_trees = 35
 r_tree = 20  # px, 40 cm
-tree_min_dist = 50  # px, 1 m
+tree_min_dist = 60  # px, 1.20 m
 
 # Bugs
 n_bugs = 40
 r_bug = 3  # px, 2 cm
-r_bug_vision = 80  # px, 1.60 m
+r_bug_vision = 60  # px, 1.60 m
 dXmax_bug = 60 / 57.3  # rad / timestep
 bug_speed = 10
-tree_land_prob = 0.03
+tree_land_prob = 0.02
 escape_prob = 0.80
 lift_prob = 0.15
 
@@ -27,9 +27,9 @@ dXmax_drone = 30 / 57.3  # rad / timestep
 
 
 # Simulation parameters
-tmax = 180  # s
-dt = 0.5  # s
 
+dt = 0.1  # s
+tmax = int(180 // dt)  # 180s
 
 # Colours for visualisation
 green = (0, 130, 20)

@@ -1,6 +1,7 @@
 import numpy as np
 from PhysicalObject import PhysicalObject
 from Bug import Bug
+from Drone import Drone
 from Visuals import Visuals
 from settings import *
 
@@ -81,7 +82,7 @@ def load_environment():
             x = (np.random.random() * width * launchpad_frac) // 1
             y = (np.random.random() * height * launchpad_frac) // 1
 
-            newdrone = PhysicalObject('Drone ' + str(k), x, y, r_drone)
+            newdrone = Drone('Drone ' + str(k), x, y, r_drone)
             if not any([check_collision(newdrone, phobject) for phobject in phobjects]):
                 phobjects.append(newdrone)
                 drones.append(newdrone)
@@ -137,25 +138,35 @@ if True:
 
             bug.advance(dt)
 
+            # Drone simulation
+            for drone in drones:
 
+                for phobject in phobjects:
+                    # Maintain list of visible phobjects
+                    if check_vision(drone, phobject) and phobject not in drone.visible_phobjects:
+                        drone.visible_phobjects.append(phobject)
+                    elif not check_vision(drone, phobject) and phobject in drone.visible_phobjects:
+                        drone.visible_phobjects.remove(phobject)
+
+                    # Check collisions
+                    if check_collision(drone, phobject):
+                        print('Collision between ', drone.name, 'and', phobject.name)
+                        if phobject in drones:
+                            drones.remove(drone)
+                            drones.remove(phobject)
+                            phobjects.remove(drone)
+                            phobjects.remove(phobject)
+                        elif phobject in bugs:
+                            bugs.remove(phobject)
+                            phobjects.remove(phobject)
+                        else:
+                            drones.remove(drone)
+                            phobjects.remove(drone)
+
+                drone.advance(dt)
 
         visuals.update(trees, bugs, drones)
-        # Drone simulation
-        # for drone in drones:
-        #     for phobject in phobjects:
-        #         if check_collision(drone, phobject):
-        #             print('Collision between ', drone.name, 'and', phobject.name)
-        #             if phobject in drones:
-        #                 drones.remove(drone)
-        #                 drones.remove(phobject)
-        #                 phobjects.remove(drone)
-        #                 phobjects.remove(phobject)
-        #             elif phobject in bugs:
-        #                 bugs.remove(phobject)
-        #                 phobjects.remove(phobject)
-        #             else:
-        #                 drones.remove(drone)
-        #                 phobjects.remove(drone)
+
 
         # End conditions
         # if not bugs:

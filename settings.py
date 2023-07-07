@@ -14,7 +14,7 @@ n_bugs = 40
 r_bug = 3  # px, 2 cm
 r_bug_vision = 60  # px, 1.60 m
 dXmax_bug = 60 / 57.3  # rad / timestep
-bug_speed = 10
+v_bug = 10
 tree_land_prob = 0.02
 escape_prob = 0.80
 lift_prob = 0.15
@@ -24,6 +24,8 @@ n_drones = n_bugs // 3
 r_drone = 13  # px, 26 cm
 r_drone_vision = 200  # px, 4 m
 dXmax_drone = 30 / 57.3  # rad / timestep
+v_drone = 1.1 * v_bug
+
 
 
 # Simulation parameters

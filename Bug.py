@@ -9,7 +9,7 @@ import numpy as np
 
 
 class Bug(PhysicalObject):
-    def __init__(self, name, x, y, r_col, speed=bug_speed, heading=0, r_vis=r_bug_vision, mode='idle'):
+    def __init__(self, name, x, y, r_col, speed=v_bug, r_vis=r_bug_vision, mode='idle'):
         """
         Simulated Bug
         :param name:
@@ -22,7 +22,7 @@ class Bug(PhysicalObject):
         :param mode:
         """
         super().__init__(name, x, y, r_col)
-        self.heading = heading
+        self.heading = np.random.random() * 2 * np.pi
         self.speed = speed
         self.r_vis = r_vis
         self.mode = mode
@@ -50,7 +50,7 @@ class Bug(PhysicalObject):
             self.speed = 0
             self.heading += np.pi  # make bug face outwards
             if np.random.random() < lift_prob:
-                self.speed = bug_speed
+                self.speed = v_bug
                 self.mode = 'idle'
 
 

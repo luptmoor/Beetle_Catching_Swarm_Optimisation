@@ -1,6 +1,7 @@
 import numpy as np
 from PhysicalObject import PhysicalObject
 from Bug import Bug
+from Visuals import Visuals
 from settings import *
 
 
@@ -110,8 +111,7 @@ def evaluate(mode, t):
 #if __name__ == 'main' and True:
 if True:
     load_environment()
-
-
+    visuals = Visuals(width, height, dt)
 
     for t in range(tmax+1):
         print('Time:', t, 's')
@@ -132,7 +132,7 @@ if True:
                 if check_vision(bug, drone):
                     bug.processVisual('drone', drone.x, drone.y)
 
-
+        visuals.update(trees, bugs)
         # Drone simulation
         # for drone in drones:
         #     for phobject in phobjects:

@@ -27,7 +27,7 @@ def check_collision(obj1, obj2, margin=0):
         return False
 
 
-def check_vision(active, passive):
+def check_bug_vision(active, passive):
     if active is None or passive is None:
         return False
 
@@ -49,8 +49,33 @@ def check_vision(active, passive):
     # else:
     d = np.sqrt((active.x - passive.x) ** 2 + (active.y - passive.y) ** 2)
 
-    print(active.name, d)
     if d <= active.r_vis + passive.r_col:
+        return True
+    else:
+        return False
+def check_drone_vision(active, passive):
+    if active is None or passive is None:
+        return False
+
+    if active.name == passive.name:
+        return False
+
+    # if passive in bugs or passive in drones and True:
+    #     ds = np.zeros(9)
+    #     ds[0] = np.sqrt((active.x - (passive.x - width)) ** 2 +     (active.y - (passive.y - height)) ** 2)
+    #     ds[1] = np.sqrt((active.x - passive.x) ** 2 +               (active.y - (passive.y - height)) ** 2)
+    #     ds[2] = np.sqrt((active.x - (passive.x + width)) ** 2 +     (active.y - (passive.y - height)) ** 2)
+    #     ds[3] = np.sqrt((active.x - (passive.x - width)) ** 2 +     (active.y - passive.y) ** 2)
+    #     ds[4] = np.sqrt((active.x - passive.x) ** 2 +               (active.y - passive.y) ** 2)
+    #     ds[5] = np.sqrt((active.x - (passive.x + width)) ** 2 +     (active.y - passive.y) ** 2)
+    #     ds[6] = np.sqrt((active.x - (passive.x - width)) ** 2 +     (active.y - (passive.y + height)) ** 2)
+    #     ds[7] = np.sqrt((active.x - passive.x) ** 2 +               (active.y - (passive.y + height)) ** 2)
+    #     ds[8] = np.sqrt((active.x - (passive.x + width)) ** 2 +     (active.y - (passive.y + height)) ** 2)
+    #     d = np.min(ds)
+    # else:
+    d = np.sqrt((active.x - passive.x) ** 2 + (active.y - passive.y) ** 2)
+
+    if d <= active.r_vis[passive.type] + passive.r_col:
         return True
     else:
         return False
@@ -108,6 +133,7 @@ def load_environment():
                 pass
 
 
+
 # def collision_loop():
 #     """
 #     loops over drones and checks for collisions with other phobjects.
@@ -145,13 +171,13 @@ if True:
             for tree in trees:
                 if check_collision(bug, tree):
                     bug.mode = 'tree'
-                if check_vision(bug, tree):
+                if check_bug_vision(bug, tree):
                     bug.processVisual('tree', tree.x, tree.y)
 
             for drone in drones:
                 # if not any([check_vision(bug, drone) for drone in drones]):
                 #     bug.processVisual('none')
-                if check_vision(bug, drone):
+                if check_bug_vision(bug, drone):
                     bug.processVisual('drone', drone.x, drone.y)
 
 
@@ -159,11 +185,13 @@ if True:
 
         # Drone simulation
         for drone in drones:
+            drone.codrones = [otherdrone for otherdrone in drones if not otherdrone == drone]
+
             for phobject in phobjects:
                 # Maintain list of visible phobjects
-                if check_vision(drone, phobject) and phobject not in drone.visible_phobjects:
+                if check_drone_vision(drone, phobject) and phobject not in drone.visible_phobjects:
                     drone.visible_phobjects.append(phobject)
-                if not check_vision(drone, phobject) and phobject in drone.visible_phobjects:
+                if not check_drone_vision(drone, phobject) and phobject in drone.visible_phobjects:
                     drone.visible_phobjects.remove(phobject)
 
             for phobject in drone.visible_phobjects:
@@ -192,12 +220,12 @@ if True:
         t += dt
 
         # End conditions
-        if not bugs:
-            score = evaluate(1, t)
-            break
-        if not drones:
-            score = evaluate(2, t)
-            break
+        # if not bugs:
+        #     score = evaluate(1, t)
+        #     break
+        # if not drones:
+        #     score = evaluate(2, t)
+        #     break
         if t >= tmax:
             score = evaluate(3, t)
             break

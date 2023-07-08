@@ -21,11 +21,17 @@ class Visuals:
 
     def update(self, trees, bugs, drones):
         # Make sure visualisation is ended when window is closed
+        global show_vecs
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
+                if event.key == pygame.K_v:
+                    if show_vecs:
+                        show_vecs = False
+                    else:
+                        show_vecs = True
+                elif event.key == pygame.K_SPACE:
                     pause = True
                     while pause:
                         for event in pygame.event.get():
@@ -47,7 +53,8 @@ class Visuals:
             pygame.draw.circle(self.screen, grey, (drone.x, drone.y), drone.r_col)
             pygame.draw.circle(self.screen, grey, (drone.x, drone.y), drone.r_vis, 1)  # visual fields
 
-            pygame.draw.line(self.screen, blue, (drone.x, drone.y), (drone.x + drone.ax * 20, drone.y + drone.ay * 20), 1)
+            if show_vecs:
+                pygame.draw.line(self.screen, blue, (drone.x, drone.y), (drone.x + drone.ax * 20, drone.y + drone.ay * 20), 1)
 
             # for phobject in drone.visible_phobjects:
             #     dx = np.abs(drone.x - phobject.x)

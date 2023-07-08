@@ -5,7 +5,7 @@ from Drone import Drone
 from Visuals import Visuals
 from settings import *
 
-
+score = 0
 
 # Lists
 phobjects = []
@@ -34,8 +34,23 @@ def check_vision(active, passive):
     if active.name == passive.name:
         return False
 
-    if np.sqrt((active.x - passive.x) ** 2 + (active.y - passive.y) ** 2) <= active.r_vis + passive.r_col:
-        print(active.name, 'sees', passive.name)
+    # if passive in bugs or passive in drones and True:
+    #     ds = np.zeros(9)
+    #     ds[0] = np.sqrt((active.x - (passive.x - width)) ** 2 +     (active.y - (passive.y - height)) ** 2)
+    #     ds[1] = np.sqrt((active.x - passive.x) ** 2 +               (active.y - (passive.y - height)) ** 2)
+    #     ds[2] = np.sqrt((active.x - (passive.x + width)) ** 2 +     (active.y - (passive.y - height)) ** 2)
+    #     ds[3] = np.sqrt((active.x - (passive.x - width)) ** 2 +     (active.y - passive.y) ** 2)
+    #     ds[4] = np.sqrt((active.x - passive.x) ** 2 +               (active.y - passive.y) ** 2)
+    #     ds[5] = np.sqrt((active.x - (passive.x + width)) ** 2 +     (active.y - passive.y) ** 2)
+    #     ds[6] = np.sqrt((active.x - (passive.x - width)) ** 2 +     (active.y - (passive.y + height)) ** 2)
+    #     ds[7] = np.sqrt((active.x - passive.x) ** 2 +               (active.y - (passive.y + height)) ** 2)
+    #     ds[8] = np.sqrt((active.x - (passive.x + width)) ** 2 +     (active.y - (passive.y + height)) ** 2)
+    #     d = np.min(ds)
+    # else:
+    d = np.sqrt((active.x - passive.x) ** 2 + (active.y - passive.y) ** 2)
+
+    print(active.name, d)
+    if d <= active.r_vis + passive.r_col:
         return True
     else:
         return False
@@ -114,10 +129,12 @@ def evaluate(mode, t):
 if True:
     load_environment()
     visuals = Visuals(width, height, dt)
+    running = True
+    t = 0
 
-    for t in range(tmax+1):
+    while running:
         print()
-        print('Time:', t, 's')
+        print('Time:', round(t, 2), 's')
 
         # Guarantee this always holds (good candidate for removal if too slow)
         phobjects = trees + bugs + drones
@@ -146,10 +163,8 @@ if True:
                 # Maintain list of visible phobjects
                 if check_vision(drone, phobject) and phobject not in drone.visible_phobjects:
                     drone.visible_phobjects.append(phobject)
-                    print(phobject.name, 'added to list')
                 if not check_vision(drone, phobject) and phobject in drone.visible_phobjects:
                     drone.visible_phobjects.remove(phobject)
-                    print(phobject.name, 'removed to list')
 
             for phobject in drone.visible_phobjects:
                 if phobject not in phobjects:
@@ -174,17 +189,19 @@ if True:
 
         visuals.update(trees, bugs, drones)
 
+        t += dt
 
         # End conditions
-        # if not bugs:
-        #     score = evaluate(1, t)
-        #     break
-        # if not drones:
-        #     score = evaluate(2, t)
-        #     break
+        if not bugs:
+            score = evaluate(1, t)
+            break
+        if not drones:
+            score = evaluate(2, t)
+            break
         if t >= tmax:
             score = evaluate(3, t)
             break
 
+print(score)
 
 

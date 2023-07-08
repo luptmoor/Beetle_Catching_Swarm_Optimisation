@@ -7,19 +7,19 @@ class Drone(PhysicalObject):
     def __init__(self, name, type, x, y, r_col=r_drone, r_vis=r_drone_vision):
         super().__init__(name, type, x, y, r_col)
         self.visible_phobjects = []
-        self.speed = 0
+        self.speed = v_min
         self.ax = 0
         self.ay = 0
         self.heading = np.random.random() * 2 * np.pi
         self.r_vis = r_vis
 
         # Tunable Parameters
-        self.k_tree = 0.05
-        self.k_drone = 0.05
-        self.k_bug = -0.1
+        self.k_tree = 0.6
+        self.k_drone = 0.5
+        self.k_bug = -0.7
         self.gains = {'tree': self.k_tree, 'drone': self.k_drone, 'bug': self.k_bug}
 
-        self.k_random = 0.2
+        self.k_random = 0.0
 
 
     def advance(self, dt):
@@ -32,7 +32,6 @@ class Drone(PhysicalObject):
 
             ays.append((max(self.r_vis - d, 0)) * self.gains[phobject.type] * np.sin(theta))
             axs.append((max(self.r_vis - d, 0)) * self.gains[phobject.type] * np.cos(theta))
-            print(phobject.name, axs[-1], ays[-1])
 
         ay = sum(ays) + np.random.random() * 2 * a_max * self.k_random - self.k_random * a_max
         ax = sum(axs) + np.random.random() * 2 * a_max * self.k_random - self.k_random * a_max
@@ -47,7 +46,7 @@ class Drone(PhysicalObject):
         vy = self.speed * np.sin(self.heading) + self.ay * dt
 
         self.heading = np.arctan2(vy, vx)
-        self.speed = min(np.sqrt(vy**2 + vx**2), v_drone)
+        self.speed = max(min(np.sqrt(vy**2 + vx**2), v_max), v_min)
 
 
 

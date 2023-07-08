@@ -1,16 +1,16 @@
 # Global Parameters
 
 # Environment
-width = 400  # px,  24 m 1200
-height = 400  # px,  16 m 700
+width = 700  # px,  24 m 1200
+height = 700  # px,  16 m 700
 launchpad_frac = 0.4
 
-n_trees = 3
+n_trees = 10
 r_tree = 20  # px, 40 cm
 tree_min_dist = 70  # px, 1.20 m
 
 # Bugs
-n_bugs = 1
+n_bugs = 10
 r_bug = 3  # px, 6 cm
 r_bug_vision = 60  # px, 1.60 m
 dXmax_bug = 60 / 57.3  # rad / timestep
@@ -20,18 +20,18 @@ escape_prob = 0.90
 lift_prob = 0.05
 
 # Static Drone Parameters
-n_drones = 2
+n_drones = 4
 r_drone = 11  # px, 22 cm
 drone_min_dist = 40
-r_drone_vision = 120  # px, 4 m
+r_drone_vision = 80  # px, 4 m
 dXmax_drone = 30 / 57.3  # rad / timestep
-v_drone = 5
+v_drone = 10
 a_max = 3  # ?
 
 
 # Simulation parameters
 
-dt = 1  # s
+dt = 0.2  # s
 tmax = int(180 // dt)  # 180s
 
 # Colours for visualisation
@@ -42,6 +42,8 @@ red = (180, 0, 0)
 yellow = (255, 255, 0)
 orange = (255, 134, 0)
 pink = (255, 0, 255)
+blue = (0, 50, 255)
+white = (255, 255, 255)
 
 bug_colours = {'idle': red, 'land': orange, 'tree': yellow, 'escape': pink}
 

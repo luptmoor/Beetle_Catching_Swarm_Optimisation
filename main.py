@@ -27,14 +27,15 @@ def check_collision(obj1, obj2, margin=0):
         return False
 
 
-def check_vision(active, passive, margin=0):
+def check_vision(active, passive):
     if active is None or passive is None:
         return False
 
     if active.name == passive.name:
         return False
 
-    if np.sqrt((active.x - passive.x) ** 2 + (active.y - passive.y) ** 2) <= active.r_vis + passive.r_col + margin:
+    if np.sqrt((active.x - passive.x) ** 2 + (active.y - passive.y) ** 2) <= active.r_vis + passive.r_col:
+        print(active.name, 'sees', passive.name)
         return True
     else:
         return False
@@ -139,37 +140,37 @@ if True:
 
             bug.advance(dt)
 
-            # Drone simulation
-            for drone in drones:
-                for phobject in phobjects:
-                    # Maintain list of visible phobjects
-                    if check_vision(drone, phobject) and phobject not in drone.visible_phobjects:
-                        drone.visible_phobjects.append(phobject)
-                        print(phobject.name, 'added to list')
-                    if not check_vision(drone, phobject) and phobject in drone.visible_phobjects:
-                        drone.visible_phobjects.remove(phobject)
-                        print(phobject.name, 'removed to list')
+        # Drone simulation
+        for drone in drones:
+            for phobject in phobjects:
+                # Maintain list of visible phobjects
+                if check_vision(drone, phobject) and phobject not in drone.visible_phobjects:
+                    drone.visible_phobjects.append(phobject)
+                    print(phobject.name, 'added to list')
+                if not check_vision(drone, phobject) and phobject in drone.visible_phobjects:
+                    drone.visible_phobjects.remove(phobject)
+                    print(phobject.name, 'removed to list')
 
-                for phobject in drone.visible_phobjects:
-                    if phobject not in phobjects:
-                        drone.visible_phobjects.remove(phobject)
+            for phobject in drone.visible_phobjects:
+                if phobject not in phobjects:
+                    drone.visible_phobjects.remove(phobject)
 
-                    # Check collisions
-                    if check_collision(drone, phobject):
-                        print('Collision between ', drone.name, 'and', phobject.name)
-                        if phobject in drones:
-                            drones.remove(drone)
-                            drones.remove(phobject)
-                            phobjects.remove(drone)
-                            phobjects.remove(phobject)
-                        elif phobject in bugs:
-                            bugs.remove(phobject)
-                            phobjects.remove(phobject)
-                        elif phobject in trees:
-                            drones.remove(drone)
-                            phobjects.remove(drone)
+                # Check collisions
+                if check_collision(drone, phobject):
+                    print('Collision between ', drone.name, 'and', phobject.name)
+                    if phobject in drones:
+                        drones.remove(drone)
+                        drones.remove(phobject)
+                        phobjects.remove(drone)
+                        phobjects.remove(phobject)
+                    elif phobject in bugs:
+                        bugs.remove(phobject)
+                        phobjects.remove(phobject)
+                    elif phobject in trees:
+                        drones.remove(drone)
+                        phobjects.remove(drone)
 
-                drone.advance(dt)
+            drone.advance(dt)
 
         visuals.update(trees, bugs, drones)
 

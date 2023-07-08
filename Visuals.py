@@ -1,3 +1,4 @@
+import numpy as np
 import pygame
 from settings import *
 
@@ -45,6 +46,17 @@ class Visuals:
         for drone in drones:
             pygame.draw.circle(self.screen, grey, (drone.x, drone.y), drone.r_col)
             pygame.draw.circle(self.screen, grey, (drone.x, drone.y), drone.r_vis, 1)  # visual fields
+
+            pygame.draw.line(self.screen, blue, (drone.x, drone.y), (drone.x + drone.ax * 20, drone.y + drone.ay * 20), 1)
+
+            # for phobject in drone.visible_phobjects:
+            #     dx = np.abs(drone.x - phobject.x)
+            #     dy = np.abs(drone.y - phobject.y)
+            #
+            #     x = drone.ax / a_max * dx
+            #     y = drone.ay / a_max * dy
+            #
+            #     pygame.draw.line(self.screen, blue, (drone.x, drone.y), (x, y), 1)
 
 
         pygame.display.flip()

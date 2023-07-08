@@ -50,7 +50,7 @@ def load_environment():
             x = np.random.random() * (width - 2 * (r_tree + tree_min_dist)) + (r_tree + tree_min_dist) // 1
             y = np.random.random() * (height - 2 * (r_tree + tree_min_dist)) + (r_tree + tree_min_dist) // 1
 
-            newtree = PhysicalObject('Tree ' + str(i), x, y, r_tree)
+            newtree = PhysicalObject('Tree ' + str(i), 'tree', x, y, r_tree)
             if not any([check_collision(newtree, phobject, tree_min_dist) for phobject in phobjects]):
                 phobjects.append(newtree)
                 trees.append(newtree)
@@ -66,7 +66,7 @@ def load_environment():
             x = (np.random.random() * width) // 1
             y = (np.random.random() * height) // 1
 
-            newbug = Bug('Bug ' + str(j), x, y, r_bug)
+            newbug = Bug('Bug ' + str(j), 'bug', x, y, r_bug)
             if not any([check_collision(newbug, phobject) for phobject in phobjects]):
                 phobjects.append(newbug)
                 bugs.append(newbug)
@@ -82,8 +82,8 @@ def load_environment():
             x = (np.random.random() * width * launchpad_frac) // 1
             y = (np.random.random() * height * launchpad_frac) // 1
 
-            newdrone = Drone('Drone ' + str(k), x, y, r_drone)
-            if not any([check_collision(newdrone, phobject) for phobject in phobjects]):
+            newdrone = Drone('Drone ' + str(k), 'drone', x, y, r_drone)
+            if not any([check_collision(newdrone, phobject, drone_min_dist) for phobject in phobjects]):
                 phobjects.append(newdrone)
                 drones.append(newdrone)
                 print(newdrone.name, 'placed!')
@@ -115,6 +115,7 @@ if True:
     visuals = Visuals(width, height, dt)
 
     for t in range(tmax+1):
+        print()
         print('Time:', t, 's')
 
         # Guarantee this always holds (good candidate for removal if too slow)
@@ -140,12 +141,17 @@ if True:
 
             # Drone simulation
             for drone in drones:
-
                 for phobject in phobjects:
                     # Maintain list of visible phobjects
                     if check_vision(drone, phobject) and phobject not in drone.visible_phobjects:
                         drone.visible_phobjects.append(phobject)
-                    elif not check_vision(drone, phobject) and phobject in drone.visible_phobjects:
+                        print(phobject.name, 'added to list')
+                    if not check_vision(drone, phobject) and phobject in drone.visible_phobjects:
+                        drone.visible_phobjects.remove(phobject)
+                        print(phobject.name, 'removed to list')
+
+                for phobject in drone.visible_phobjects:
+                    if phobject not in phobjects:
                         drone.visible_phobjects.remove(phobject)
 
                     # Check collisions
@@ -159,7 +165,7 @@ if True:
                         elif phobject in bugs:
                             bugs.remove(phobject)
                             phobjects.remove(phobject)
-                        else:
+                        elif phobject in trees:
                             drones.remove(drone)
                             phobjects.remove(drone)
 

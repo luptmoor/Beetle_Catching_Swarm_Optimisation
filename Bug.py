@@ -9,7 +9,7 @@ import numpy as np
 
 
 class Bug(PhysicalObject):
-    def __init__(self, name, x, y, r_col, speed=v_bug, r_vis=r_bug_vision, mode='idle'):
+    def __init__(self, name, type,  x, y, r_col, speed=v_bug, r_vis=r_bug_vision, mode='idle'):
         """
         Simulated Bug
         :param name:
@@ -21,7 +21,7 @@ class Bug(PhysicalObject):
         :param r_vis:
         :param mode:
         """
-        super().__init__(name, x, y, r_col)
+        super().__init__(name, type, x, y, r_col)
         self.heading = np.random.random() * 2 * np.pi
         self.speed = speed
         self.r_vis = r_vis
@@ -76,7 +76,7 @@ class Bug(PhysicalObject):
             self.y += height
 
 
-        print(self.name, '@', self.x, self.y, '(heading: ', round(self.heading * 57.3, 1), ') in mode:', self.mode)
+        #print(self.name, '@', self.x, self.y, '(heading: ', round(self.heading * 57.3, 1), ') in mode:', self.mode)
 
     def processVisual(self, cue, x=0, y=0):
 
@@ -86,7 +86,7 @@ class Bug(PhysicalObject):
 
         # Bug sees a tree already identified (v)
         elif self.mode == 'land' and cue == 'tree':
-            self.heading = np.arctan2(y - self.y, x - self.x)  # attracting heading
+            self.heading = np.arctan2(y - self.y, x - self.x) # attracting heading
 
         # Bug sees the tree it is sitting on, turns away to start
         elif self.mode == 'tree' and cue == 'tree':

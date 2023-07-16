@@ -9,7 +9,7 @@ import numpy as np
 
 
 class Bug(PhysicalObject):
-    def __init__(self, name, type,  x, y, r_col, speed=v_bug, r_vis=r_bug_vision, mode='idle'):
+    def __init__(self, name,  x, y, speed=v_bug, r_vis=r_bug_vision, mode='idle'):
         """
         Simulated Bug
         :param name:
@@ -21,7 +21,7 @@ class Bug(PhysicalObject):
         :param r_vis:
         :param mode:
         """
-        super().__init__(name, type, x, y, r_col)
+        super().__init__(name, 'bug', x, y, r_bug)
         self.heading = np.random.random() * 2 * np.pi
         self.speed = speed
         self.r_vis = r_vis
@@ -52,6 +52,10 @@ class Bug(PhysicalObject):
             if np.random.random() < lift_prob:
                 self.speed = v_bug
                 self.mode = 'idle'
+            elif np.random.random() < repro_prob:
+                self.speed = v_bug
+                self.mode = 'idle'
+                return True
 
 
         # Heading periodicity
@@ -75,7 +79,7 @@ class Bug(PhysicalObject):
         if self.y < 0:
             self.y += height
 
-
+        return False
         #print(self.name, '@', self.x, self.y, '(heading: ', round(self.heading * 57.3, 1), ') in mode:', self.mode)
 
     def processVisual(self, cue, x=0, y=0):

@@ -107,7 +107,7 @@ def load_environment():
             x = (np.random.random() * width) // 1
             y = (np.random.random() * height) // 1
 
-            newbug = Bug('Bug ' + str(j), 'bug', x, y, r_bug)
+            newbug = Bug('Bug ' + str(j), x, y)
             if not any([check_collision(newbug, phobject) for phobject in phobjects]):
                 phobjects.append(newbug)
                 bugs.append(newbug)
@@ -159,8 +159,9 @@ if True:
     t = 0
 
     while running:
-        print()
-        print('Time:', round(t, 2), 's')
+        if t//1 % 5 == 0:
+            print()
+            print('Time:', round(t, 2), 's')
 
         # Guarantee this always holds (good candidate for removal if too slow)
         phobjects = trees + bugs + drones
@@ -181,7 +182,11 @@ if True:
                     bug.processVisual('drone', drone.x, drone.y)
 
 
-            bug.advance(dt)
+            repro = bug.advance(dt)
+            if repro:
+                newbug = Bug(bug.name + ' (' + str(t) + 's)', bug.x, bug.y)
+                bugs.append(newbug)
+                phobjects.append(newbug)
 
         # Drone simulation
         for drone in drones:

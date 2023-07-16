@@ -70,7 +70,7 @@ class Visuals:
             if view >= 2:
                 pygame.draw.line(self.screen, blue, (drone.x, drone.y), (drone.x + drone.ax * 20, drone.y + drone.ay * 20), 1)
 
-                text_surface, text_rect = self.font.render(str(round(drone.speed, 2)), (0, 0, 0))
+                text_surface, text_rect = self.font.render(str(round(drone.activity, 2)), (0, 0, 0))
                 text_rect.center = (drone.x, drone.y)
                 self.screen.blit(text_surface, text_rect)
             # for phobject in drone.visible_phobjects:

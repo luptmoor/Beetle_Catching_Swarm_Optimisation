@@ -80,6 +80,21 @@ def check_drone_vision(active, passive):
     else:
         return False
 
+def place_drones(n):
+    for k in range(n):
+        placing = True
+        while placing:
+            x = (np.random.random() * width * launchpad_frac) // 1
+            y = (np.random.random() * height * launchpad_frac) // 1
+
+            newdrone = Drone('Drone ' + str(k), 'drone', x, y, r_drone)
+            if not any([check_collision(newdrone, phobject, drone_min_dist) for phobject in phobjects]):
+                phobjects.append(newdrone)
+                drones.append(newdrone)
+                print(newdrone.name, 'placed!')
+                placing = False
+            else:
+                pass
 
 def load_environment():
     global phobjects
@@ -117,21 +132,7 @@ def load_environment():
                 pass
 
     # Place drones
-    for k in range(n_drones):
-        placing = True
-        while placing:
-            x = (np.random.random() * width * launchpad_frac) // 1
-            y = (np.random.random() * height * launchpad_frac) // 1
-
-            newdrone = Drone('Drone ' + str(k), 'drone', x, y, r_drone)
-            if not any([check_collision(newdrone, phobject, drone_min_dist) for phobject in phobjects]):
-                phobjects.append(newdrone)
-                drones.append(newdrone)
-                print(newdrone.name, 'placed!')
-                placing = False
-            else:
-                pass
-
+    place_drones(n_drones)
 
 
 # def collision_loop():
@@ -214,11 +215,17 @@ if True:
                     elif phobject in bugs:
                         bugs.remove(phobject)
                         phobjects.remove(phobject)
+                        drone.activity += 50
                     elif phobject in trees:
                         drones.remove(drone)
                         phobjects.remove(drone)
 
             drone.advance(dt)
+
+
+
+
+
 
         visuals.update(trees, bugs, drones)
 

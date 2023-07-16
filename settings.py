@@ -18,17 +18,16 @@ v_bug = 12
 tree_land_prob = 0.005
 escape_prob = 0.90
 lift_prob = 0.05
-repro_prob = 0.001
+repro_prob = 0.0001
 
 # Static Drone Parameters
-n_drones = 5
+n_drones = 6
 r_drone = 11  # px, 22 cm
 drone_min_dist = 40
 r_drone_vision = 80  # px, 4 m
 dXmax_drone = 30 / 57.3  # rad / timestep
 v_max = 40
-v_min = 5
-a_max = 200 # ?
+a_max = 80  # ?
 
 
 # Simulation parameters

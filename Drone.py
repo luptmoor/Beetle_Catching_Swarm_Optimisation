@@ -7,6 +7,8 @@ class Drone(PhysicalObject):
     def __init__(self, name, type, x, y, r_col=r_drone, r_vis=r_drone_vision):
         super().__init__(name, type, x, y, r_col)
 
+        self.activity = 0
+
         # Tunable Parameters
         self.r_vis_bug = 150
         self.r_vis_drone = 100
@@ -15,11 +17,11 @@ class Drone(PhysicalObject):
 
         self.k_tree = 20
         self.k_neardrone = 1.5
-        self.k_fardrone = -0.001
+        self.k_fardrone = -0.0001
         self.k_bug = -0.5
         self.gains = {'tree': self.k_tree, 'drone': self.k_neardrone, 'bug': self.k_bug}
 
-        self.v_min = v_min
+        self.v_min = 5
         self.p_random = 0.1
         self.k_random = 0.4
 
@@ -51,8 +53,8 @@ class Drone(PhysicalObject):
             d = np.sqrt((codrone.x - self.x) ** 2 + (codrone.y - self.y) ** 2)
             theta = np.arctan2(self.y - codrone.y, self.x - codrone.x)
 
-            ays.append(d * self.k_fardrone * np.sin(theta))
-            axs.append(d * self.k_fardrone * np.cos(theta))
+            ays.append(d * self.k_fardrone * codrone.activity * np.sin(theta))
+            axs.append(d * self.k_fardrone * codrone.activity * np.cos(theta))
 
         ax = sum(axs)
         ay = sum(ays)
@@ -97,4 +99,7 @@ class Drone(PhysicalObject):
             self.y += height
 
         #print(self.name, '@', self.x, self.y, '(heading: ', round(self.heading * 57.3, 1))
+
+        self.activity = max(-5, self.activity - 0.5)
+
 

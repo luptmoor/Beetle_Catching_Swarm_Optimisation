@@ -18,10 +18,10 @@ v_bug = 12
 tree_land_prob = 0.005
 escape_prob = 0.90
 lift_prob = 0.05
-repro_prob = 0.0001
+repro_prob = 0.0002
 
 # Static Drone Parameters
-n_drones = 6
+n_drones = 10
 r_drone = 11  # px, 22 cm
 drone_min_dist = 40
 r_drone_vision = 80  # px, 4 m
@@ -29,11 +29,15 @@ dXmax_drone = 30 / 57.3  # rad / timestep
 v_max = 40
 a_max = 80  # ?
 
+activity_decay = 0.2  # points / s
+activity_award = 10   # points / bug
+charge_rate = 1  # % / s
+
 
 # Simulation parameters
 
 dt = 0.1 # s
-tmax = 1000  # s
+tmax = 5000  # s
 
 # Colours for visualisation
 green = (0, 130, 20)

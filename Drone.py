@@ -7,7 +7,10 @@ class Drone(PhysicalObject):
     def __init__(self, name, type, x, y, r_col=r_drone, r_vis=r_drone_vision):
         super().__init__(name, type, x, y, r_col)
 
-        self.activity = 0
+
+
+        self.p_random = 0.1
+        self.k_random = 0.4
 
         # Tunable Parameters
         self.r_vis_bug = 150
@@ -17,15 +20,17 @@ class Drone(PhysicalObject):
 
         self.k_tree = 20
         self.k_neardrone = 1.5
-        self.k_fardrone = -0.0001
         self.k_bug = -0.5
         self.gains = {'tree': self.k_tree, 'drone': self.k_neardrone, 'bug': self.k_bug}
 
+        self.k_fardrone = -0.001
+        self.k_activity = -0.0001
+        self.temp_cohesion = 30
+
         self.v_min = 5
-        self.p_random = 0.1
-        self.k_random = 0.4
 
-
+        self.activity = 0
+        self.charge = round(np.random.random() * (100 - self.temp_cohesion) + self.temp_cohesion, 1)
 
         self.visible_phobjects = []
         self.codrones = []
@@ -46,6 +51,7 @@ class Drone(PhysicalObject):
             d = np.sqrt((phobject.x - self.x)**2 + (phobject.y - self.y)**2) - phobject.r_col
             theta = np.arctan2(self.y - phobject.y, self.x - phobject.x)
 
+            # Local attraction/repulsion from other phobjects
             ays.append((max(self.r_vis[phobject.type] - d, 0)) * self.gains[phobject.type] * np.sin(theta))
             axs.append((max(self.r_vis[phobject.type] - d, 0)) * self.gains[phobject.type] * np.cos(theta))
 
@@ -53,13 +59,18 @@ class Drone(PhysicalObject):
             d = np.sqrt((codrone.x - self.x) ** 2 + (codrone.y - self.y) ** 2)
             theta = np.arctan2(self.y - codrone.y, self.x - codrone.x)
 
-            ays.append(d * self.k_fardrone * codrone.activity * np.sin(theta))
-            axs.append(d * self.k_fardrone * codrone.activity * np.cos(theta))
+            # Attraction towards activity
+            ays.append(d * self.k_activity * codrone.activity * np.sin(theta))
+            axs.append(d * self.k_activity * codrone.activity * np.cos(theta))
+
+            # Attraction towards other drones
+            ays.append(d * self.k_fardrone * np.sin(theta))
+            axs.append(d * self.k_fardrone * np.cos(theta))
 
         ax = sum(axs)
         ay = sum(ays)
         a = min(np.sqrt(ay ** 2 + ax ** 2), a_max)
-        if np.random.random() < self.p_random and a <=100:
+        if np.random.random() < self.p_random and a <= 100:
             self.heading += 2 * 90 / 57.3 * self.k_random * np.random.random() - 90 / 57.3 * self.k_random
 
 
@@ -100,6 +111,13 @@ class Drone(PhysicalObject):
 
         #print(self.name, '@', self.x, self.y, '(heading: ', round(self.heading * 57.3, 1))
 
-        self.activity = max(-5, self.activity - 0.5)
+        self.activity = min(50, max(-50, self.activity - activity_decay * dt))
+        self.charge = max(0, self.charge - charge_rate * dt)
+
+        if self.charge == 0:
+            return True
+        else:
+            return False
+
 
 

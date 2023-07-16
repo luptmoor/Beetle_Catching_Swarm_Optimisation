@@ -11,6 +11,7 @@ score = 0
 phobjects = []
 trees = []
 drones = []
+charging = []
 bugs = []
 
 
@@ -215,19 +216,31 @@ if True:
                     elif phobject in bugs:
                         bugs.remove(phobject)
                         phobjects.remove(phobject)
-                        drone.activity += 50
+                        drone.activity += activity_award
                     elif phobject in trees:
                         drones.remove(drone)
                         phobjects.remove(drone)
 
-            drone.advance(dt)
+            recharge = drone.advance(dt)
+            if recharge:
+                drones.remove(drone)
+                charging.append(drone)
+
+
+        for drone in charging:
+            drone.charge = min(drone.charge + charge_rate * dt, 100)
+            if drone.charge >= 100:
+                drone.x = 0
+                drone.y = 0
+                drones.append(drone)
+                charging.remove(drone)
 
 
 
 
 
 
-        visuals.update(trees, bugs, drones)
+        visuals.update(trees, bugs, drones, charging)
 
         t += dt
 

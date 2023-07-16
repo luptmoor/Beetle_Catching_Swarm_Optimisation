@@ -21,7 +21,7 @@ class Visuals:
         pygame.display.flip()
 
 
-    def update(self, trees, bugs, drones):
+    def update(self, trees, bugs, drones, charging):
         # Make sure visualisation is ended when window is closed
         global view
         for event in pygame.event.get():
@@ -42,12 +42,20 @@ class Visuals:
 
         self.screen.fill(green)
 
-        text_surface, text_rect = self.font.render(str(round(len(drones))), (0, 0, 0))
-        text_rect.center = (10, 10)
+        text_surface, text_rect = self.font.render('Active Drones: ' + str(round(len(drones))), (0, 0, 0))
+        text_rect.center = (50, 10)
         self.screen.blit(text_surface, text_rect)
 
-        text_surface, text_rect = self.font.render(str(round(len(bugs))), (0, 0, 0))
-        text_rect.center = (10, 25)
+        text_surface, text_rect = self.font.render('Charging Drones: ' + str(round(len(charging))), (0, 0, 0))
+        text_rect.center = (200, 10)
+        self.screen.blit(text_surface, text_rect)
+
+        text_surface, text_rect = self.font.render('Dead Drones: ' + str(round(n_drones - len(drones) - len(charging))), (0, 0, 0))
+        text_rect.center = (350, 10)
+        self.screen.blit(text_surface, text_rect)
+
+        text_surface, text_rect = self.font.render('Bugs: ' + str(round(len(bugs))), (0, 0, 0))
+        text_rect.center = (30, 25)
         self.screen.blit(text_surface, text_rect)
 
         for tree in trees:
@@ -70,7 +78,7 @@ class Visuals:
             if view >= 2:
                 pygame.draw.line(self.screen, blue, (drone.x, drone.y), (drone.x + drone.ax * 20, drone.y + drone.ay * 20), 1)
 
-                text_surface, text_rect = self.font.render(str(round(drone.activity, 2)), (0, 0, 0))
+                text_surface, text_rect = self.font.render(str(round(drone.charge, 0)), (0, 0, 0))
                 text_rect.center = (drone.x, drone.y)
                 self.screen.blit(text_surface, text_rect)
             # for phobject in drone.visible_phobjects:

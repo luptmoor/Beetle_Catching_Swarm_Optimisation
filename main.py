@@ -85,11 +85,11 @@ def place_drones(n):
     for k in range(n):
         placing = True
         while placing:
-            x = (np.random.random() * width * launchpad_frac) // 1
-            y = (np.random.random() * height * launchpad_frac) // 1
+            x = (np.random.random() * WIDTH * LAUNCHPAD_FRAC) // 1
+            y = (np.random.random() * HEIGHT * LAUNCHPAD_FRAC) // 1
 
-            newdrone = Drone('Drone ' + str(k), 'drone', x, y, r_drone)
-            if not any([check_collision(newdrone, phobject, drone_min_dist) for phobject in phobjects]):
+            newdrone = Drone('Drone ' + str(k), 'drone', x, y, R_DRONE)
+            if not any([check_collision(newdrone, phobject, DRONE_MIN_DIST) for phobject in phobjects]):
                 phobjects.append(newdrone)
                 drones.append(newdrone)
                 print(newdrone.name, 'placed!')
@@ -101,14 +101,14 @@ def load_environment():
     global phobjects
 
     # Place trees
-    for i in range(n_trees):
+    for i in range(N_TREES):
         placing = True
         while placing:
-            x = np.random.random() * (width - 2 * (r_tree + tree_min_dist)) + (r_tree + tree_min_dist) // 1
-            y = np.random.random() * (height - 2 * (r_tree + tree_min_dist)) + (r_tree + tree_min_dist) // 1
+            x = np.random.random() * (WIDTH - 2 * (R_TREE + TREE_MIN_DIST)) + (R_TREE + TREE_MIN_DIST) // 1
+            y = np.random.random() * (HEIGHT - 2 * (R_TREE + TREE_MIN_DIST)) + (R_TREE + TREE_MIN_DIST) // 1
 
-            newtree = PhysicalObject('Tree ' + str(i), 'tree', x, y, r_tree)
-            if not any([check_collision(newtree, phobject, tree_min_dist) for phobject in phobjects]):
+            newtree = PhysicalObject('Tree ' + str(i), 'tree', x, y, R_TREE)
+            if not any([check_collision(newtree, phobject, TREE_MIN_DIST) for phobject in phobjects]):
                 phobjects.append(newtree)
                 trees.append(newtree)
                 print(newtree.name, 'placed!')
@@ -117,11 +117,11 @@ def load_environment():
                 pass
 
     # Place bugs
-    for j in range(n_bugs):
+    for j in range(N_BUGS):
         placing = True
         while placing:
-            x = (np.random.random() * width) // 1
-            y = (np.random.random() * height) // 1
+            x = (np.random.random() * WIDTH) // 1
+            y = (np.random.random() * HEIGHT) // 1
 
             newbug = Bug('Bug ' + str(j), x, y)
             if not any([check_collision(newbug, phobject) for phobject in phobjects]):
@@ -133,7 +133,7 @@ def load_environment():
                 pass
 
     # Place drones
-    place_drones(n_drones)
+    place_drones(N_DRONES)
 
 
 # def collision_loop():
@@ -150,13 +150,13 @@ def evaluate(mode, t):
     if mode == 2:
         return 450 - t
     if mode == 3:
-        return 300 * len(drones) / n_drones - 150
+        return 300 * len(drones) / N_DRONES - 150
 
 
 #if __name__ == 'main' and True:
 if True:
     load_environment()
-    visuals = Visuals(width, height, dt)
+    visuals = Visuals(WIDTH, HEIGHT, DT)
     running = True
     t = 0
 
@@ -184,7 +184,7 @@ if True:
                     bug.processVisual('drone', drone.x, drone.y)
 
 
-            repro = bug.advance(dt)
+            repro = bug.advance(DT)
             if repro:
                 newbug = Bug(bug.name + ' (' + str(t) + 's)', bug.x, bug.y)
                 bugs.append(newbug)
@@ -216,19 +216,19 @@ if True:
                     elif phobject in bugs:
                         bugs.remove(phobject)
                         phobjects.remove(phobject)
-                        drone.activity += activity_award
+                        drone.activity += ACTIVITY_AWARD
                     elif phobject in trees:
                         drones.remove(drone)
                         phobjects.remove(drone)
 
-            recharge = drone.advance(dt)
+            recharge = drone.advance(DT)
             if recharge:
                 drones.remove(drone)
                 charging.append(drone)
 
 
         for drone in charging:
-            drone.charge = min(drone.charge + charge_rate * dt, 100)
+            drone.charge = min(drone.charge + CHARGE_RATE * DT, 100)
             if drone.charge >= 100:
                 drone.x = 0
                 drone.y = 0
@@ -242,7 +242,7 @@ if True:
 
         visuals.update(trees, bugs, drones, charging)
 
-        t += dt
+        t += DT
 
         # End conditions
         # if not bugs:
@@ -251,7 +251,7 @@ if True:
         # if not drones:
         #     score = evaluate(2, t)
         #     break
-        if t >= tmax:
+        if t >= T_MAX:
             score = evaluate(3, t)
             break
 

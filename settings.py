@@ -1,55 +1,51 @@
-# Global Parameters
+# Environment   1 px = 2cm
+WIDTH           = 1200        # px,  24 m
+HEIGHT          = 700         # px,  14 m
+LAUNCHPAD_FRAC  = 0.4
 
-# Environment
-width = 1200  # px,  24 m 1200
-height = 700  # px,  16 m 700
-launchpad_frac = 0.4
-
-n_trees = 35
-r_tree = 20  # px, 40 cm
-tree_min_dist = 50  # px, 1.20 m
+N_TREES         = 35
+R_TREE          = 20          # px, 40 cm
+TREE_MIN_DIST   = 50          # px, 1.00 m
 
 # Bugs
-n_bugs = 50
-r_bug = 3  # px, 6 cm
-r_bug_vision = 60  # px, 1.60 m
-dXmax_bug = 60 / 57.3  # rad / timestep
-v_bug = 12
-tree_land_prob = 0.005
-escape_prob = 0.90
-lift_prob = 0.05
-repro_prob = 0.0002
+N_BUGS          = 50
+R_BUG           = 1           # px, 6 cm, maybe to 1?
+R_VIS_BUG       = 60          # px, 1.60 m
+BUG_RANDOMNESS  = 120 / 57.3  # rad / s,  maximum heading change per second
+V_BUG           = 12          # px / s (0.24 m/s    0.864 km/h)
+TREE_LAND_PROB  = 0.005
+ESCAPE_PROB     = 0.90
+TAKEOFF_PROB    = 0.05
+REPRO_PROB      = 0.0002
 
 # Static Drone Parameters
-n_drones = 10
-r_drone = 11  # px, 22 cm
-drone_min_dist = 40
-r_drone_vision = 80  # px, 4 m
-dXmax_drone = 30 / 57.3  # rad / timestep
-v_max = 40
-a_max = 80  # ?
+N_DRONES        = 20
+R_DRONE         = 7         # px, 22 cm
+DRONE_MIN_DIST  = 40         # px (80 cm),   minimum distance that drones can be placed at start of simulation
+V_DRONE_MAX           = 75         # px / s (0.8m/s   2.88 km/h)
+A_DRONE_MAX           = 80         # px / s^2 (1.6 m/s^2      0.16g)
 
-activity_decay = 0.2  # points / s
-activity_award = 10   # points / bug
-charge_rate = 1  # % / s
+ACTIVITY_DECAY  = 0.2        # points / s
+ACTIVITY_AWARD  = 10         # points / bug
+BATTERY_CAP     = 300        # s
+CHARGE_RATE     = 100 / BATTERY_CAP          # % / s
 
 
 # Simulation parameters
 
-dt = 0.1 # s
-tmax = 5000  # s
+DT              = 0.1        # s
+T_MAX            = 5000       # s (1h 23min 20s)
 
 # Colours for visualisation
-green = (0, 130, 20)
-brown = (117, 60, 26)
-grey = (128, 128, 128)
-red = (180, 0, 0)
-yellow = (255, 255, 0)
-orange = (255, 134, 0)
-pink = (255, 0, 255)
-blue = (0, 50, 255)
-white = (255, 255, 255)
+GREEN           = (0, 130, 20)
+BROWN           = (117, 60, 26)
+GREY            = (128, 128, 128)
+RED             = (180, 0, 0)
+YELLOW          = (255, 255, 0)
+ORANGE          = (255, 134, 0)
+PINK            = (255, 0, 255)
+BLUE            = (0, 50, 255)
+WHITE           = (255, 255, 255)
 
-bug_colours = {'idle': red, 'land': orange, 'tree': yellow, 'escape': pink}
+BUG_COLOURS = {'idle': RED, 'land': ORANGE, 'tree': YELLOW, 'escape': PINK}
 
-view = 0

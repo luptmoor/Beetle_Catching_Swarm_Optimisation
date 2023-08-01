@@ -9,7 +9,7 @@ import numpy as np
 
 
 class Bug(PhysicalObject):
-    def __init__(self, name,  x, y, speed=v_bug, r_vis=r_bug_vision, mode='idle'):
+    def __init__(self, name, x, y, speed=V_BUG, r_vis=R_VIS_BUG, mode='idle'):
         """
         Simulated Bug
         :param name:
@@ -21,7 +21,7 @@ class Bug(PhysicalObject):
         :param r_vis:
         :param mode:
         """
-        super().__init__(name, 'bug', x, y, r_bug)
+        super().__init__(name, 'bug', x, y, R_BUG)
         self.heading = np.random.random() * 2 * np.pi
         self.speed = speed
         self.r_vis = r_vis
@@ -43,17 +43,17 @@ class Bug(PhysicalObject):
         """
         # Bug idles (v)
         if self.mode == 'idle':
-            self.heading += np.random.random() * 2 * dXmax_bug - dXmax_bug
+            self.heading += (np.random.random() * 2 * BUG_RANDOMNESS - BUG_RANDOMNESS) * dt
 
         # Bug sits on tree (v)
         elif self.mode == 'tree':
             self.speed = 0
             self.heading += np.pi  # make bug face outwards
-            if np.random.random() < lift_prob:
-                self.speed = v_bug
+            if np.random.random() < TAKEOFF_PROB:
+                self.speed = V_BUG
                 self.mode = 'idle'
-            elif np.random.random() < repro_prob:
-                self.speed = v_bug
+            elif np.random.random() < REPRO_PROB:
+                self.speed = V_BUG
                 self.mode = 'idle'
                 return True
 
@@ -69,15 +69,15 @@ class Bug(PhysicalObject):
         self.y = int(round(self.y + self.speed * np.sin(self.heading) * dt, 0))
 
         # Position periodicity
-        if self.x > width:
-            self.x -= width
+        if self.x > WIDTH:
+            self.x -= WIDTH
         if self.x < 0:
-            self.x += width
+            self.x += WIDTH
 
-        if self.y > height:
-            self.y -= height
+        if self.y > HEIGHT:
+            self.y -= HEIGHT
         if self.y < 0:
-            self.y += height
+            self.y += HEIGHT
 
         return False
         #print(self.name, '@', self.x, self.y, '(heading: ', round(self.heading * 57.3, 1), ') in mode:', self.mode)
@@ -85,7 +85,7 @@ class Bug(PhysicalObject):
     def processVisual(self, cue, x=0, y=0):
 
         # Bug sees a new tree only while idling (v)
-        if self.mode == 'idle' and cue == 'tree' and np.random.random() < tree_land_prob:
+        if self.mode == 'idle' and cue == 'tree' and np.random.random() < TREE_LAND_PROB:
             self.mode = 'land'
 
         # Bug sees a tree already identified (v)
@@ -101,11 +101,11 @@ class Bug(PhysicalObject):
 
 
         # Bug sees a new drone while idling or landing (v)
-        elif (self.mode == 'idle' or self.mode == 'land') and cue == 'drone' and np.random.random() < escape_prob:
+        elif (self.mode == 'idle' or self.mode == 'land') and cue == 'drone' and np.random.random() < ESCAPE_PROB:
             self.mode = 'escape'
 
         # Bug sees a new drone while sitting on tree -> first goes to idle (and then likely escape)
-        elif self.mode == 'tree' and cue == 'drone' and np.random.random() < escape_prob:
+        elif self.mode == 'tree' and cue == 'drone' and np.random.random() < ESCAPE_PROB:
             self.heading = np.arctan2(self.y - y, self.x - x) + np.pi  # repelling heading
             self.mode = 'idle'
 

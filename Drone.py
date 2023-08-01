@@ -4,7 +4,7 @@ from settings import *
 
 
 class Drone(PhysicalObject):
-    def __init__(self, name, type, x, y, r_col=r_drone, r_vis=r_drone_vision):
+    def __init__(self, name, type, x, y, r_col=R_DRONE):
         super().__init__(name, type, x, y, r_col)
 
 
@@ -69,7 +69,7 @@ class Drone(PhysicalObject):
 
         ax = sum(axs)
         ay = sum(ays)
-        a = min(np.sqrt(ay ** 2 + ax ** 2), a_max)
+        a = min(np.sqrt(ay ** 2 + ax ** 2), A_DRONE_MAX)
         if np.random.random() < self.p_random and a <= 100:
             self.heading += 2 * 90 / 57.3 * self.k_random * np.random.random() - 90 / 57.3 * self.k_random
 
@@ -83,7 +83,7 @@ class Drone(PhysicalObject):
         vy = self.speed * np.sin(self.heading) + self.ay * dt
 
         self.heading = np.arctan2(vy, vx)
-        self.speed = max(min(np.sqrt(vy**2 + vx**2), v_max), self.v_min)
+        self.speed = max(min(np.sqrt(vy**2 + vx**2), V_DRONE_MAX), self.v_min)
 
 
 
@@ -99,20 +99,20 @@ class Drone(PhysicalObject):
         self.y = int(round(self.y + self.speed * np.sin(self.heading) * dt, 0))
 
         # Position periodicity
-        if self.x > width:
-            self.x -= width
+        if self.x > WIDTH:
+            self.x -= WIDTH
         if self.x < 0:
-            self.x += width
+            self.x += WIDTH
 
-        if self.y > height:
-            self.y -= height
+        if self.y > HEIGHT:
+            self.y -= HEIGHT
         if self.y < 0:
-            self.y += height
+            self.y += HEIGHT
 
         #print(self.name, '@', self.x, self.y, '(heading: ', round(self.heading * 57.3, 1))
 
-        self.activity = min(50, max(-50, self.activity - activity_decay * dt))
-        self.charge = max(0, self.charge - charge_rate * dt)
+        self.activity = min(50, max(-50, self.activity - ACTIVITY_DECAY * dt))
+        self.charge = max(0, self.charge - CHARGE_RATE * dt)
 
         if self.charge == 0:
             return True

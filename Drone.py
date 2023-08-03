@@ -4,7 +4,7 @@ from settings import *
 
 
 class Drone(PhysicalObject):
-    def __init__(self, name, type, x, y, r_col=R_DRONE):
+    def __init__(self, name, type, x, y, params, r_col=R_DRONE):
         super().__init__(name, type, x, y, r_col)
 
 
@@ -13,22 +13,22 @@ class Drone(PhysicalObject):
         self.k_random = 0.4
 
         # Tunable Parameters, negative ks mean attraction, positive means repulsion
-        self.r_vis_bug = 50  # 50 to 200
-        self.r_vis_drone = 15  # 20 to 150
-        self.r_vis_tree = 40  # 20 to 100
+        self.r_vis_bug = params['r_vis_bug']  # 50 to 200
+        self.r_vis_drone = params['r_vis_drone']  # 20 to 150
+        self.r_vis_tree = params['r_vis_tree']  # 20 to 100
         self.r_vis = {'tree': self.r_vis_tree, 'drone': self.r_vis_drone, 'bug': self.r_vis_bug}
 
-        self.k_tree = 50  # 0 to 100
-        self.k_neardrone = 100  # 0 to 100
-        self.k_bug = -5  # 0 to -5
+        self.k_tree = params['k_tree']  # 0 to 100
+        self.k_neardrone = params['k_neardrone']  # 0 to 100
+        self.k_bug = params['k_bug']  # 0 to -5
         self.gains = {'tree': self.k_tree, 'drone': self.k_neardrone, 'bug': self.k_bug}
 
-        self.k_fardrone = - 10e-4  # -20 to +20 e-4
-        self.k_activity = - 1e-4  # -20 to +20 e-4
+        self.k_fardrone = params['k_fardrone']  # -20 to +20 e-4
+        self.k_activity = params['k_activity']  # -20 to +20 e-4
 
-        self.v_min = 5  # 0 to 15
+        self.v_min = params['v_min']  # 0 to 15
 
-        self.temp_cohesion = 100  # 0 to 100
+        self.temp_cohesion = params['temp_cohesion']  # 0 to 100
 
 
         self.activity = 0

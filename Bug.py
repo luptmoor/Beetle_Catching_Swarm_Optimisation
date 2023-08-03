@@ -27,7 +27,7 @@ class Bug(PhysicalObject):
         self.r_vis = r_vis
         self.mode = mode
 
-        print(self.name, 'in', self.mode, 'mode created')
+        #print(self.name, 'in', self.mode, 'mode created')
 
     def setSpeed(self, speed):
         self.speed = speed

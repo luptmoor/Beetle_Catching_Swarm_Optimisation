@@ -7,7 +7,7 @@ from settings import *
 
 
 class Simulation:
-    def __init__(self, params):
+    def __init__(self, params, visualise=False):
         self.score = 0
 
         # Lists
@@ -18,6 +18,10 @@ class Simulation:
         self.bugs = []
 
         self.params = params
+        self.visualise = visualise
+        if visualise:
+            self.visuals = Visuals(WIDTH, HEIGHT, DT)
+
 
     def check_collision(self, obj1, obj2, margin=0):
         if obj1 is None or obj2 is None:
@@ -98,7 +102,7 @@ class Simulation:
                 if not any([self.check_collision(newtree, phobject, TREE_MIN_DIST) for phobject in self.phobjects]):
                     self.phobjects.append(newtree)
                     self.trees.append(newtree)
-                    print(newtree.name, 'placed!')
+                    #print(newtree.name, 'placed!')
                     placing = False
                 else:
                     pass
@@ -114,7 +118,7 @@ class Simulation:
                 if not any([self.check_collision(newbug, phobject) for phobject in self.phobjects]):
                     self.phobjects.append(newbug)
                     self.bugs.append(newbug)
-                    print(newbug.name, 'placed!')
+                    #print(newbug.name, 'placed!')
                     placing = False
                 else:
                     pass
@@ -130,7 +134,7 @@ class Simulation:
                 if not any([self.check_collision(newdrone, phobject, DRONE_MIN_DIST) for phobject in self.phobjects]):
                     self.phobjects.append(newdrone)
                     self.drones.append(newdrone)
-                    print(newdrone.name, 'placed!')
+                    #print(newdrone.name, 'placed!')
                     placing = False
                 else:
                     pass
@@ -153,15 +157,16 @@ class Simulation:
 
     # if __name__ == 'main' and True:
     def run(self):
+        print('SIMULATION WITH PARAMETERS', self.params)
+        print()
         self.load_environment()
-        visuals = Visuals(WIDTH, HEIGHT, DT)
         running = True
         t = 0
 
         while running:
-            if t // 1 % 5 == 0:
-                print()
-                print('Time:', round(t, 2), 's')
+
+            if int(round(t, 0)) % 10 == 0 and abs(int(round(t, 0)) - t) < 0.001:
+                print('Time:', round(t, 0), 's')
 
             # Guarantee this always holds (good candidate for removal if too slow)
             self.phobjects = self.trees + self.bugs + self.drones
@@ -230,22 +235,23 @@ class Simulation:
                     self.drones.append(drone)
                     self.charging.remove(drone)
 
-            visuals.update(self.trees, self.bugs, self.drones, self.charging)
+            if self.visualise:
+                self.visuals.update(self.trees, self.bugs, self.drones, self.charging)
 
             t += DT
 
             # End conditions
-            # if not bugs:
-            #     score = evaluate(1, t)
-            #     break
-            # if not drones:
-            #     score = evaluate(2, t)
-            #     break
+            if not self.bugs:
+                score = self.evaluate(1, t)
+                break
+            if not self.drones:
+                score = self.evaluate(2, t)
+                break
             if t >= T_MAX:
                 self.score = self.evaluate(3, t)
                 break
 
-        print(self.score)
+        return self.score
 
 
 

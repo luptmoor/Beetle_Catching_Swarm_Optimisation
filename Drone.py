@@ -13,22 +13,22 @@ class Drone(PhysicalObject):
         self.k_random = 0.4
 
         # Tunable Parameters, negative ks mean attraction, positive means repulsion
-        self.r_vis_bug = params[0]  # 50 to 200
-        self.r_vis_drone = params[1]  # 20 to 150
-        self.r_vis_tree = params[2]  # 20 to 100
+        self.r_vis_bug = params[0] * RANGE_R_VIS_BUG / 2 + MU_R_VIS_BUG
+        self.r_vis_drone = params[1] * RANGE_R_VIS_DRONE / 2 + MU_R_VIS_DRONE
+        self.r_vis_tree = params[2] * RANGE_R_VIS_TREE / 2 + MU_R_VIS_TREE
         self.r_vis = {'tree': self.r_vis_tree, 'drone': self.r_vis_drone, 'bug': self.r_vis_bug}
 
-        self.k_tree = params[3]  # 0 to 100
-        self.k_neardrone = params[4]  # 0 to 100
-        self.k_bug = params[5]  # 0 to -5
+        self.k_tree = params[3] * RANGE_K_TREE / 2 + MU_K_TREE
+        self.k_neardrone = params[4] * RANGE_K_NEARDRONE / 2 + MU_K_NEARDRONE
+        self.k_bug = params[5] * RANGE_K_BUG / 2 + MU_K_BUG
         self.gains = {'tree': self.k_tree, 'drone': self.k_neardrone, 'bug': self.k_bug}
 
-        self.k_fardrone = params[6]  # -20 to +20 e-4
-        self.k_activity = params[7]  # -20 to +20 e-4
+        self.k_fardrone = params[6] * RANGE_K_FARDRONE / 2 + MU_K_FARDRONE
+        self.k_activity = params[7]  * RANGE_K_ACTIVITY / 2 + MU_K_ACTIVITY
 
-        self.v_min = params[8]  # 0 to 15
+        self.v_min = params[8] * RANGE_V_MIN / 2 + MU_V_MIN
 
-        self.temp_cohesion = params[9]  # 0 to 100
+        self.temp_cohesion = params[9] * RANGE_TEMP_COHESION / 2 + MU_TEMP_COHESION
 
 
         self.activity = 0

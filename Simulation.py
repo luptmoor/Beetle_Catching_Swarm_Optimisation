@@ -157,8 +157,6 @@ class Simulation:
 
     # if __name__ == 'main' and True:
     def run(self):
-        print('SIMULATION WITH PARAMETERS', self.params)
-        print()
         self.load_environment()
         running = True
         t = 0

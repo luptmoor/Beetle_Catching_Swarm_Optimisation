@@ -6,9 +6,25 @@ from Visuals import Visuals
 from settings import *
 
 
+def F_time(x):
+    return 1 - 0.5 * x ** 2
+
+
+def F_bugs(x):
+    a = 0.3
+    # return a ** 2 / ((1 - x) ** 2 + a ** 2)
+    return x ** 2
+
+
+def F_drones(x):
+    a = 0.08
+    return a ** 2 / (x ** 2 + a ** 2)
+
+
 class Simulation:
     def __init__(self, params, seed=42, visualise=False):
         self.score = 0
+        self.t = 0
 
         # Lists
         self.phobjects = []
@@ -22,7 +38,6 @@ class Simulation:
         self.visualise = visualise
         if visualise:
             self.visuals = Visuals(WIDTH, HEIGHT, DT)
-
 
     def check_collision(self, obj1, obj2, margin=0):
         if obj1 is None or obj2 is None:
@@ -103,7 +118,7 @@ class Simulation:
                 if not any([self.check_collision(newtree, phobject, TREE_MIN_DIST) for phobject in self.phobjects]):
                     self.phobjects.append(newtree)
                     self.trees.append(newtree)
-                    #print(newtree.name, 'placed!')
+                    # print(newtree.name, 'placed!')
                     placing = False
                 else:
                     pass
@@ -119,7 +134,7 @@ class Simulation:
                 if not any([self.check_collision(newbug, phobject) for phobject in self.phobjects]):
                     self.phobjects.append(newbug)
                     self.bugs.append(newbug)
-                    #print(newbug.name, 'placed!')
+                    # print(newbug.name, 'placed!')
                     placing = False
                 else:
                     pass
@@ -135,7 +150,7 @@ class Simulation:
                 if not any([self.check_collision(newdrone, phobject, DRONE_MIN_DIST) for phobject in self.phobjects]):
                     self.phobjects.append(newdrone)
                     self.drones.append(newdrone)
-                    #print(newdrone.name, 'placed!')
+                    # print(newdrone.name, 'placed!')
                     placing = False
                 else:
                     pass
@@ -148,25 +163,20 @@ class Simulation:
     #     """
     #
 
-    def evaluate(self, mode, t):
-        if mode == 1:
-            return t - 450
-        if mode == 2:
-            return 450 - t
-        if mode == 3:
-            return 300 * len(self.drones) / N_DRONES - 150
+    def evaluate(self):
+        score = F_drones(len(self.drones) / N_DRONES) * F_bugs(1 - len(self.bugs) / N_BUGS) * F_time(self.t / T_MAX)
+        return score
 
     # if __name__ == 'main' and True:
     def run(self):
         np.random.seed(self.seed)
         self.load_environment()
         running = True
-        t = 0
 
         while running:
 
-            if int(round(t, 0)) % 10 == 0 and abs(int(round(t, 0)) - t) < 0.001:
-                print('Time:', round(t, 0), 's')
+            if int(round(self.t, 0)) % 10 == 0 and abs(int(round(self.t, 0)) - self.t) < 0.001:
+                print('Time:', round(self.t, 0), 's')
 
             # Guarantee this always holds (good candidate for removal if too slow)
             self.phobjects = self.trees + self.bugs + self.drones
@@ -187,7 +197,7 @@ class Simulation:
 
                 repro = bug.advance(DT)
                 if repro:
-                    newbug = Bug(bug.name + ' (' + str(t) + 's)', bug.x, bug.y)
+                    newbug = Bug(bug.name + ' (' + str(self.t) + 's)', bug.x, bug.y)
                     self.bugs.append(newbug)
                     self.phobjects.append(newbug)
 
@@ -208,7 +218,7 @@ class Simulation:
 
                     # Check collisions
                     if self.check_collision(drone, phobject):
-                        print('Collision between ', drone.name, 'and', phobject.name)
+                        # print('Collision between ', drone.name, 'and', phobject.name)
                         if phobject in self.drones:
                             self.drones.remove(drone)
                             self.drones.remove(phobject)
@@ -238,20 +248,11 @@ class Simulation:
             if self.visualise:
                 self.visuals.update(self.trees, self.bugs, self.drones, self.charging)
 
-            t += DT
+            self.t += DT
 
             # End conditions
-            if not self.bugs:
-                score = self.evaluate(1, t)
-                break
-            if not self.drones:
-                score = self.evaluate(2, t)
-                break
-            if t >= T_MAX:
-                self.score = self.evaluate(3, t)
-                break
+            if len(self.drones) / N_DRONES < 0.2 or not self.bugs or self.t >= T_MAX:
+                running = False
+                self.score = self.evaluate()
 
         return self.score
-
-
-

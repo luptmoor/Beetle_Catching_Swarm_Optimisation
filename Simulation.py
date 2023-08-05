@@ -7,7 +7,7 @@ from settings import *
 
 
 class Simulation:
-    def __init__(self, params, visualise=False):
+    def __init__(self, params, seed=42, visualise=False):
         self.score = 0
 
         # Lists
@@ -18,6 +18,7 @@ class Simulation:
         self.bugs = []
 
         self.params = params
+        self.seed = seed
         self.visualise = visualise
         if visualise:
             self.visuals = Visuals(WIDTH, HEIGHT, DT)
@@ -157,6 +158,7 @@ class Simulation:
 
     # if __name__ == 'main' and True:
     def run(self):
+        np.random.seed(self.seed)
         self.load_environment()
         running = True
         t = 0

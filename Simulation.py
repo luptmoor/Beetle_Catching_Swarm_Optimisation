@@ -251,7 +251,7 @@ class Simulation:
             self.t += DT
 
             # End conditions
-            if len(self.drones) / N_DRONES < 0.2 or not self.bugs or self.t >= T_MAX:
+            if (len(self.drones) + len(self.charging)) / N_DRONES < 0.2 or not self.bugs or self.t >= T_MAX:
                 running = False
                 self.score = self.evaluate()
 

@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from datetime import datetime
 from settings import *
+import os
 
 
 def fitness(params):
@@ -11,23 +12,27 @@ def fitness(params):
     for i in range(RUNS_PER_SOLUTION):
         sim = Simulation(params, seed=i, visualise=False)
         print('STARTING SIMULATION WITH SEED', i, 'AND PARAMETERS:')
-        print('r_vis_bug:', params[0] * RANGE_R_VIS_BUG / 2 + MU_R_VIS_BUG)
-        print('r_vis_drone:', params[1] * RANGE_R_VIS_DRONE / 2 + MU_R_VIS_DRONE)
-        print('r_vis_tree:', params[2] * RANGE_R_VIS_TREE / 2 + MU_R_VIS_TREE)
+        print('r_vis_bug:', int(round(params[0] * RANGE_R_VIS_BUG / 2 + MU_R_VIS_BUG, 0)))
+        print('r_vis_drone:', int(round(params[1] * RANGE_R_VIS_DRONE / 2 + MU_R_VIS_DRONE)))
+        print('r_vis_tree:', int(round(params[2] * RANGE_R_VIS_TREE / 2 + MU_R_VIS_TREE)))
         print('k_tree:', params[3] * RANGE_K_TREE / 2 + MU_K_TREE)
         print('k_neardrone:', params[4] * RANGE_K_NEARDRONE / 2 + MU_K_NEARDRONE)
         print('k_bug:', params[5] * RANGE_K_BUG / 2 + MU_K_BUG)
         print('k_fardrone:', params[6] * RANGE_K_FARDRONE / 2 + MU_K_FARDRONE)
         print('k_activity:', params[7] * RANGE_K_ACTIVITY / 2 + MU_K_ACTIVITY)
-        print('v_min:', params[8] * RANGE_V_MIN / 2 + MU_V_MIN)
-        print('temp_cohesion:', params[9] * RANGE_TEMP_COHESION / 2 + MU_TEMP_COHESION)
+        print('v_min:', min(V_DRONE_MAX, max(0, params[8] * RANGE_V_MIN / 2 + MU_V_MIN)))
+        print('temp_cohesion:', min(100, max(0, params[9] * RANGE_TEMP_COHESION / 2 + MU_TEMP_COHESION)))
         print()
 
         scores.append(sim.run())
 
     fitness_value = np.mean(scores)
     timestamp = datetime.now().strftime('%d_%m__%H_%M_%S')
-    with open(str(fitness_value) + '_' + timestamp, 'w') as file:
+
+    if not os.path.exists('logs/gen' + str(g)):
+        os.mkdir('logs/gen' + str(g))
+
+    with open('logs/gen' + str(g) + '/' + str(fitness_value) + '_' + timestamp, 'w') as file:
         file.write('Simulation with parameters:\n')
         file.write('r_vis_bug: ' + str(params[0] * RANGE_R_VIS_BUG / 2 + MU_R_VIS_BUG) + '\n')
         file.write('r_vis_drone: ' + str(params[1] * RANGE_R_VIS_DRONE / 2 + MU_R_VIS_DRONE) + '\n')
@@ -45,19 +50,16 @@ def fitness(params):
     return fitness_value
 
 
-# Set up of the CMA-ES hyperparameters
-population_size = 10
-max_iterations = 10
-
 options = {
-    'maxiter': max_iterations,
+    'maxiter': N_GENERATIONS,
     'tolfun': 0,
+    #'bounds': 8 * [[None, None]] + [[0, V_DRONE_MAX], [0, 100]]
+
 }
 
-# Run the CMA-ES optimization
-es = cma.CMAEvolutionStrategy(10 * [0], 0.35, options)
-best_solution = None
 
+# Run the CMA-ES optimization
+es = cma.CMAEvolutionStrategy(POPULATION_SIZE * [0], 0.35, options)
 fitnesses = []
 g = 1
 while not es.stop():

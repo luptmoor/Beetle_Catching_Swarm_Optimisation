@@ -13,9 +13,9 @@ class Drone(PhysicalObject):
         self.k_random = 0.4
 
         # Tunable Parameters, negative ks mean attraction, positive means repulsion
-        self.r_vis_bug = params[0] * RANGE_R_VIS_BUG / 2 + MU_R_VIS_BUG
-        self.r_vis_drone = params[1] * RANGE_R_VIS_DRONE / 2 + MU_R_VIS_DRONE
-        self.r_vis_tree = params[2] * RANGE_R_VIS_TREE / 2 + MU_R_VIS_TREE
+        self.r_vis_bug = int(round(params[0] * RANGE_R_VIS_BUG / 2 + MU_R_VIS_BUG, 0))
+        self.r_vis_drone = int(round(params[1] * RANGE_R_VIS_DRONE / 2 + MU_R_VIS_DRONE))
+        self.r_vis_tree = int(round(params[2] * RANGE_R_VIS_TREE / 2 + MU_R_VIS_TREE))
         self.r_vis = {'tree': self.r_vis_tree, 'drone': self.r_vis_drone, 'bug': self.r_vis_bug}
 
         self.k_tree = params[3] * RANGE_K_TREE / 2 + MU_K_TREE
@@ -26,9 +26,9 @@ class Drone(PhysicalObject):
         self.k_fardrone = params[6] * RANGE_K_FARDRONE / 2 + MU_K_FARDRONE
         self.k_activity = params[7]  * RANGE_K_ACTIVITY / 2 + MU_K_ACTIVITY
 
-        self.v_min = params[8] * RANGE_V_MIN / 2 + MU_V_MIN
+        self.v_min = min(V_DRONE_MAX, max(0, params[8] * RANGE_V_MIN / 2 + MU_V_MIN))
 
-        self.temp_cohesion = params[9] * RANGE_TEMP_COHESION / 2 + MU_TEMP_COHESION
+        self.temp_cohesion = min(100, max(0, params[9] * RANGE_TEMP_COHESION / 2 + MU_TEMP_COHESION))
 
 
         self.activity = 0

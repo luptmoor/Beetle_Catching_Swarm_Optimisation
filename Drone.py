@@ -114,7 +114,7 @@ class Drone(PhysicalObject):
         #print(self.name, '@', self.x, self.y, '(heading: ', round(self.heading * 57.3, 1))
 
         self.activity = min(50, max(-50, self.activity - ACTIVITY_DECAY * dt))
-        self.charge = max(0, self.charge - CHARGE_RATE * dt)
+        self.charge = max(0, self.charge - DISCHARGE_RATE * dt)
 
         if self.charge == 0:
             return True

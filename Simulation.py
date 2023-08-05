@@ -7,7 +7,7 @@ from settings import *
 
 
 def F_time(x):
-    return 1 - 0.5 * x ** 2
+    return 1 - 0.3 * x ** 2
 
 
 def F_bugs(x):
@@ -111,10 +111,10 @@ class Simulation:
         for i in range(N_TREES):
             placing = True
             while placing:
-                x = np.random.random() * (WIDTH - 2 * (R_TREE + TREE_MIN_DIST)) + (R_TREE + TREE_MIN_DIST) // 1
-                y = np.random.random() * (HEIGHT - 2 * (R_TREE + TREE_MIN_DIST)) + (R_TREE + TREE_MIN_DIST) // 1
+                x = np.random.random() * (WIDTH - 2 * (R_TREE_MAX + TREE_MIN_DIST)) + (R_TREE_MAX + TREE_MIN_DIST) // 1
+                y = np.random.random() * (HEIGHT - 2 * (R_TREE_MAX + TREE_MIN_DIST)) + (R_TREE_MAX + TREE_MIN_DIST) // 1
 
-                newtree = PhysicalObject('Tree ' + str(i), 'tree', x, y, R_TREE)
+                newtree = PhysicalObject('Tree ' + str(i), 'tree', x, y, round(np.random.normal(R_TREE_AVG, R_TREE_STD), 0))
                 if not any([self.check_collision(newtree, phobject, TREE_MIN_DIST) for phobject in self.phobjects]):
                     self.phobjects.append(newtree)
                     self.trees.append(newtree)

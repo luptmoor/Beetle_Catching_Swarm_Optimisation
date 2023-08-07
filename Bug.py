@@ -48,14 +48,14 @@ class Bug(PhysicalObject):
         # Bug sits on tree (v)
         elif self.mode == 'tree':
             self.speed = 0
-            self.heading += np.pi  # make bug face outwards
+            #self.heading += np.pi  # make bug face outwards
             if np.random.random() < TAKEOFF_PROB:
                 self.speed = V_BUG
                 self.mode = 'idle'
-            elif np.random.random() < REPRO_PROB:
-                self.speed = V_BUG
-                self.mode = 'idle'
-                return True
+            # elif np.random.random() < REPRO_PROB:
+            #     self.speed = V_BUG
+            #     self.mode = 'idle'
+            #     return True
 
 
         # Heading periodicity
@@ -94,7 +94,7 @@ class Bug(PhysicalObject):
 
         # Bug sees the tree it is sitting on, turns away to start
         elif self.mode == 'tree' and cue == 'tree':
-            self.heading = np.arctan2(self.y - y, self.x - x) + np.pi  # repelling heading
+            self.heading = np.arctan2(self.y - y, self.x - x)  # repelling heading
 
         elif cue == 'none':
             self.mode = 'idle'

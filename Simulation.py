@@ -186,14 +186,15 @@ class Simulation:
                 for tree in self.trees:
                     if self.check_collision(bug, tree):
                         bug.mode = 'tree'
+                        bug.tree = tree
                     if self.check_bug_vision(bug, tree):
-                        bug.processVisual('tree', tree.x, tree.y)
+                        bug.processVisual(tree)
 
                 for drone in self.drones:
                     # if not any([check_vision(bug, drone) for drone in drones]):
                     #     bug.processVisual('none')
                     if self.check_bug_vision(bug, drone):
-                        bug.processVisual('drone', drone.x, drone.y)
+                        bug.processVisual(drone)
 
                 repro = bug.advance(DT)
                 if repro:

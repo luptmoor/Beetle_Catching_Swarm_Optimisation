@@ -26,6 +26,7 @@ class Bug(PhysicalObject):
         self.speed = speed
         self.r_vis = r_vis
         self.mode = mode
+        self.tree = None
 
         #print(self.name, 'in', self.mode, 'mode created')
 
@@ -48,10 +49,14 @@ class Bug(PhysicalObject):
         # Bug sits on tree (v)
         elif self.mode == 'tree':
             self.speed = 0
-            #self.heading += np.pi  # make bug face outwards
+            self.heading = np.arctan2(self.y - self.tree.y, self.x - self.tree.x)  # bug faces away from tree
             if np.random.random() < TAKEOFF_PROB:
                 self.speed = V_BUG
+                self.tree = None
                 self.mode = 'idle'
+            elif np.sqrt((self.x - self.tree.x)**2 + (self.y - self.tree.y)**2) < self.tree.r_col:
+                self.x = self.tree.x + self.tree.r_col * np.cos(self.heading)
+                self.y = self.tree.y + self.tree.r_col * np.sin(self.heading)
             # elif np.random.random() < REPRO_PROB:
             #     self.speed = V_BUG
             #     self.mode = 'idle'
@@ -82,37 +87,38 @@ class Bug(PhysicalObject):
         return False
         #print(self.name, '@', self.x, self.y, '(heading: ', round(self.heading * 57.3, 1), ') in mode:', self.mode)
 
-    def processVisual(self, cue, x=0, y=0):
+    def processVisual(self, cue):
 
         # Bug sees a new tree only while idling (v)
-        if self.mode == 'idle' and cue == 'tree' and np.random.random() < TREE_LAND_PROB:
+        if self.mode == 'idle' and cue.type == 'tree' and np.random.random() < TREE_LAND_PROB:
             self.mode = 'land'
 
         # Bug sees a tree already identified (v)
-        elif self.mode == 'land' and cue == 'tree':
-            self.heading = np.arctan2(y - self.y, x - self.x) # attracting heading
+        elif self.mode == 'land' and cue.type == 'tree':
+            self.heading = np.arctan2(cue.y - self.y, cue.x - self.x)  # attracting heading
 
         # Bug sees the tree it is sitting on, turns away to start
-        elif self.mode == 'tree' and cue == 'tree':
-            self.heading = np.arctan2(self.y - y, self.x - x)  # repelling heading
+        elif self.mode == 'tree' and cue.type == 'tree':
+            pass
 
-        elif cue == 'none':
+        elif cue is None:
             self.mode = 'idle'
 
 
         # Bug sees a new drone while idling or landing (v)
-        elif (self.mode == 'idle' or self.mode == 'land') and cue == 'drone' and np.random.random() < ESCAPE_PROB:
+        elif (self.mode == 'idle' or self.mode == 'land') and cue.type == 'drone' and np.random.random() < ESCAPE_PROB:
             self.mode = 'escape'
 
         # Bug sees a new drone while sitting on tree -> first goes to idle, escaping both tree and drone
-        elif self.mode == 'tree' and cue == 'drone' and np.random.random() < ESCAPE_PROB:
-            self.heading = (self.heading + np.arctan2(self.y - y, self.x - x)) / 2
+        elif self.mode == 'tree' and cue.type == 'drone' and np.random.random() < ESCAPE_PROB:
+            self.heading = (self.heading + np.arctan2(self.y - cue.y, self.x - cue.x)) / 2
             self.speed = V_BUG
+            self.tree = None
             self.mode = 'idle'
 
         # Bug sees a drone already identified (v)
-        elif self.mode == 'escape' and cue == 'drone':
-            self.heading = np.arctan2(self.y - y, self.x - x)  # repelling heading
+        elif self.mode == 'escape' and cue.type == 'drone':
+            self.heading = np.arctan2(self.y - cue.y, self.x - cue.x)  # repelling heading
 
 
 

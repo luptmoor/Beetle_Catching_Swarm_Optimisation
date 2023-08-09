@@ -86,7 +86,10 @@ options = {
 es = cma.CMAEvolutionStrategy(10 * [0], 0.35, options)
 fitnesses = []
 g = 1
-while not es.stop():
+
+
+
+while not es.stop() and False:
     print('GENERATION:', g)
     solutions = es.ask()  # list of lists with parameters (n_pop x n_param)
     fitness_values = [fitness(x) for x in solutions]  # list of fitnesses (n_pop x RUNS_PER_SOLUTION)
@@ -101,23 +104,26 @@ while not es.stop():
     g += 1
 
 # Retrieve the best solution and its fitness value
-print("Best solution:", best_solution)
+# print("Best solution:", best_solution)
+#
+# plt.plot(range(1, len(fitnesses) + 1), fitnesses)
+# plt.xlabel("Generation")
+# plt.ylabel("Best Fitness Value")
+# plt.title("Convergence Plot")
+# plt.grid(True)
+# plt.show()
 
-plt.plot(range(1, len(fitnesses) + 1), fitnesses)
-plt.xlabel("Generation")
-plt.ylabel("Best Fitness Value")
-plt.title("Convergence Plot")
-plt.grid(True)
-plt.show()
+parameters = [(180 - MU_R_VIS_BUG) * 2 / RANGE_R_VIS_BUG,  # 'r_vis_bug'
+              (80 - MU_R_VIS_DRONE) * 2 / RANGE_R_VIS_DRONE,  # 'r_vis_drone'
+              (60 - MU_R_VIS_TREE) * 2 / RANGE_R_VIS_TREE,  # 'r_vis_tree'
+          200,  # 'k_tree'
+          60,  # 'k_neardrone'
+          -0.5,  # 'k_bug'
+          - 10e-4,  # 'k_fardrone'
+          - 1e-4,  # 'k_activity'
+          2,  # 'v_min'
+          100  # 'temp_cohesion'
+          ]
 
-# parameters = [50,  # 'r_vis_bug'
-#                 15,  # 'r_vis_drone'
-#           40,  # 'r_vis_tree'
-#           50,  # 'k_tree'
-#           100,  # 'k_neardrone'
-#           -5,  # 'k_bug'
-#           - 10e-4,  # 'k_fardrone'
-#           - 1e-4,  # 'k_activity'
-#           5,  # 'v_min'
-#           100  # 'temp_cohesion'
-#           ]
+sim = Simulation(parameters, visualise=True)
+sim.run()

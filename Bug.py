@@ -104,9 +104,10 @@ class Bug(PhysicalObject):
         elif (self.mode == 'idle' or self.mode == 'land') and cue == 'drone' and np.random.random() < ESCAPE_PROB:
             self.mode = 'escape'
 
-        # Bug sees a new drone while sitting on tree -> first goes to idle (and then likely escape)
+        # Bug sees a new drone while sitting on tree -> first goes to idle, escaping both tree and drone
         elif self.mode == 'tree' and cue == 'drone' and np.random.random() < ESCAPE_PROB:
-            self.heading = np.arctan2(self.y - y, self.x - x) + np.pi  # repelling heading
+            self.heading = (self.heading + np.arctan2(self.y - y, self.x - x)) / 2
+            self.speed = V_BUG
             self.mode = 'idle'
 
         # Bug sees a drone already identified (v)

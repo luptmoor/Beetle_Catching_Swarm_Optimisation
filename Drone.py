@@ -18,13 +18,13 @@ class Drone(PhysicalObject):
         self.r_vis_tree = int(round(params[2] * RANGE_R_VIS_TREE / 2 + MU_R_VIS_TREE))
         self.r_vis = {'tree': self.r_vis_tree, 'drone': self.r_vis_drone, 'bug': self.r_vis_bug}
 
-        self.k_tree = params[3] * RANGE_K_TREE / 2 + MU_K_TREE
-        self.k_neardrone = params[4] * RANGE_K_NEARDRONE / 2 + MU_K_NEARDRONE
-        self.k_bug = params[5] * RANGE_K_BUG / 2 + MU_K_BUG
+        self.k_tree = params[3]# * RANGE_K_TREE / 2 + MU_K_TREE
+        self.k_neardrone = params[4]# * RANGE_K_NEARDRONE / 2 + MU_K_NEARDRONE
+        self.k_bug = params[5]# * RANGE_K_BUG / 2 + MU_K_BUG
         self.gains = {'tree': self.k_tree, 'drone': self.k_neardrone, 'bug': self.k_bug}
 
-        self.k_fardrone = params[6] * RANGE_K_FARDRONE / 2 + MU_K_FARDRONE
-        self.k_activity = params[7]  * RANGE_K_ACTIVITY / 2 + MU_K_ACTIVITY
+        self.k_fardrone = params[6]# * RANGE_K_FARDRONE / 2 + MU_K_FARDRONE
+        self.k_activity = params[7]#  * RANGE_K_ACTIVITY / 2 + MU_K_ACTIVITY
 
         self.v_min = min(V_DRONE_MAX, max(0, params[8] * RANGE_V_MIN / 2 + MU_V_MIN))
 

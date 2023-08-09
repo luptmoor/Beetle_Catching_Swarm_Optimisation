@@ -5,7 +5,7 @@ AREA                = WIDTH * 0.02 * HEIGHT * 0.02      # m2
 LAUNCHPAD_FRAC      =    0.4
 
 # Trees
-TREE_DENSITY        =    0.1
+TREE_DENSITY        =    0.08
 N_TREES             =   int(round(AREA * TREE_DENSITY, 0))
 R_TREE_MIN          =    4          # px,  8 cm
 R_TREE_MAX          =   40          # px, 80 cm
@@ -16,11 +16,11 @@ TREE_MIN_DIST       =   R_TREE_MAX         # px, 1.00 m
 # Bugs
 N_BUGS              =   int(round(1.3 * AREA * TREE_DENSITY, 0))
 R_BUG               =    1           # px, 2 cm
-R_VIS_BUG           =   30          # px, 0.6 m
+R_VIS_BUG           =   50          # px, 1 m
 BUG_RANDOMNESS      =  120 / 57.3  # rad / s,  maximum heading change per second
 V_BUG               =   62          # px / s (1.24 m/s) look at paper
 TREE_LAND_PROB      =    0.005
-ESCAPE_PROB         =    0.90
+ESCAPE_PROB         =    0.50
 TAKEOFF_PROB        =    0.001
 REPRO_PROB          =    0.0002
 
@@ -29,8 +29,8 @@ BUGS_PER_DRONE      =  4
 N_DRONES            =  int(round(N_BUGS / BUGS_PER_DRONE, 0))
 R_DRONE             =   7          # px, 14 cm
 DRONE_MIN_DIST      =  40         # px (80 cm),   minimum distance that drones can be placed at start of simulation
-V_DRONE_MAX         =  694         # px / s (0.8m/s   2.88 km/h) check again
-A_DRONE_MAX         =  70         # px / s^2 (1.6 m/s^2      0.16g)
+V_DRONE_MAX         =  185         # px / s (694)
+A_DRONE_MAX         =  185         # px / s^2 (70)
 
 ACTIVITY_DECAY      =   0.2        # points / s
 ACTIVITY_AWARD      =  10         # points / bug

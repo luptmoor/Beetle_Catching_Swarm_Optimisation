@@ -32,7 +32,7 @@ class Visuals:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_v:
                     view += 1
-                    if view > 2:
+                    if view > 3:
                         view = 0
                 elif event.key == pygame.K_SPACE:
                     pause = True
@@ -66,19 +66,24 @@ class Visuals:
         # Draw all bugs
         for bug in bugs:
             pygame.draw.circle(self.screen, BUG_COLOURS[bug.mode], (bug.x, bug.y), bug.r_col)
-            #pygame.draw.circle(self.screen, bug_colours[bug.mode], (bug.x, bug.y), bug.r_vis, 1)  # visual fields
+
+            if view == 3:
+
+                pygame.draw.circle(self.screen, BUG_COLOURS[bug.mode], (bug.x, bug.y), bug.r_vis, 1)  # visual fields
+                if bug.tree is not None:
+                    pygame.draw.line(self.screen, BLUE, (bug.x, bug.y), (bug.tree.x, bug.tree.y), 1)
 
         for drone in drones:
             pygame.draw.circle(self.screen, GREY, (drone.x, drone.y), drone.r_col)
 
-            if view >= 1:
+            if view == 1:
                 pygame.draw.circle(self.screen, GREY, (drone.x, drone.y), drone.r_vis['drone'], 1)  # visual range for drones
                 pygame.draw.circle(self.screen, BROWN, (drone.x, drone.y), drone.r_vis['tree'], 1)  # visual range for trees
                 pygame.draw.circle(self.screen, RED, (drone.x, drone.y), drone.r_vis['bug'], 1)  # visual range for bugs
 
 
-            if view >= 2:
-                pygame.draw.line(self.screen, BLUE, (drone.x, drone.y), (drone.x + drone.ax * 20, drone.y + drone.ay * 20), 1)
+            if view == 2:
+                #pygame.draw.line(self.screen, BLUE, (drone.x, drone.y), (drone.x + drone.ax * 20, drone.y + drone.ay * 20), 1)
 
                 text_surface, text_rect = self.font.render(str(round(drone.charge, 0)), (0, 0, 0))
                 text_rect.center = (drone.x, drone.y)

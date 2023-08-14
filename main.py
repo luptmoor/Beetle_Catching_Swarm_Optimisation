@@ -11,7 +11,7 @@ import pandas as pd
 def log(g, mean, sigma, solutions, fitness_values):
     solutions.append(mean)
 
-    df = pd.DataFrame(solutions, index=[i for i in range(len(solutions)-1)] + ['Underlying Mean'], columns=['r_vis_bug', 'r_vis_fardrone', 'r_vis_tree', 'k_tree', 'k_neardrone', 'k_bug', 'k_fardrone', 'k_activity', 'v_min', 'v_max', 'carefulness'])
+    df = pd.DataFrame(solutions, index=[i for i in range(len(solutions)-1)] + ['Underlying Mean'], columns=['r_vis_bug', 'r_vis_fardrone', 'r_vis_tree', 'k_tree', 'k_neardrone', 'k_bug', 'k_fardrone', 'r_vis_fardrone', 'k_activity', 'v_min', 'v_max', 'carefulness'])
     df['Fitness 1'] = pd.Series([value[0] for value in fitness_values])
     df['Fitness 2'] = pd.Series([value[1] for value in fitness_values])
     df['Fitness 3'] = pd.Series([value[2] for value in fitness_values])
@@ -20,7 +20,7 @@ def log(g, mean, sigma, solutions, fitness_values):
 
     # Coordinate shift
     df['r_vis_bug'] = round(df['r_vis_bug'] * RANGE_R_VIS_BUG / 2 + MU_R_VIS_BUG, 0)
-    df['r_vis_fardrone'] = round(df['r_vis_fardrone'] * RANGE_r_vis_fardrone / 2 + MU_R_VIS_DRONE)
+    df['r_vis_fardrone'] = round(df['r_vis_fardrone'] * RANGE_R_VIS_FARDRONE / 2 + MU_R_VIS_FARDRONE)
     df['r_vis_tree'] = round(df['r_vis_tree'] * RANGE_R_VIS_TREE / 2 + MU_R_VIS_TREE)
     df['k_tree'] = df['k_tree'] * RANGE_K_TREE / 2 + MU_K_TREE
     df['k_neardrone'] = df['k_neardrone'] * RANGE_K_NEARDRONE / 2 + MU_K_NEARDRONE

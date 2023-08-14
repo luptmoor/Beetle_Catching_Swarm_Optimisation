@@ -1,6 +1,6 @@
 # Environment   1 px = 2cm
-WIDTH               = 1300        # px,  24 m
-HEIGHT              =  700         # px,  14 m
+WIDTH               = 1400        # px,  24 m
+HEIGHT              =  750         # px,  14 m
 AREA                = WIDTH * 0.02 * HEIGHT * 0.02      # m2
 LAUNCHPAD_FRAC      =    0.4
 
@@ -44,7 +44,7 @@ CHARGE_RATE         = 100 / CHARGING_TIME
 # Simulation parameters
 
 DT                  = 0.1        # s
-T_MAX               = ENDURANCE       # s (1h 23min 20s)
+T_MAX               = 10 * 60    # s (10min)
 
 # Colours for visualisation
 GREEN               = (0, 130, 20)
@@ -105,10 +105,10 @@ MU_K_FARDRONE           = (MAX_K_FARDRONE + MIN_K_FARDRONE) / 2
 RANGE_K_FARDRONE        = MAX_K_FARDRONE - MIN_K_FARDRONE
 
 # Parameter 7
-MIN_R_FARDRONE          =  MAX_K_NEARDRONE
-MAX_R_FARDRONE          =  300
-MU_R_FARDRONE           = (MAX_R_FARDRONE + MIN_R_FARDRONE) / 2
-RANGE_R_FARDRONE        = MAX_R_FARDRONE - MIN_R_FARDRONE
+MIN_R_VIS_FARDRONE          =  MAX_K_NEARDRONE
+MAX_R_VIS_FARDRONE          =  300
+MU_R_VIS_FARDRONE           = (MAX_R_VIS_FARDRONE + MIN_R_VIS_FARDRONE) / 2
+RANGE_R_VIS_FARDRONE        = MAX_R_VIS_FARDRONE - MIN_R_VIS_FARDRONE
 
 # Parameter 8
 MIN_K_ACTIVITY          =  -20e-4

@@ -66,12 +66,6 @@ class Bug(PhysicalObject):
                 self.y = self.tree.y + self.tree.r_col * np.sin(self.heading)
 
 
-            # elif np.random.random() < REPRO_PROB:
-            #     self.speed = V_BUG
-            #     self.mode = 'idle'
-            #     return True
-
-
         # Heading periodicity
         self.heading = self.heading % (2 * np.pi)
 
@@ -79,8 +73,6 @@ class Bug(PhysicalObject):
         self.x = int(round(self.x + self.speed * np.cos(self.heading) * dt, 0)) % WIDTH
         self.y = int(round(self.y + self.speed * np.sin(self.heading) * dt, 0)) % HEIGHT
 
-        # Reproduction disabled
-        return False
         #print(self.name, '@', self.x, self.y, '(heading: ', round(self.heading * 57.3, 1), ') in mode:', self.mode)
 
     def processVisual(self, cue):

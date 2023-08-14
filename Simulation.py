@@ -163,7 +163,7 @@ class Simulation:
         while running:
 
             if int(round(self.t, 0)) % 10 == 0 and abs(int(round(self.t, 0)) - self.t) < 0.001:
-                print('Time:', round(self.t, 0), 's')
+                print('Seed:', self.seed, 'Time:', round(self.t, 0), 's')
 
             # Guarantee this always holds (good candidate for removal if too slow)
             self.phobjects = self.trees + self.bugs + self.drones
@@ -176,7 +176,7 @@ class Simulation:
                     if self.check_bug_vision(bug, drone):
                         bug.processVisual(drone)
 
-                repro = bug.advance(DT / 2)
+                bug.advance(DT / 2)
 
                 for tree in self.trees:
                     if self.check_collision(bug, tree):
@@ -185,12 +185,7 @@ class Simulation:
                     if self.check_bug_vision(bug, tree):
                         bug.processVisual(tree)
 
-                repro = bug.advance(DT/2)
-                if repro:
-                    newbug = Bug(bug.name + ' (' + str(self.t) + 's)', bug.x, bug.y)
-                    self.bugs.append(newbug)
-                    self.phobjects.append(newbug)
-
+                bug.advance(DT/2)
 
 
             # Drone simulation
@@ -224,10 +219,8 @@ class Simulation:
                             self.drones.remove(drone)
                             self.phobjects.remove(drone)
 
-                recharge = drone.advance(DT)
-                if recharge:
-                    self.drones.remove(drone)
-                    self.charging.append(drone)
+                drone.advance(DT)
+
 
             for drone in self.charging:
                 drone.charge = min(drone.charge + CHARGE_RATE * DT, 100)
@@ -238,12 +231,12 @@ class Simulation:
                     self.charging.remove(drone)
 
             if self.visualise:
-                self.visuals.update(self.trees, self.bugs, self.drones, self.charging)
+                self.visuals.update(self.trees, self.bugs, self.drones)
 
             self.t += DT
 
             #End conditions
-            if (len(self.drones) + len(self.charging)) / N_DRONES < 0.2 or not self.bugs or self.t >= T_MAX:
+            if len(self.drones) / N_DRONES < 0.2 or not self.bugs or self.t >= T_MAX:
                 running = False
                 self.score = self.evaluate()
 

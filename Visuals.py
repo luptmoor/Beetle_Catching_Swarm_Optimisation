@@ -23,7 +23,7 @@ class Visuals:
         pygame.display.flip()
 
 
-    def update(self, trees, bugs, drones, charging):
+    def update(self, trees, bugs, drones):
         # Make sure visualisation is ended when window is closed
         global view
         for event in pygame.event.get():
@@ -48,12 +48,8 @@ class Visuals:
         text_rect.center = (50, 10)
         self.screen.blit(text_surface, text_rect)
 
-        text_surface, text_rect = self.font.render('Charging Drones: ' + str(round(len(charging))), (0, 0, 0))
-        text_rect.center = (200, 10)
-        self.screen.blit(text_surface, text_rect)
-
-        text_surface, text_rect = self.font.render('Dead Drones: ' + str(round(N_DRONES - len(drones) - len(charging))), (0, 0, 0))
-        text_rect.center = (350, 10)
+        text_surface, text_rect = self.font.render('Dead Drones: ' + str(round(N_DRONES - len(drones))), (0, 0, 0))
+        text_rect.center = (250, 10)
         self.screen.blit(text_surface, text_rect)
 
         text_surface, text_rect = self.font.render('Bugs: ' + str(round(len(bugs))), (0, 0, 0))

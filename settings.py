@@ -58,7 +58,7 @@ BLUE                = (0, 50, 255)
 WHITE               = (255, 255, 255)
 
 BUG_COLOURS = {'idle': RED, 'land': ORANGE, 'tree': YELLOW, 'escape': PINK}
-
+TYPE_COLOURS = {'drone': GREY, 'tree': BROWN, 'bug': RED}
 
 # CMA-ES parameter settings
 MIN_R_VIS_BUG           =  50

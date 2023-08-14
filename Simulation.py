@@ -110,8 +110,7 @@ class Simulation:
                     self.trees.append(newtree)
                     # print(newtree.name, 'placed!')
                     placing = False
-                else:
-                    pass
+
 
         # Place bugs
         for j in range(N_BUGS):
@@ -126,8 +125,7 @@ class Simulation:
                     self.bugs.append(newbug)
                     # print(newbug.name, 'placed!')
                     placing = False
-                else:
-                    pass
+
 
         # Place drones
         for k in range(N_DRONES):
@@ -142,8 +140,7 @@ class Simulation:
                     self.drones.append(newdrone)
                     # print(newdrone.name, 'placed!')
                     placing = False
-                else:
-                    pass
+
 
     # def collision_loop():
     #     """
@@ -173,6 +170,14 @@ class Simulation:
 
             # Bug simulation
             for bug in self.bugs:
+                for drone in self.drones:
+                    # if not any([check_vision(bug, drone) for drone in drones]):
+                    #     bug.processVisual('none')
+                    if self.check_bug_vision(bug, drone):
+                        bug.processVisual(drone)
+
+                repro = bug.advance(DT / 2)
+
                 for tree in self.trees:
                     if self.check_collision(bug, tree):
                         bug.mode = 'tree'
@@ -180,17 +185,13 @@ class Simulation:
                     if self.check_bug_vision(bug, tree):
                         bug.processVisual(tree)
 
-                for drone in self.drones:
-                    # if not any([check_vision(bug, drone) for drone in drones]):
-                    #     bug.processVisual('none')
-                    if self.check_bug_vision(bug, drone):
-                        bug.processVisual(drone)
-
-                repro = bug.advance(DT)
+                repro = bug.advance(DT/2)
                 if repro:
                     newbug = Bug(bug.name + ' (' + str(self.t) + 's)', bug.x, bug.y)
                     self.bugs.append(newbug)
                     self.phobjects.append(newbug)
+
+
 
             # Drone simulation
             for drone in self.drones:

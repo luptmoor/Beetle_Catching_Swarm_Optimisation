@@ -42,24 +42,30 @@ class Bug(PhysicalObject):
         :param dt:
         :return: void
         """
-        # Bug idles (v)
+        # Bug idles and changes direction randomly
         if self.mode == 'idle':
             self.heading += (np.random.random() * 2 * BUG_RANDOMNESS - BUG_RANDOMNESS) * dt
 
-        if self.mode == 'escape':
+        # Bug escapes and changes direction less randomly
+        elif self.mode == 'escape':
             self.heading += (np.random.random() * 2 * 0.3 * BUG_RANDOMNESS - 0.3 * BUG_RANDOMNESS) * dt
 
-        # Bug sits on tree (v)
+        # Bug sits on tree
         elif self.mode == 'tree':
             self.speed = 0
             self.heading = np.arctan2(self.y - self.tree.y, self.x - self.tree.x)  # bug faces away from tree
+
+            # Bug randomly takes off from tree
             if np.random.random() < TAKEOFF_PROB:
                 self.speed = V_BUG
                 self.tree = None
                 self.mode = 'idle'
+            # Ensure that bug always sits on the bark of tree
             elif np.sqrt((self.x - self.tree.x)**2 + (self.y - self.tree.y)**2) < self.tree.r_col:
                 self.x = self.tree.x + self.tree.r_col * np.cos(self.heading)
                 self.y = self.tree.y + self.tree.r_col * np.sin(self.heading)
+
+
             # elif np.random.random() < REPRO_PROB:
             #     self.speed = V_BUG
             #     self.mode = 'idle'
@@ -69,17 +75,17 @@ class Bug(PhysicalObject):
         # Heading periodicity
         self.heading = self.heading % (2 * np.pi)
 
-
-        # Integration
+        # Motion
         self.x = int(round(self.x + self.speed * np.cos(self.heading) * dt, 0)) % WIDTH
         self.y = int(round(self.y + self.speed * np.sin(self.heading) * dt, 0)) % HEIGHT
 
+        # Reproduction disabled
         return False
         #print(self.name, '@', self.x, self.y, '(heading: ', round(self.heading * 57.3, 1), ') in mode:', self.mode)
 
     def processVisual(self, cue):
 
-        # Bug sees a new tree only while idling (v)
+        # Bug sees a new tree only while idling
         if self.mode == 'idle' and cue.type == 'tree' and np.random.random() < TREE_LAND_PROB:
             self.mode = 'land'
 
@@ -94,9 +100,6 @@ class Bug(PhysicalObject):
 
             self.heading = np.arctan2(dy, dx)  # attracting heading
 
-        # Bug sees the tree it is sitting on, turns away to start
-        elif self.mode == 'tree' and cue.type == 'tree':
-            pass
 
         elif cue is None:
             self.mode = 'idle'
@@ -115,6 +118,7 @@ class Bug(PhysicalObject):
             if abs(dy) > HEIGHT / 2:
                 dy = HEIGHT - dy
 
+            # Bug flies half the angle between tree (its current heading) and the drone
             self.heading = (self.heading + np.arctan2(dy, dx)) / 2
             self.speed = V_BUG
             self.tree = None

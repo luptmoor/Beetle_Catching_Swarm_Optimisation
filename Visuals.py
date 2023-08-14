@@ -81,12 +81,12 @@ class Visuals:
                 pygame.draw.circle(self.screen, BROWN, (drone.x, drone.y), drone.r_vis['tree'], 1)  # visual range for trees
                 pygame.draw.circle(self.screen, RED, (drone.x, drone.y), drone.r_vis['bug'], 1)  # visual range for bugs
                 for phobject in drone.visible_phobjects:
-                    pygame.draw.line(self.screen, BLUE, (drone.x, drone.y), (phobject.x, phobject.y), 1)
+                    pygame.draw.line(self.screen, TYPE_COLOURS[phobject.type], (drone.x, drone.y), (phobject.x, phobject.y), 1)
 
             if view == 2:
                 #pygame.draw.line(self.screen, BLUE, (drone.x, drone.y), (drone.x + drone.ax * 20, drone.y + drone.ay * 20), 1)
 
-                text_surface, text_rect = self.font.render(str(round(drone.charge, 0)), (0, 0, 0))
+                text_surface, text_rect = self.font.render(str(round(drone.speed / V_DRONE_MAX * 100, 0)), (0, 0, 0))
                 text_rect.center = (drone.x, drone.y)
                 self.screen.blit(text_surface, text_rect)
             # for phobject in drone.visible_phobjects:

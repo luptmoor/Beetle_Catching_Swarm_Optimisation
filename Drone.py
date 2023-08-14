@@ -41,7 +41,7 @@ class Drone(PhysicalObject):
         self.ay = 0
         self.heading = np.random.random() * 2 * np.pi
 
-
+        self.closest_d = self.r_vis_bug
 
 
 
@@ -50,6 +50,19 @@ class Drone(PhysicalObject):
         ays = []
 
         for phobject in self.visible_phobjects:
+            # Distance
+            dx = np.abs(self.x - phobject.x)
+            dy = np.abs(self.y - phobject.y)
+            dx = min(dx, WIDTH - dx)
+            dy = min(dy, HEIGHT - dy)
+            d = np.sqrt(dx ** 2 + dy ** 2) - phobject.r_col
+
+            # if phobject.type == 'bug':
+            #     if d <= self.closest_d:
+            #         self.closest_d = d
+            #     else:
+            #         self.visible_phobjects.remove(phobject)
+
 
             #Heading
             dx = phobject.x - self.x
@@ -61,13 +74,7 @@ class Drone(PhysicalObject):
                 dy = HEIGHT - dy
             theta = np.arctan2(-dy, -dx)
 
-            # Distance
-            dx = np.abs(self.x - phobject.x)
-            dy = np.abs(self.y - phobject.y)
-            dx = min(dx, WIDTH - dx)
-            dy = min(dy, HEIGHT - dy)
-            d = np.sqrt(dx ** 2 + dy ** 2) - phobject.r_col
-            print(phobject.name, d)
+
 
 
             # Local attraction/repulsion from other phobjects

@@ -38,7 +38,7 @@ class Drone(PhysicalObject):
         self.heading = np.random.random() * 2 * np.pi
 
 
-    def advance(self, dt):
+    def advance(self):
         axs = []
         ays = []
 
@@ -94,21 +94,21 @@ class Drone(PhysicalObject):
         self.ax = a * np.cos(angle)
         self.ay = a * np.sin(angle)
 
-        vx = self.speed * np.cos(self.heading) + self.ax * dt
-        vy = self.speed * np.sin(self.heading) + self.ay * dt
+        vx = self.speed * np.cos(self.heading) + self.ax * DT
+        vy = self.speed * np.sin(self.heading) + self.ay * DT
 
         self.heading = np.arctan2(vy, vx) % (2 * np.pi)
         self.speed = max(min(np.sqrt(vy**2 + vx**2), self.v_max), self.v_min)
 
 
         # Integration
-        self.x = int(round(self.x + self.speed * np.cos(self.heading) * dt, 0)) % WIDTH
-        self.y = int(round(self.y + self.speed * np.sin(self.heading) * dt, 0)) % HEIGHT
+        self.x = int(round(self.x + self.speed * np.cos(self.heading) * DT, 0)) % WIDTH
+        self.y = int(round(self.y + self.speed * np.sin(self.heading) * DT, 0)) % HEIGHT
 
 
         #print(self.name, '@', self.x, self.y, '(heading: ', round(self.heading * 57.3, 1))
 
-        self.activity = min(50, max(-50, self.activity - ACTIVITY_DECAY * dt))
+        self.activity = min(50, max(-50, self.activity - ACTIVITY_DECAY * DT))
 
 
 

@@ -53,35 +53,11 @@ def fitness(params):
         # print()
 
         scores.append(sim.run())
-
-    # timestamp = datetime.now().strftime('%d_%m__%H_%M_%S')
-    #
-    # if not os.path.exists('logs/gen' + str(g)):
-    #     os.mkdir('logs/gen' + str(g))
-    #
-    # with open('logs/gen' + str(g) + '/' + str(fitness_value) + '_' + timestamp, 'w') as file:
-    #     file.write('Simulation with parameters:\n')
-    #     file.write('r_vis_bug: ' + str(params[0] * RANGE_R_VIS_BUG / 2 + MU_R_VIS_BUG) + '\n')
-    #     file.write('r_vis_neardrone: ' + str(params[1] * RANGE_r_vis_neardrone / 2 + MU_r_vis_neardrone) + '\n')
-    #     file.write('r_vis_tree: ' + str(params[2] * RANGE_R_VIS_TREE / 2 + MU_R_VIS_TREE) + '\n')
-    #     file.write('k_tree: ' + str(params[3] * RANGE_K_TREE / 2 + MU_K_TREE) + '\n')
-    #     file.write('k_neardrone: ' + str(params[4] * RANGE_K_NEARDRONE / 2 + MU_K_NEARDRONE) + '\n')
-    #     file.write('k_bug: ' + str(params[5] * RANGE_K_BUG / 2 + MU_K_BUG) + '\n')
-    #     file.write('k_fardrone: ' + str(params[6] * RANGE_K_FARDRONE / 2 + MU_K_FARDRONE) + '\n')
-    #     file.write('k_activity: ' + str(params[7] * RANGE_K_ACTIVITY / 2 + MU_K_ACTIVITY) + '\n')
-    #     file.write('v_min: ' + str(params[8] * RANGE_V_MIN / 2 + MU_V_MIN) + '\n')
-    #     file.write('temp_cohesion: ' + str(params[9] * RANGE_TEMP_COHESION / 2 + MU_TEMP_COHESION) + '\n')
-    #     file.write('\n')
-    #     file.write('attained fitness values of ' + str(scores) + ' (avg. ' + str(fitness_value) + ')')
-
     return scores
 
 
 options = {
     'maxiter': N_GENERATIONS,
-    'tolfun': 0,
-    # 'bounds': 8 * [[None, None]] + [[0, V_DRONE_MAX], [0, 100]]
-
 }
 
 # Run the CMA-ES optimization

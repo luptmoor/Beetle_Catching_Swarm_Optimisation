@@ -30,7 +30,6 @@ class Simulation:
         self.phobjects = []
         self.trees = []
         self.drones = []
-        self.charging = []
         self.bugs = []
 
         self.params = params
@@ -185,7 +184,7 @@ class Simulation:
                     if self.check_bug_vision(bug, tree):
                         bug.processVisual(tree)
 
-                bug.advance(DT/2)
+                bug.advance(DT / 2)
 
 
             # Drone simulation
@@ -219,16 +218,9 @@ class Simulation:
                             self.drones.remove(drone)
                             self.phobjects.remove(drone)
 
-                drone.advance(DT)
+                drone.advance()
 
 
-            for drone in self.charging:
-                drone.charge = min(drone.charge + CHARGE_RATE * DT, 100)
-                if drone.charge >= 100:
-                    drone.x = 0
-                    drone.y = 0
-                    self.drones.append(drone)
-                    self.charging.remove(drone)
 
             if self.visualise:
                 self.visuals.update(self.trees, self.bugs, self.drones)

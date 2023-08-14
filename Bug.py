@@ -78,7 +78,7 @@ class Bug(PhysicalObject):
     def processVisual(self, cue):
 
         # Bug sees a new tree only while idling
-        if self.mode == 'idle' and cue.type == 'tree' and np.random.random() < TREE_LAND_PROB:
+        if self.mode == 'idle' and cue.type == 'tree' and np.random.random() < TREE_LAND_PROB * DT:
             self.mode = 'land'
 
         # Bug sees a tree already identified (v)
@@ -98,7 +98,7 @@ class Bug(PhysicalObject):
 
 
         # Bug sees a new drone while idling or landing (v)
-        elif (self.mode == 'idle' or self.mode == 'land') and cue.type == 'drone' and np.random.random() < ESCAPE_PROB:
+        elif (self.mode == 'idle' or self.mode == 'land') and cue.type == 'drone' and np.random.random() < ESCAPE_PROB * DT:
             self.mode = 'escape'
 
         # Bug sees a new drone while sitting on tree -> first goes to idle, escaping both tree and drone

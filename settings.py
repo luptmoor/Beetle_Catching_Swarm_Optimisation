@@ -1,6 +1,6 @@
 # Environment   1 px = 2cm
-WIDTH               = 1400        # px,  24 m
-HEIGHT              =  750         # px,  14 m
+WIDTH               = 1400        # px,  28 m
+HEIGHT              =  750        # px,  15 m
 AREA                = WIDTH * 0.02 * HEIGHT * 0.02      # m2
 LAUNCHPAD_FRAC      =    0.4
 
@@ -14,7 +14,7 @@ R_TREE_STD          =   (R_TREE_MAX - R_TREE_MIN) / 6
 TREE_MIN_DIST       =   R_TREE_MAX         # px, 1.00 m
 
 # Bugs
-N_BUGS              =   int(round(1.3 * AREA * TREE_DENSITY, 0))
+N_BUGS              =   int(round(1.4 * AREA * TREE_DENSITY, 0))
 R_BUG               =    1           # px, 2 cm
 R_VIS_BUG           =   100          # px, 1 m
 BUG_RANDOMNESS      =  120 / 57.3  # rad / s,  maximum heading change per second
@@ -141,3 +141,4 @@ POPULATION_SIZE         =   10
 N_GENERATIONS           =  100
 
 print('AREA:', AREA ,'m2')
+print('TREES:', N_TREES)

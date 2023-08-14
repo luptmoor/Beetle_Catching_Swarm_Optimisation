@@ -14,25 +14,27 @@ class Drone(PhysicalObject):
 
         # Tunable Parameters, negative ks mean attraction, positive means repulsion
         self.r_vis_bug = int(round(params[0] * RANGE_R_VIS_BUG / 2 + MU_R_VIS_BUG, 0))
-        self.r_vis_drone = int(round(params[1] * RANGE_R_VIS_DRONE / 2 + MU_R_VIS_DRONE))
+        self.r_vis_neardrone = int(round(params[1] * RANGE_R_VIS_NEARDRONE / 2 + MU_R_VIS_NEARDRONE))
         self.r_vis_tree = int(round(params[2] * RANGE_R_VIS_TREE / 2 + MU_R_VIS_TREE))
-        self.r_vis = {'tree': self.r_vis_tree, 'drone': self.r_vis_drone, 'bug': self.r_vis_bug}
+        self.r_vis = {'tree': self.r_vis_tree, 'drone': self.r_vis_neardrone, 'bug': self.r_vis_bug}
 
-        self.k_tree = params[3]# * RANGE_K_TREE / 2 + MU_K_TREE
-        self.k_neardrone = params[4]# * RANGE_K_NEARDRONE / 2 + MU_K_NEARDRONE
-        self.k_bug = params[5]# * RANGE_K_BUG / 2 + MU_K_BUG
+        self.k_tree = params[3] * RANGE_K_TREE / 2 + MU_K_TREE
+        self.k_neardrone = params[4] * RANGE_K_NEARDRONE / 2 + MU_K_NEARDRONE
+        self.k_bug = params[5] * RANGE_K_BUG / 2 + MU_K_BUG
         self.gains = {'tree': self.k_tree, 'drone': self.k_neardrone, 'bug': self.k_bug}
 
-        self.k_fardrone = params[6]# * RANGE_K_FARDRONE / 2 + MU_K_FARDRONE
-        self.k_activity = params[7]#  * RANGE_K_ACTIVITY / 2 + MU_K_ACTIVITY
+        self.r_fardrone = params[6] * RANGE_R_FARDRONE / 2 + MU_R_FARDRONE
+        self.k_fardrone = params[7] * RANGE_K_FARDRONE / 2 + MU_K_FARDRONE
+        self.k_activity = params[8]  * RANGE_K_ACTIVITY / 2 + MU_K_ACTIVITY
 
-        self.v_min = min(V_DRONE_MAX, max(0, params[8] * RANGE_V_MIN / 2 + MU_V_MIN))
+        self.v_min = min(V_DRONE_MAX, max(0, params[9] * RANGE_V_MIN / 2 + MU_V_MIN))
+        self.v_max = min(V_DRONE_MAX, max(self.v_min, params[10] * RANGE_V_MAX / 2 + MU_V_MAX))
 
-        self.temp_cohesion = min(100, max(0, params[9] * RANGE_TEMP_COHESION / 2 + MU_TEMP_COHESION))
+        self.carefulness = params[11] * RANGE_CAREFULNESS / 2 + MU_CAREFULNESS
 
 
         self.activity = 0
-        self.charge = round(np.random.random() * (100 - self.temp_cohesion) + self.temp_cohesion, 1)
+        self.charge = 100
 
         self.visible_phobjects = []
         self.codrones = []
@@ -82,16 +84,20 @@ class Drone(PhysicalObject):
             axs.append((max(self.r_vis[phobject.type] - d, 0)) * self.gains[phobject.type] * np.cos(theta))
 
         for codrone in self.codrones:
-            d = np.sqrt((codrone.x - self.x) ** 2 + (codrone.y - self.y) ** 2)
+            dx = np.abs(self.x - codrone.x)
+            dy = np.abs(self.y - codrone.y)
+            dx = min(dx, WIDTH - dx)
+            dy = min(dy, HEIGHT - dy)
+            d = np.sqrt(dx ** 2 + dy ** 2)
             theta = np.arctan2(self.y - codrone.y, self.x - codrone.x)
 
             # Attraction towards activity
             ays.append(d * self.k_activity * codrone.activity * np.sin(theta))
             axs.append(d * self.k_activity * codrone.activity * np.cos(theta))
 
-            # Attraction towards other drones
-            ays.append(d * self.k_fardrone * np.sin(theta))
-            axs.append(d * self.k_fardrone * np.cos(theta))
+            # Attraction towards other drones within a radius that determines the subflock size
+            ays.append(max(0, self.r_fardrone - d) * self.k_fardrone * np.sin(theta))
+            axs.append(max(0, self.r_fardrone - d) * self.k_fardrone * np.cos(theta))
 
         ax = sum(axs)
         ay = sum(ays)
@@ -100,7 +106,7 @@ class Drone(PhysicalObject):
         #     self.heading += 2 * 90 / 57.3 * self.k_random * np.random.random() - 90 / 57.3 * self.k_random
 
         if a <= 5:
-            self.speed = 0.4 * self.speed
+            self.speed = (1 - self.carefulness) * self.speed
 
         angle = np.arctan2(ay, ax)
 
@@ -111,7 +117,7 @@ class Drone(PhysicalObject):
         vy = self.speed * np.sin(self.heading) + self.ay * dt
 
         self.heading = np.arctan2(vy, vx) % (2 * np.pi)
-        self.speed = max(min(np.sqrt(vy**2 + vx**2), V_DRONE_MAX), self.v_min)
+        self.speed = max(min(np.sqrt(vy**2 + vx**2), self.v_max), self.v_min)
 
 
         # Integration

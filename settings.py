@@ -25,7 +25,7 @@ TAKEOFF_PROB        =    0.001
 REPRO_PROB          =    0.0002
 
 # Static Drone Parameters
-BUGS_PER_DRONE      =  2
+BUGS_PER_DRONE      =  3
 N_DRONES            =  int(round(N_BUGS / BUGS_PER_DRONE, 0))
 R_DRONE             =   7          # px, 14 cm
 DRONE_MIN_DIST      =  40         # px (80 cm),   minimum distance that drones can be placed at start of simulation
@@ -44,7 +44,7 @@ CHARGE_RATE         = 100 / CHARGING_TIME
 # Simulation parameters
 
 DT                  = 0.1        # s
-T_MAX               = 5000       # s (1h 23min 20s)
+T_MAX               = ENDURANCE       # s (1h 23min 20s)
 
 # Colours for visualisation
 GREEN               = (0, 130, 20)
@@ -61,55 +61,80 @@ BUG_COLOURS = {'idle': RED, 'land': ORANGE, 'tree': YELLOW, 'escape': PINK}
 TYPE_COLOURS = {'drone': GREY, 'tree': BROWN, 'bug': RED}
 
 # CMA-ES parameter settings
+
+# Parameter 0
 MIN_R_VIS_BUG           =  50
 MAX_R_VIS_BUG           = 200
 MU_R_VIS_BUG            = (MAX_R_VIS_BUG + MIN_R_VIS_BUG) / 2
 RANGE_R_VIS_BUG         = MAX_R_VIS_BUG - MIN_R_VIS_BUG
 
-MIN_R_VIS_DRONE         = int(round(1.1 * R_DRONE, 0))
-MAX_R_VIS_DRONE         = 150
-MU_R_VIS_DRONE          = (MAX_R_VIS_DRONE + MIN_R_VIS_DRONE) / 2
-RANGE_R_VIS_DRONE       = MAX_R_VIS_DRONE - MIN_R_VIS_DRONE
+# Parameter 1
+MIN_R_VIS_NEARDRONE         = int(round(1.1 * R_DRONE, 0))
+MAX_R_VIS_NEARDRONE         = 150
+MU_R_VIS_NEARDRONE          = (MAX_R_VIS_NEARDRONE + MIN_R_VIS_NEARDRONE) / 2
+RANGE_R_VIS_NEARDRONE       = MAX_R_VIS_NEARDRONE - MIN_R_VIS_NEARDRONE
 
+# Parameter 2
 MIN_R_VIS_TREE          = int(round(1.1 * R_DRONE, 0))
 MAX_R_VIS_TREE          = 150
 MU_R_VIS_TREE           = (MAX_R_VIS_TREE + MIN_R_VIS_TREE) / 2
 RANGE_R_VIS_TREE        = MAX_R_VIS_TREE - MIN_R_VIS_TREE
 
+# Parameter 3
 MIN_K_TREE              =   0
 MAX_K_TREE              = 150
 MU_K_TREE               = (MAX_K_TREE + MIN_K_TREE) / 2
 RANGE_K_TREE            = MAX_K_TREE - MIN_K_TREE
 
+# Parameter 4
 MIN_K_NEARDRONE         =   0
 MAX_K_NEARDRONE         = 150
 MU_K_NEARDRONE          = (MAX_K_NEARDRONE + MIN_K_NEARDRONE) / 2
 RANGE_K_NEARDRONE       = MAX_K_NEARDRONE - MIN_K_NEARDRONE
 
+# Parameter 5
 MIN_K_BUG               =   -5
 MAX_K_BUG               =    0
 MU_K_BUG                = (MAX_K_BUG + MIN_K_BUG) / 2
 RANGE_K_BUG             = MAX_K_BUG - MIN_K_BUG
 
+# Parameter 6
 MIN_K_FARDRONE          =  -20e-4
 MAX_K_FARDRONE          =   20e-4
 MU_K_FARDRONE           = (MAX_K_FARDRONE + MIN_K_FARDRONE) / 2
 RANGE_K_FARDRONE        = MAX_K_FARDRONE - MIN_K_FARDRONE
 
+# Parameter 7
+MIN_R_FARDRONE          =  MAX_K_NEARDRONE
+MAX_R_FARDRONE          =  300
+MU_R_FARDRONE           = (MAX_R_FARDRONE + MIN_R_FARDRONE) / 2
+RANGE_R_FARDRONE        = MAX_R_FARDRONE - MIN_R_FARDRONE
+
+# Parameter 8
 MIN_K_ACTIVITY          =  -20e-4
 MAX_K_ACTIVITY          =   20e-4
 MU_K_ACTIVITY           = (MAX_K_ACTIVITY + MIN_K_ACTIVITY) / 2
 RANGE_K_ACTIVITY        = MAX_K_ACTIVITY - MIN_K_ACTIVITY
 
+# Parameter 9
 MIN_V_MIN               =    0
 MAX_V_MIN               =   15
 MU_V_MIN                = (MAX_V_MIN + MIN_V_MIN) / 2
 RANGE_V_MIN             = MAX_V_MIN - MIN_V_MIN
 
-MIN_TEMP_COHESION       =    0
-MAX_TEMP_COHESION       =  100
-MU_TEMP_COHESION        = (MAX_TEMP_COHESION + MIN_TEMP_COHESION) / 2
-RANGE_TEMP_COHESION     = MAX_TEMP_COHESION - MIN_TEMP_COHESION
+# Parameter 10
+MIN_V_MAX               =   MIN_V_MIN
+MAX_V_MAX               =  V_DRONE_MAX
+MU_V_MAX                = (MAX_V_MAX + MIN_V_MAX) / 2
+RANGE_V_MAX             = MAX_V_MAX - MIN_V_MAX
+
+# Parameter 11
+MIN_CAREFULNESS         =   0
+MAX_CAREFULNESS         =   1
+MU_CAREFULNESS          = (MAX_CAREFULNESS + MIN_CAREFULNESS) / 2
+RANGE_CAREFULNESS       = MAX_CAREFULNESS - MIN_CAREFULNESS
+
+
 
 RUNS_PER_SOLUTION       =    3
 POPULATION_SIZE         =   10

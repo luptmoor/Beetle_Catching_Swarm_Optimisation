@@ -100,6 +100,6 @@ class Visuals:
 
 
         pygame.display.flip()
-        self.clock.tick(self.FPS)
+        # self.clock.tick(self.FPS)
 
 

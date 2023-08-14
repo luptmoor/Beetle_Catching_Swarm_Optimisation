@@ -11,7 +11,7 @@ import pandas as pd
 def log(g, mean, sigma, solutions, fitness_values):
     solutions.append(mean)
 
-    df = pd.DataFrame(solutions, index=[i for i in range(len(solutions)-1)] + ['Underlying Mean'], columns=['r_vis_bug', 'r_vis_drone', 'r_vis_tree', 'k_tree', 'k_neardrone', 'k_bug', 'k_fardrone', 'k_activity', 'v_min', 'temp_cohesion'])
+    df = pd.DataFrame(solutions, index=[i for i in range(len(solutions)-1)] + ['Underlying Mean'], columns=['r_vis_bug', 'r_vis_fardrone', 'r_vis_tree', 'k_tree', 'k_neardrone', 'k_bug', 'k_fardrone', 'k_activity', 'v_min', 'v_max', 'carefulness'])
     df['Fitness 1'] = pd.Series([value[0] for value in fitness_values])
     df['Fitness 2'] = pd.Series([value[1] for value in fitness_values])
     df['Fitness 3'] = pd.Series([value[2] for value in fitness_values])
@@ -20,7 +20,7 @@ def log(g, mean, sigma, solutions, fitness_values):
 
     # Coordinate shift
     df['r_vis_bug'] = round(df['r_vis_bug'] * RANGE_R_VIS_BUG / 2 + MU_R_VIS_BUG, 0)
-    df['r_vis_drone'] = round(df['r_vis_drone'] * RANGE_R_VIS_DRONE / 2 + MU_R_VIS_DRONE)
+    df['r_vis_fardrone'] = round(df['r_vis_fardrone'] * RANGE_r_vis_fardrone / 2 + MU_R_VIS_DRONE)
     df['r_vis_tree'] = round(df['r_vis_tree'] * RANGE_R_VIS_TREE / 2 + MU_R_VIS_TREE)
     df['k_tree'] = df['k_tree'] * RANGE_K_TREE / 2 + MU_K_TREE
     df['k_neardrone'] = df['k_neardrone'] * RANGE_K_NEARDRONE / 2 + MU_K_NEARDRONE
@@ -28,8 +28,10 @@ def log(g, mean, sigma, solutions, fitness_values):
     df['k_fardrone'] = df['k_fardrone'] * RANGE_K_FARDRONE / 2 + MU_K_FARDRONE
     df['k_activity'] = df['k_activity'] * RANGE_K_ACTIVITY / 2 + MU_K_ACTIVITY
     df['v_min'] = df['v_min'] * RANGE_V_MIN / 2 + MU_V_MIN
-    df['temp_cohesion'] = df['temp_cohesion'] * RANGE_TEMP_COHESION / 2 + MU_TEMP_COHESION
+    df['v_max'] = df['v_max'] * RANGE_V_MAX / 2 + MU_V_MAX
+    df['carefulness'] = df['carefulness'] * RANGE_CAREFULNESS / 2 + MAX_CAREFULNESS
 
+    df = df.sort_values(by='Average Fitness', ascending=False)
     df.to_csv('logs/Gen' + str(g) + '.csv')
 
 
@@ -39,7 +41,7 @@ def fitness(params):
         sim = Simulation(params, seed=i, visualise=True)
         # print('STARTING SIMULATION WITH SEED', i, 'AND PARAMETERS:')
         # print('r_vis_bug:', int(round(params[0] * RANGE_R_VIS_BUG / 2 + MU_R_VIS_BUG, 0)))
-        # print('r_vis_drone:', int(round(params[1] * RANGE_R_VIS_DRONE / 2 + MU_R_VIS_DRONE)))
+        # print('r_vis_neardrone:', int(round(params[1] * RANGE_r_vis_neardrone / 2 + MU_r_vis_neardrone)))
         # print('r_vis_tree:', int(round(params[2] * RANGE_R_VIS_TREE / 2 + MU_R_VIS_TREE)))
         # print('k_tree:', params[3] * RANGE_K_TREE / 2 + MU_K_TREE)
         # print('k_neardrone:', params[4] * RANGE_K_NEARDRONE / 2 + MU_K_NEARDRONE)
@@ -60,7 +62,7 @@ def fitness(params):
     # with open('logs/gen' + str(g) + '/' + str(fitness_value) + '_' + timestamp, 'w') as file:
     #     file.write('Simulation with parameters:\n')
     #     file.write('r_vis_bug: ' + str(params[0] * RANGE_R_VIS_BUG / 2 + MU_R_VIS_BUG) + '\n')
-    #     file.write('r_vis_drone: ' + str(params[1] * RANGE_R_VIS_DRONE / 2 + MU_R_VIS_DRONE) + '\n')
+    #     file.write('r_vis_neardrone: ' + str(params[1] * RANGE_r_vis_neardrone / 2 + MU_r_vis_neardrone) + '\n')
     #     file.write('r_vis_tree: ' + str(params[2] * RANGE_R_VIS_TREE / 2 + MU_R_VIS_TREE) + '\n')
     #     file.write('k_tree: ' + str(params[3] * RANGE_K_TREE / 2 + MU_K_TREE) + '\n')
     #     file.write('k_neardrone: ' + str(params[4] * RANGE_K_NEARDRONE / 2 + MU_K_NEARDRONE) + '\n')
@@ -83,18 +85,17 @@ options = {
 }
 
 # Run the CMA-ES optimization
-es = cma.CMAEvolutionStrategy(10 * [0], 0.35, options)
+es = cma.CMAEvolutionStrategy(12 * [0], 0.35, options)
 fitnesses = []
 g = 1
 
 
 
-while not es.stop() and False:
+while not es.stop():
     print('GENERATION:', g)
     solutions = es.ask()  # list of lists with parameters (n_pop x n_param)
     fitness_values = [fitness(x) for x in solutions]  # list of fitnesses (n_pop x RUNS_PER_SOLUTION)
     log(g, es.mean, es.sigma, solutions.copy(), fitness_values)
-
     average_fitnesses = [np.mean(fitness_value) for fitness_value in fitness_values] # list of avg fitnesses (n_pop x 1)
     es.tell(solutions, average_fitnesses)
     best_solution = es.best.get()[0]  # list of params of best solution (1 x n_param)
@@ -113,17 +114,17 @@ while not es.stop() and False:
 # plt.grid(True)
 # plt.show()
 
-parameters = [(180 - MU_R_VIS_BUG) * 2 / RANGE_R_VIS_BUG,  # 'r_vis_bug'
-              (180 - MU_R_VIS_DRONE) * 2 / RANGE_R_VIS_DRONE,  # 'r_vis_drone'
-              (50 - MU_R_VIS_TREE) * 2 / RANGE_R_VIS_TREE,  # 'r_vis_tree'
-          300,  # 'k_tree'
-          60,  # 'k_neardrone'
-          -4,  # 'k_bug'
-          - 50e-4,  # 'k_fardrone'
-          - 1e-4,  # 'k_activity'
-          3,  # 'v_min'
-          100  # 'temp_cohesion'
-          ]
-
-sim = Simulation(parameters, seed=33, visualise=True)
-sim.run()
+# parameters = [(180 - MU_R_VIS_BUG) * 2 / RANGE_R_VIS_BUG,  # 'r_vis_bug'
+#               (180 - MU_r_vis_neardrone) * 2 / RANGE_r_vis_neardrone,  # 'r_vis_neardrone'
+#               (50 - MU_R_VIS_TREE) * 2 / RANGE_R_VIS_TREE,  # 'r_vis_tree'
+#           300,  # 'k_tree'
+#           60,  # 'k_neardrone'
+#           -4,  # 'k_bug'
+#           - 50e-4,  # 'k_fardrone'
+#           - 1e-4,  # 'k_activity'
+#           3,  # 'v_min'
+#           100  # 'temp_cohesion'
+#           ]
+#
+# sim = Simulation(parameters, seed=355, visualise=True)
+# sim.run()

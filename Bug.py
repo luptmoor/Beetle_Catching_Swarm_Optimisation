@@ -46,6 +46,9 @@ class Bug(PhysicalObject):
         if self.mode == 'idle':
             self.heading += (np.random.random() * 2 * BUG_RANDOMNESS - BUG_RANDOMNESS) * dt
 
+        if self.mode == 'escape':
+            self.heading += (np.random.random() * 2 * 0.3 * BUG_RANDOMNESS - 0.3 * BUG_RANDOMNESS) * dt
+
         # Bug sits on tree (v)
         elif self.mode == 'tree':
             self.speed = 0
@@ -64,25 +67,12 @@ class Bug(PhysicalObject):
 
 
         # Heading periodicity
-        if self.heading >= 2 * np.pi:
-            self.heading -= 2 * np.pi
-        elif self.heading < 0:
-            self.heading += 2 * np.pi
+        self.heading = self.heading % (2 * np.pi)
+
 
         # Integration
-        self.x = int(round(self.x + self.speed * np.cos(self.heading) * dt, 0))
-        self.y = int(round(self.y + self.speed * np.sin(self.heading) * dt, 0))
-
-        # Position periodicity
-        if self.x > WIDTH:
-            self.x -= WIDTH
-        if self.x < 0:
-            self.x += WIDTH
-
-        if self.y > HEIGHT:
-            self.y -= HEIGHT
-        if self.y < 0:
-            self.y += HEIGHT
+        self.x = int(round(self.x + self.speed * np.cos(self.heading) * dt, 0)) % WIDTH
+        self.y = int(round(self.y + self.speed * np.sin(self.heading) * dt, 0)) % HEIGHT
 
         return False
         #print(self.name, '@', self.x, self.y, '(heading: ', round(self.heading * 57.3, 1), ') in mode:', self.mode)
@@ -95,7 +85,14 @@ class Bug(PhysicalObject):
 
         # Bug sees a tree already identified (v)
         elif self.mode == 'land' and cue.type == 'tree':
-            self.heading = np.arctan2(cue.y - self.y, cue.x - self.x)  # attracting heading
+            dx = cue.x - self.x
+            dy = cue.y - self.y
+            if abs(dx) > WIDTH / 2:
+                dx = WIDTH - dx
+            if abs(dy) > HEIGHT / 2:
+                dy = HEIGHT - dy
+
+            self.heading = np.arctan2(dy, dx)  # attracting heading
 
         # Bug sees the tree it is sitting on, turns away to start
         elif self.mode == 'tree' and cue.type == 'tree':
@@ -110,15 +107,29 @@ class Bug(PhysicalObject):
             self.mode = 'escape'
 
         # Bug sees a new drone while sitting on tree -> first goes to idle, escaping both tree and drone
-        elif self.mode == 'tree' and cue.type == 'drone' and np.random.random() < ESCAPE_PROB:
-            self.heading = (self.heading + np.arctan2(self.y - cue.y, self.x - cue.x)) / 2
+        elif self.mode == 'tree' and cue.type == 'drone':
+            dx = self.x - cue.x
+            dy = self.y - cue.y
+            if abs(dx) > WIDTH / 2:
+                dx = WIDTH - dx
+            if abs(dy) > HEIGHT / 2:
+                dy = HEIGHT - dy
+
+            self.heading = (self.heading + np.arctan2(dy, dx)) / 2
             self.speed = V_BUG
             self.tree = None
             self.mode = 'idle'
 
         # Bug sees a drone already identified (v)
         elif self.mode == 'escape' and cue.type == 'drone':
-            self.heading = np.arctan2(self.y - cue.y, self.x - cue.x)  # repelling heading
+            dx = self.x - cue.x
+            dy = self.y - cue.y
+            if abs(dx) > WIDTH / 2:
+                dx = WIDTH - dx
+            if abs(dy) > HEIGHT / 2:
+                dy = HEIGHT - dy
+
+            self.heading = np.arctan2(dy, dx)  # attracting heading
 
 
 

@@ -58,20 +58,12 @@ class Simulation:
         if active.name == passive.name:
             return False
 
-        # if passive in bugs or passive in drones and True:
-        #     ds = np.zeros(9)
-        #     ds[0] = np.sqrt((active.x - (passive.x - width)) ** 2 +     (active.y - (passive.y - height)) ** 2)
-        #     ds[1] = np.sqrt((active.x - passive.x) ** 2 +               (active.y - (passive.y - height)) ** 2)
-        #     ds[2] = np.sqrt((active.x - (passive.x + width)) ** 2 +     (active.y - (passive.y - height)) ** 2)
-        #     ds[3] = np.sqrt((active.x - (passive.x - width)) ** 2 +     (active.y - passive.y) ** 2)
-        #     ds[4] = np.sqrt((active.x - passive.x) ** 2 +               (active.y - passive.y) ** 2)
-        #     ds[5] = np.sqrt((active.x - (passive.x + width)) ** 2 +     (active.y - passive.y) ** 2)
-        #     ds[6] = np.sqrt((active.x - (passive.x - width)) ** 2 +     (active.y - (passive.y + height)) ** 2)
-        #     ds[7] = np.sqrt((active.x - passive.x) ** 2 +               (active.y - (passive.y + height)) ** 2)
-        #     ds[8] = np.sqrt((active.x - (passive.x + width)) ** 2 +     (active.y - (passive.y + height)) ** 2)
-        #     d = np.min(ds)
-        # else:
-        d = np.sqrt((active.x - passive.x) ** 2 + (active.y - passive.y) ** 2)
+        dx = np.abs(active.x - passive.x)
+        dy = np.abs(active.y - passive.y)
+        dx = min(dx, WIDTH - dx)
+        dy = min(dy, HEIGHT - dy)
+
+        d = np.sqrt(dx ** 2 + dy ** 2)
 
         if d <= active.r_vis + passive.r_col:
             return True
@@ -85,22 +77,20 @@ class Simulation:
         if active.name == passive.name:
             return False
 
-        # if passive in bugs or passive in drones and True:
-        #     ds = np.zeros(9)
-        #     ds[0] = np.sqrt((active.x - (passive.x - width)) ** 2 +     (active.y - (passive.y - height)) ** 2)
-        #     ds[1] = np.sqrt((active.x - passive.x) ** 2 +               (active.y - (passive.y - height)) ** 2)
-        #     ds[2] = np.sqrt((active.x - (passive.x + width)) ** 2 +     (active.y - (passive.y - height)) ** 2)
-        #     ds[3] = np.sqrt((active.x - (passive.x - width)) ** 2 +     (active.y - passive.y) ** 2)
-        #     ds[4] = np.sqrt((active.x - passive.x) ** 2 +               (active.y - passive.y) ** 2)
-        #     ds[5] = np.sqrt((active.x - (passive.x + width)) ** 2 +     (active.y - passive.y) ** 2)
-        #     ds[6] = np.sqrt((active.x - (passive.x - width)) ** 2 +     (active.y - (passive.y + height)) ** 2)
-        #     ds[7] = np.sqrt((active.x - passive.x) ** 2 +               (active.y - (passive.y + height)) ** 2)
-        #     ds[8] = np.sqrt((active.x - (passive.x + width)) ** 2 +     (active.y - (passive.y + height)) ** 2)
-        #     d = np.min(ds)
-        # else:
-        d = np.sqrt((active.x - passive.x) ** 2 + (active.y - passive.y) ** 2)
+        dx = np.abs(active.x - passive.x)
+        dy = np.abs(active.y - passive.y)
+        dx = min(dx, WIDTH - dx)
+        dy = min(dy, HEIGHT - dy)
+        
+        d = np.sqrt(dx**2 + dy**2)
+        obstructed = False
+        if passive.type == 'bug' and passive.tree is not None:
+            d_obs = np.sqrt((active.x - passive.tree.x) ** 2 + (active.y - passive.tree.y) ** 2)
+            if d_obs < d:
+                obstructed = True
 
-        if d <= active.r_vis[passive.type] + passive.r_col:
+
+        if d <= active.r_vis[passive.type] + passive.r_col and not obstructed:
             return True
         else:
             return False

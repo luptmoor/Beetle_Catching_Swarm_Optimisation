@@ -114,16 +114,16 @@ while not es.stop() and False:
 # plt.show()
 
 parameters = [(180 - MU_R_VIS_BUG) * 2 / RANGE_R_VIS_BUG,  # 'r_vis_bug'
-              (80 - MU_R_VIS_DRONE) * 2 / RANGE_R_VIS_DRONE,  # 'r_vis_drone'
-              (60 - MU_R_VIS_TREE) * 2 / RANGE_R_VIS_TREE,  # 'r_vis_tree'
-          200,  # 'k_tree'
+              (180 - MU_R_VIS_DRONE) * 2 / RANGE_R_VIS_DRONE,  # 'r_vis_drone'
+              (50 - MU_R_VIS_TREE) * 2 / RANGE_R_VIS_TREE,  # 'r_vis_tree'
+          300,  # 'k_tree'
           60,  # 'k_neardrone'
-          -0.5,  # 'k_bug'
-          - 10e-4,  # 'k_fardrone'
+          -4,  # 'k_bug'
+          - 50e-4,  # 'k_fardrone'
           - 1e-4,  # 'k_activity'
-          2,  # 'v_min'
+          3,  # 'v_min'
           100  # 'temp_cohesion'
           ]
 
-sim = Simulation(parameters, visualise=True)
+sim = Simulation(parameters, seed=33, visualise=True)
 sim.run()

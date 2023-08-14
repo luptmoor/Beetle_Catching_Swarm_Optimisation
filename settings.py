@@ -16,20 +16,20 @@ TREE_MIN_DIST       =   R_TREE_MAX         # px, 1.00 m
 # Bugs
 N_BUGS              =   int(round(1.3 * AREA * TREE_DENSITY, 0))
 R_BUG               =    1           # px, 2 cm
-R_VIS_BUG           =   50          # px, 1 m
+R_VIS_BUG           =   100          # px, 1 m
 BUG_RANDOMNESS      =  120 / 57.3  # rad / s,  maximum heading change per second
 V_BUG               =   62          # px / s (1.24 m/s) look at paper
 TREE_LAND_PROB      =    0.005
-ESCAPE_PROB         =    0.50
+ESCAPE_PROB         =    0.20
 TAKEOFF_PROB        =    0.001
 REPRO_PROB          =    0.0002
 
 # Static Drone Parameters
-BUGS_PER_DRONE      =  4
+BUGS_PER_DRONE      =  2
 N_DRONES            =  int(round(N_BUGS / BUGS_PER_DRONE, 0))
 R_DRONE             =   7          # px, 14 cm
 DRONE_MIN_DIST      =  40         # px (80 cm),   minimum distance that drones can be placed at start of simulation
-V_DRONE_MAX         =  185         # px / s (694)
+V_DRONE_MAX         =  124         # px / s (694)
 A_DRONE_MAX         =  185         # px / s^2 (70)
 
 ACTIVITY_DECAY      =   0.2        # points / s

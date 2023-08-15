@@ -1,5 +1,7 @@
-from settings import  *
-class PhysicalObject:
+from settings import *
+
+
+class Entity:
     def __init__(self, name, type, x, y, r_col):
         self.name = name
         self.type = type

@@ -76,8 +76,8 @@ class Visuals:
                 pygame.draw.circle(self.screen, GREY, (drone.x, drone.y), drone.r_vis['drone'], 1)  # visual range for drones
                 pygame.draw.circle(self.screen, BROWN, (drone.x, drone.y), drone.r_vis['tree'], 1)  # visual range for trees
                 pygame.draw.circle(self.screen, RED, (drone.x, drone.y), drone.r_vis['bug'], 1)  # visual range for bugs
-                for phobject in drone.visible_phobjects:
-                    pygame.draw.line(self.screen, TYPE_COLOURS[phobject.type], (drone.x, drone.y), (phobject.x, phobject.y), 1)
+                for entity in drone.visible_entities:
+                    pygame.draw.line(self.screen, TYPE_COLOURS[entity.type], (drone.x, drone.y), (entity.x, entity.y), 1)
 
             if view == 2:
                 #pygame.draw.line(self.screen, BLUE, (drone.x, drone.y), (drone.x + drone.ax * 20, drone.y + drone.ay * 20), 1)
@@ -87,9 +87,9 @@ class Visuals:
                 text_surface, text_rect = self.font.render(str(round(drone.activity, 0)), (0, 0, 0))
                 text_rect.center = (drone.x, drone.y)
                 self.screen.blit(text_surface, text_rect)
-            # for phobject in drone.visible_phobjects:
-            #     dx = np.abs(drone.x - phobject.x)
-            #     dy = np.abs(drone.y - phobject.y)
+            # for entity in drone.visible_entities:
+            #     dx = np.abs(drone.x - entity.x)
+            #     dy = np.abs(drone.y - entity.y)
             #
             #     x = drone.ax / a_max * dx
             #     y = drone.ay / a_max * dy

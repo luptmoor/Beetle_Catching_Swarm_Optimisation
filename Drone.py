@@ -1,9 +1,9 @@
 import numpy as np
-from PhysicalObject import PhysicalObject
+from Entity import Entity
 from settings import *
 
 
-class Drone(PhysicalObject):
+class Drone(Entity):
     def __init__(self, name, type, x, y, params, r_col=R_DRONE):
         super().__init__(name, type, x, y, r_col)
 
@@ -29,12 +29,12 @@ class Drone(PhysicalObject):
         self.v_min = min(V_DRONE_MAX, max(0, params[10] * RANGE_V_MIN / 2 + MU_V_MIN))
         self.v_max = min(V_DRONE_MAX, max(self.v_min, params[11] * RANGE_V_MAX / 2 + MU_V_MAX))
 
-        self.carefulness = params[12] * RANGE_CAREFULNESS / 2 + MU_CAREFULNESS
+        self.c = params[12] * RANGE_C / 2 + MU_C
 
 
         # Initialisation
         self.activity = 0
-        self.visible_phobjects = []
+        self.visible_entities = []
         self.codrones = []
         self.speed = self.v_min
         self.ax = 0
@@ -47,21 +47,21 @@ class Drone(PhysicalObject):
         ays = []
 
         self.activity = 0
-        for phobject in self.visible_phobjects:
-            if phobject.type == 'bug':
+        for entity in self.visible_entities:
+            if entity.type == 'bug':
                 self.activity += 1
 
             # Distance
-            dx = np.abs(self.x - phobject.x)
-            dy = np.abs(self.y - phobject.y)
+            dx = np.abs(self.x - entity.x)
+            dy = np.abs(self.y - entity.y)
             dx = min(dx, WIDTH - dx)
             dy = min(dy, HEIGHT - dy)
-            d = np.sqrt(dx ** 2 + dy ** 2) - phobject.r_col
+            d = np.sqrt(dx ** 2 + dy ** 2) - entity.r_col
 
 
             #Heading
-            dx = phobject.x - self.x
-            dy = phobject.y - self.y
+            dx = entity.x - self.x
+            dy = entity.y - self.y
 
             if abs(dx) > WIDTH / 2:
                 dx = WIDTH - dx
@@ -70,9 +70,9 @@ class Drone(PhysicalObject):
             theta = np.arctan2(-dy, -dx)
 
 
-            # Local attraction/repulsion from other phobjects
-            ays.append((max(self.r_vis[phobject.type] - d, 0)) * self.gains[phobject.type] * np.sin(theta))
-            axs.append((max(self.r_vis[phobject.type] - d, 0)) * self.gains[phobject.type] * np.cos(theta))
+            # Local attraction/repulsion from other entities
+            ays.append((max(self.r_vis[entity.type] - d, 0)) * self.gains[entity.type] * np.sin(theta))
+            axs.append((max(self.r_vis[entity.type] - d, 0)) * self.gains[entity.type] * np.cos(theta))
 
         for codrone in self.codrones:
             dx = np.abs(self.x - codrone.x)
@@ -106,7 +106,7 @@ class Drone(PhysicalObject):
         self.speed = max(min(np.sqrt(vy**2 + vx**2), self.v_max), self.v_min)
 
         if a <= 0.05 * A_DRONE_MAX:
-            self.speed = max((1 - self.carefulness) * self.speed, self.speed - A_DRONE_MAX * DT)
+            self.speed = max((1 - self.c) * self.speed, self.speed - A_DRONE_MAX * DT)
 
 
         # Integration

@@ -1,5 +1,5 @@
 import numpy as np
-from PhysicalObject import PhysicalObject
+from Entity import Entity
 from Bug import Bug
 from Drone import Drone
 from Visuals import Visuals
@@ -27,7 +27,7 @@ class Simulation:
         self.t = 0
 
         # Lists
-        self.phobjects = []
+        self.entities = []
         self.trees = []
         self.drones = []
         self.bugs = []
@@ -103,9 +103,9 @@ class Simulation:
                 x = np.random.random() * (WIDTH - 2 * TREE_MIN_DIST) + TREE_MIN_DIST // 1
                 y = np.random.random() * (HEIGHT - 2 * TREE_MIN_DIST) + TREE_MIN_DIST // 1
 
-                newtree = PhysicalObject('Tree ' + str(i), 'tree', x, y, round(np.random.normal(R_TREE_AVG, R_TREE_STD), 0))
-                if not any([self.check_collision(newtree, phobject, TREE_MIN_DIST) for phobject in self.phobjects]):
-                    self.phobjects.append(newtree)
+                newtree = Entity('Tree ' + str(i), 'tree', x, y, round(np.random.normal(R_TREE_AVG, R_TREE_STD), 0))
+                if not any([self.check_collision(newtree, entity, TREE_MIN_DIST) for entity in self.entities]):
+                    self.entities.append(newtree)
                     self.trees.append(newtree)
                     # print(newtree.name, 'placed!')
                     placing = False
@@ -119,8 +119,8 @@ class Simulation:
                 y = (np.random.random() * HEIGHT) // 1
 
                 newbug = Bug('Bug ' + str(j), x, y)
-                if not any([self.check_collision(newbug, phobject) for phobject in self.phobjects]):
-                    self.phobjects.append(newbug)
+                if not any([self.check_collision(newbug, entity) for entity in self.entities]):
+                    self.entities.append(newbug)
                     self.bugs.append(newbug)
                     # print(newbug.name, 'placed!')
                     placing = False
@@ -134,8 +134,8 @@ class Simulation:
                 y = (np.random.random() * HEIGHT * LAUNCHPAD_FRAC) // 1
 
                 newdrone = Drone('Drone ' + str(k), 'drone', x, y, self.params)
-                if not any([self.check_collision(newdrone, phobject, DRONE_MIN_DIST) for phobject in self.phobjects]):
-                    self.phobjects.append(newdrone)
+                if not any([self.check_collision(newdrone, entity, DRONE_MIN_DIST) for entity in self.entities]):
+                    self.entities.append(newdrone)
                     self.drones.append(newdrone)
                     # print(newdrone.name, 'placed!')
                     placing = False
@@ -158,7 +158,7 @@ class Simulation:
                 print('Seed:', self.seed, 'Time:', round(self.t, 0), 's')
 
             # Guarantee this always holds (good candidate for removal if too slow)
-            self.phobjects = self.trees + self.bugs + self.drones
+            self.entities = self.trees + self.bugs + self.drones
 
             # Bug simulation
             for bug in self.bugs:
@@ -182,31 +182,31 @@ class Simulation:
 
             # Drone simulation
             for drone in self.drones:
-                for phobject in self.phobjects:
+                for entity in self.entities:
                     # Check collisions
-                    if self.check_collision(drone, phobject):
-                        # print('Collision between ', drone.name, 'and', phobject.name)
-                        if phobject in self.drones:
+                    if self.check_collision(drone, entity):
+                        # print('Collision between ', drone.name, 'and', entity.name)
+                        if entity in self.drones:
                             self.drones.remove(drone)
-                            self.drones.remove(phobject)
-                            self.phobjects.remove(drone)
-                            self.phobjects.remove(phobject)
-                        elif phobject in self.bugs:
-                            self.bugs.remove(phobject)
-                            self.phobjects.remove(phobject)
-                        elif phobject in self.trees:
+                            self.drones.remove(entity)
+                            self.entities.remove(drone)
+                            self.entities.remove(entity)
+                        elif entity in self.bugs:
+                            self.bugs.remove(entity)
+                            self.entities.remove(entity)
+                        elif entity in self.trees:
                             self.drones.remove(drone)
-                            self.phobjects.remove(drone)
+                            self.entities.remove(drone)
 
-                    # Maintain list of visible phobjects
-                    if self.check_drone_vision(drone, phobject) and phobject not in drone.visible_phobjects:
-                        drone.visible_phobjects.append(phobject)
-                    if not self.check_drone_vision(drone, phobject) and phobject in drone.visible_phobjects:
-                        drone.visible_phobjects.remove(phobject)
+                    # Maintain list of visible entities
+                    if self.check_drone_vision(drone, entity) and entity not in drone.visible_entities:
+                        drone.visible_entities.append(entity)
+                    if not self.check_drone_vision(drone, entity) and entity in drone.visible_entities:
+                        drone.visible_entities.remove(entity)
 
-                    for phobject in drone.visible_phobjects:
-                        if phobject not in self.phobjects:
-                            drone.visible_phobjects.remove(phobject)
+                    for entity in drone.visible_entities:
+                        if entity not in self.entities:
+                            drone.visible_entities.remove(entity)
 
 
                 drone.codrones = [otherdrone for otherdrone in self.drones if not otherdrone == drone]

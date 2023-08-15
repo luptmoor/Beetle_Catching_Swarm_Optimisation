@@ -148,15 +148,18 @@ class Simulation:
 
             # Drone simulation
             for drone in self.drones:
+
                 # Check collisions
                 for entity in self.entities:
                     if check_collision(drone, entity):
                         # print('Collision between ', drone.name, 'and', entity.name)
                         if entity in self.drones:
-                            self.entities.remove(drone)
+                            if drone in self.entities:
+                                self.entities.remove(drone)
+                            if drone in self.drones:
+                                self.drones.remove(drone)  # XXX
                             self.entities.remove(entity)
-                            self.drones.remove(entity)  # must be true
-                            self.drones.remove(drone)  # must be true XXX
+                            self.drones.remove(entity)
 
                         elif entity in self.bugs:
                             self.bugs.remove(entity)

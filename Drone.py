@@ -8,13 +8,13 @@ class Drone(Entity):
         super().__init__(name, type, x, y, r_col)
 
         # Tunable Parameters, negative ks mean attraction, positive means repulsion
-        self.r_vis_tree = int(round(params[0] * RANGE_R_VIS_TREE / 2 + MU_R_VIS_TREE))
+        self.r_vis_tree = params[0] * RANGE_R_VIS_TREE / 2 + MU_R_VIS_TREE
         self.k_tree = params[1] * RANGE_K_TREE / 2 + MU_K_TREE
 
-        self.r_vis_bug = int(round(params[2] * RANGE_R_VIS_BUG / 2 + MU_R_VIS_BUG, 0))
+        self.r_vis_bug = params[2] * RANGE_R_VIS_BUG / 2 + MU_R_VIS_BUG
         self.k_bug = params[3] * RANGE_K_BUG / 2 + MU_K_BUG
 
-        self.r_vis_neardrone = int(round(params[4] * RANGE_R_VIS_NEARDRONE / 2 + MU_R_VIS_NEARDRONE))
+        self.r_vis_neardrone = params[4] * RANGE_R_VIS_NEARDRONE / 2 + MU_R_VIS_NEARDRONE
         self.k_neardrone = params[5] * RANGE_K_NEARDRONE / 2 + MU_K_NEARDRONE
 
         self.r_vis = {'tree': self.r_vis_tree, 'drone': self.r_vis_neardrone, 'bug': self.r_vis_bug}
@@ -26,10 +26,10 @@ class Drone(Entity):
         self.r_activity = params[8] * RANGE_R_ACTIVITY / 2 + MU_R_ACTIVITY
         self.k_activity = params[9]  * RANGE_K_ACTIVITY / 2 + MU_K_ACTIVITY
 
-        self.v_min = min(V_DRONE_MAX, max(0, params[10] * RANGE_V_MIN / 2 + MU_V_MIN))
-        self.v_max = min(V_DRONE_MAX, max(self.v_min, params[11] * RANGE_V_MAX / 2 + MU_V_MAX))
+        self.v_min = min(V_DRONE_MAX, max(0, params[10] * RANGE_V_MIN / 2 + MU_V_MIN))  # clip between 0 and V_DRONE_MAX
+        self.v_max = min(V_DRONE_MAX, max(self.v_min, params[11] * RANGE_V_MAX / 2 + MU_V_MAX))  # clip between v_min and V_DRONE_MAX
 
-        self.c = params[12] * RANGE_C / 2 + MU_C
+        self.c = min(1, max(params[12] * RANGE_C / 2 + MU_C, 0))  # clip between 0 and 1
 
 
         # Initialisation
@@ -60,7 +60,7 @@ class Drone(Entity):
             if d_obs < d:
                 obstructed = True
 
-        if d <= self.r_vis[entity.type] + entity.r_col and not obstructed:
+        if d <= (self.r_vis[entity.type] + entity.r_col) and not obstructed:
             return True
         else:
             return False

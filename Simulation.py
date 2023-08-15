@@ -60,9 +60,10 @@ class Simulation:
     """
     Class holding all the functions and parameters for a single simulation instance.
     """
+
     def __init__(self, params, seed=42):
         self.score = 0  # Initialisation of fitness score for this particular simulation
-        self.t = 0      # Initialisation of time [s]
+        self.t = 0  # Initialisation of time [s]
 
         # Lists holding simulated entities
         self.entities = []
@@ -74,7 +75,7 @@ class Simulation:
         self.seed = seed  # seed for random number generator
 
         if VISUALISE:
-            self.visuals = Visuals(WIDTH, HEIGHT, DT)
+            self.visuals = Visuals(WIDTH, HEIGHT)
 
     def load_environment(self):
         """
@@ -95,7 +96,6 @@ class Simulation:
                     # print(newtree.name, 'placed!')
                     placing = False
 
-
         # Initial random placement of bugs on map
         for j in range(N_BUGS):
             placing = True
@@ -109,7 +109,6 @@ class Simulation:
                     self.bugs.append(newbug)
                     # print(newbug.name, 'placed!')
                     placing = False
-
 
         # Initial random placement of drones on launchpad (fraction of total map)
         for k in range(N_DRONES):
@@ -125,7 +124,6 @@ class Simulation:
                     # print(newdrone.name, 'placed!')
                     placing = False
 
-
     def evaluate(self):
         """
         called when simulation is over to evaluate the fitness of a solution using three transfer functions: one for each criterion.
@@ -133,7 +131,6 @@ class Simulation:
         """
         score = F_drones(len(self.drones) / N_DRONES) * F_bugs(1 - len(self.bugs) / N_BUGS) * F_time(self.t / T_MAX)
         return score
-
 
     def run(self):
         """
@@ -149,7 +146,6 @@ class Simulation:
             if int(round(self.t, 0)) % 10 == 0 and abs(int(round(self.t, 0)) - self.t) < 0.001:
                 print('Seed:', self.seed, 'Time:', round(self.t, 0), 's')
 
-
             # Drone simulation
             for drone in self.drones:
                 # Check collisions
@@ -157,10 +153,11 @@ class Simulation:
                     if check_collision(drone, entity):
                         # print('Collision between ', drone.name, 'and', entity.name)
                         if entity in self.drones:
-                            self.drones.remove(drone)  # must be true
-                            self.drones.remove(entity) # must be true
                             self.entities.remove(drone)
                             self.entities.remove(entity)
+                            self.drones.remove(entity)  # must be true
+                            self.drones.remove(drone)  # must be true XXX
+
                         elif entity in self.bugs:
                             self.bugs.remove(entity)
                             self.entities.remove(entity)
@@ -202,7 +199,6 @@ class Simulation:
                         bug.processVisual(tree)
                 # Second half step
                 bug.advance(DT / 2)
-
 
             # Update screen if requested
             if VISUALISE:

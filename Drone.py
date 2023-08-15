@@ -42,21 +42,32 @@ class Drone(Entity):
         self.heading = np.random.random() * 2 * np.pi
 
     def sees(self, entity):
+        """
+        determines if entity is in drone's radius of vision corresponding to the type of entity.
+        :param entity: Entity that is to be checked for vision.
+        :return: (Boolean) True if visible, False if not.
+        """
         if entity is None:
             return False
 
         if entity == self:
             return False
 
+        # Determine distance according to periodical domain
         dx = np.abs(self.x - entity.x)
         dy = np.abs(self.y - entity.y)
+        # limit distance in both axes to half the WIDTH or HEIGHT
         dx = min(dx, WIDTH - dx)
         dy = min(dy, HEIGHT - dy)
 
-        d = np.sqrt(dx ** 2 + dy ** 2)
+        d = np.sqrt(dx ** 2 + dy ** 2)  # Pythagoras
+
+
         obstructed = False
+        # If a bug, check if it's behind a tree
         if entity.type == 'bug' and entity.tree is not None:
             d_obs = np.sqrt((self.x - entity.tree.x) ** 2 + (self.y - entity.tree.y) ** 2)
+            # If tree is closer than bug, bug is probably not visible
             if d_obs < d:
                 obstructed = True
 
@@ -66,15 +77,22 @@ class Drone(Entity):
             return False
 
     def advance(self):
+        """
+        Function executing drone dynamics.
+        :return: None
+        """
+
+        # List of cartesian acceleration components
         axs = []
         ays = []
 
+        # Determine number of seen bugs by drone
         self.activity = 0
         for entity in self.visible_entities:
             if entity.type == 'bug':
                 self.activity += 1
 
-            # Distance
+            # Distance calculation according to periodical domain
             dx = np.abs(self.x - entity.x)
             dy = np.abs(self.y - entity.y)
             dx = min(dx, WIDTH - dx)
@@ -82,7 +100,7 @@ class Drone(Entity):
             d = np.sqrt(dx ** 2 + dy ** 2) - entity.r_col
 
 
-            #Heading
+            # Heading calculation according to periodical domain
             dx = entity.x - self.x
             dy = entity.y - self.y
 
@@ -97,6 +115,7 @@ class Drone(Entity):
             ays.append((max(self.r_vis[entity.type] - d, 0)) * self.gains[entity.type] * np.sin(theta))
             axs.append((max(self.r_vis[entity.type] - d, 0)) * self.gains[entity.type] * np.cos(theta))
 
+        # Mid-range inter-drone communication
         for codrone in self.codrones:
             dx = np.abs(self.x - codrone.x)
             dy = np.abs(self.y - codrone.y)
@@ -105,14 +124,15 @@ class Drone(Entity):
             d = np.sqrt(dx ** 2 + dy ** 2)
             theta = np.arctan2(self.y - codrone.y, self.x - codrone.x)
 
-            # Attraction towards activity
-            ays.append(d * self.k_activity * codrone.activity * np.sin(theta))
-            axs.append(d * self.k_activity * codrone.activity * np.cos(theta))
+            # Attraction towards activity if within radius
+            ays.append(max(0, self.r_activity - d) * self.k_activity * codrone.activity * np.sin(theta))
+            axs.append(max(0, self.r_activity - d)  * self.k_activity * codrone.activity * np.cos(theta))
 
             # Attraction towards other drones within a radius that determines the subflock size
             ays.append(max(0, self.r_fardrone - d) * self.k_fardrone * np.sin(theta))
             axs.append(max(0, self.r_fardrone - d) * self.k_fardrone * np.cos(theta))
 
+        # Check if sum of accelerations does not exceed maximum acceleration
         ax = sum(axs)
         ay = sum(ays)
         a = min(np.sqrt(ay ** 2 + ax ** 2), A_DRONE_MAX)
@@ -122,23 +142,19 @@ class Drone(Entity):
         self.ax = a * np.cos(angle)
         self.ay = a * np.sin(angle)
 
+        # Integration of acceleration cartesian components
         vx = self.speed * np.cos(self.heading) + self.ax * DT
         vy = self.speed * np.sin(self.heading) + self.ay * DT
 
+        # Check if speed lies within correct range
         self.heading = np.arctan2(vy, vx) % (2 * np.pi)
         self.speed = max(min(np.sqrt(vy**2 + vx**2), self.v_max), self.v_min)
 
+        # Brake if nothing big happens (check if this exceeds maximum acceleration)
         if a <= 0.05 * A_DRONE_MAX:
             self.speed = max((1 - self.c) * self.speed, self.speed - A_DRONE_MAX * DT)
-
 
         # Integration
         self.x = int(round(self.x + self.speed * np.cos(self.heading) * DT, 0)) % WIDTH
         self.y = int(round(self.y + self.speed * np.sin(self.heading) * DT, 0)) % HEIGHT
-
-
-        #print(self.name, '@', self.x, self.y, '(heading: ', round(self.heading * 57.3, 1))
-
-
-
 

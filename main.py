@@ -63,7 +63,7 @@ def log(g, mean, sigma, solutions, fitness_values):
 
     df = df.sort_values(by='Average Fitness', ascending=False)
     df.index = [i for i in range(len(solutions)-1)] + ['Underlying Mean']
-    df.to_csv('logs/Gen' + str(g) + '.csv')
+    df.to_csv('logs/Gen' + str(g) + '_' + str(np.round(np.mean(df['Average Fitness']), 7)) + '.csv')
 
 
 def fitness(params):

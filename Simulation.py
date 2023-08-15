@@ -130,7 +130,7 @@ class Simulation:
         :return: (float) score for this particular simulation, lies in interval [0, 1].
         """
         score = F_drones(len(self.drones) / N_DRONES) * F_bugs(1 - len(self.bugs) / N_BUGS) * F_time(self.t / T_MAX)
-        return score
+        return [score, (len(self.drones) / N_DRONES), (1 - len(self.bugs) / N_BUGS), (self.t / T_MAX)]
 
     def run(self):
         """

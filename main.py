@@ -20,6 +20,7 @@ def log(g, mean, sigma, solutions, fitness_values):
     """
     solutions.append(mean)
 
+
     df = pd.DataFrame(solutions, index=[i for i in range(len(solutions)-1)] + ['Underlying Mean'],
                       columns=['r_vis_tree',
                                'k_tree',
@@ -35,11 +36,29 @@ def log(g, mean, sigma, solutions, fitness_values):
                                'v_max',
                                'c'])
 
-    df['Fitness 1'] = pd.Series([value[0] for value in fitness_values])
-    df['Fitness 2'] = pd.Series([value[1] for value in fitness_values])
-    df['Fitness 3'] = pd.Series([value[2] for value in fitness_values])
-    df['Average Fitness'] = pd.Series([np.mean(value) for value in fitness_values])
     df['Sigma'] = pd.Series(13 * [sigma])
+
+    #  fitness_values: (n_pop x RUNS_PER_SOLUTION x 4)
+    df['Fitness 1'] = pd.Series([value[0][0] for value in fitness_values])
+    df['Rem. Drones 1'] = pd.Series([value[0][1] for value in fitness_values])
+    df['Killed Bugs 1'] = pd.Series([value[0][2] for value in fitness_values])
+    df['Passed Time 1'] = pd.Series([value[0][3] for value in fitness_values])
+
+    df['Fitness 2'] = pd.Series([value[1][0] for value in fitness_values])
+    df['Rem. Drones 2'] = pd.Series([value[1][1] for value in fitness_values])
+    df['Killed Bugs 2'] = pd.Series([value[1][2] for value in fitness_values])
+    df['Passed Time 2'] = pd.Series([value[1][3] for value in fitness_values])
+
+    df['Fitness 3'] = pd.Series([value[2][0] for value in fitness_values])
+    df['Rem. Drones 3'] = pd.Series([value[2][1] for value in fitness_values])
+    df['Killed Bugs 3'] = pd.Series([value[2][2] for value in fitness_values])
+    df['Passed Time 3'] = pd.Series([value[2][3] for value in fitness_values])
+
+    df['Average Fitness'] = df[['Fitness 1', 'Fitness 2', 'Fitness 3']].mean(axis=1)
+    df['Average Rem. Drones'] = df[['Rem. Drones 1', 'Rem. Drones 2', 'Rem. Drones 3']].mean(axis=1)
+    df['Average Killed Bugs'] = df[['Killed Bugs 1', 'Killed Bugs 2', 'Killed Bugs 3']].mean(axis=1)
+    df['Average Passed Time'] = df[['Passed Time 1', 'Passed Time 2', 'Passed Time 3']].mean(axis=1)
+
 
     # Coordinate shift
     df['r_vis_tree'] = round(df['r_vis_tree'] * RANGE_R_VIS_TREE / 2 + MU_R_VIS_TREE)
@@ -63,7 +82,7 @@ def log(g, mean, sigma, solutions, fitness_values):
 
     df = df.sort_values(by='Average Fitness', ascending=False)
     df.index = [i for i in range(len(solutions)-1)] + ['Underlying Mean']
-    df.to_csv('logs/Gen' + str(g) + '_' + str(np.round(np.mean(df['Average Fitness']), 7)) + '.csv')
+    df.to_csv('logs/Gen' + str(g) + '_' + str(np.round(np.mean(df['Average Fitness']), 6)) + '.csv')
 
 
 def fitness(params):
@@ -88,8 +107,8 @@ def fitness(params):
         # print('temp_cohesion:', min(100, max(0, params[9] * RANGE_TEMP_COHESION / 2 + MU_TEMP_COHESION)))
         # print()
 
-        scores.append(sim.run())
-    return scores
+        scores.append(sim.run())  # list 1 x 4 (score + 3 criteria)
+    return scores  # list RUNS_PER_SOLUTION x 4
 
 
 options = {
@@ -104,7 +123,7 @@ g = 1
 while not es.stop():
     print('GENERATION:', g)
     solutions = es.ask()  # list of lists with parameters (n_pop x n_param)
-    fitness_values = [fitness(x) for x in solutions]  # list of fitnesses (n_pop x RUNS_PER_SOLUTION)
+    fitness_values = [fitness(x) for x in solutions]  # list of fitnesses (n_pop x RUNS_PER_SOLUTION x 4)
     log(g, es.mean, es.sigma, solutions.copy(), fitness_values)
     average_fitnesses = [np.mean(fitness_value) for fitness_value in fitness_values]  # list of avg fitnesses (n_pop x 1)
 

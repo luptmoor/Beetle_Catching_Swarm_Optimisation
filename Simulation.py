@@ -100,8 +100,8 @@ class Simulation:
         for i in range(N_TREES):
             placing = True
             while placing:
-                x = np.random.random() * (WIDTH - 2 * (R_TREE_MAX + TREE_MIN_DIST)) + (R_TREE_MAX + TREE_MIN_DIST) // 1
-                y = np.random.random() * (HEIGHT - 2 * (R_TREE_MAX + TREE_MIN_DIST)) + (R_TREE_MAX + TREE_MIN_DIST) // 1
+                x = np.random.random() * (WIDTH - 2 * TREE_MIN_DIST) + TREE_MIN_DIST // 1
+                y = np.random.random() * (HEIGHT - 2 * TREE_MIN_DIST) + TREE_MIN_DIST // 1
 
                 newtree = PhysicalObject('Tree ' + str(i), 'tree', x, y, round(np.random.normal(R_TREE_AVG, R_TREE_STD), 0))
                 if not any([self.check_collision(newtree, phobject, TREE_MIN_DIST) for phobject in self.phobjects]):

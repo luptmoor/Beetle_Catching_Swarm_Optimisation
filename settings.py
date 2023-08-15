@@ -2,7 +2,7 @@
 WIDTH               = 1400        # px,  28 m
 HEIGHT              =  750        # px,  15 m
 AREA                = WIDTH * 0.02 * HEIGHT * 0.02      # m2
-LAUNCHPAD_FRAC      =    0.4
+LAUNCHPAD_FRAC      =    0.3
 
 # Trees
 TREE_DENSITY        =    0.08
@@ -29,8 +29,8 @@ BUGS_PER_DRONE      =  3
 N_DRONES            =  int(round(N_BUGS / BUGS_PER_DRONE, 0))
 R_DRONE             =   7          # px, 14 cm
 DRONE_MIN_DIST      =  40         # px (80 cm),   minimum distance that drones can be placed at start of simulation
-V_DRONE_MAX         =  124         # px / s (694)
-A_DRONE_MAX         =  185         # px / s^2 (70)
+V_DRONE_MAX         =  250        # px / s (694) 5 m / s
+A_DRONE_MAX         =  165         # px / s^2 (70)
 
 ACTIVITY_DECAY      =   0.2        # points / s
 ACTIVITY_AWARD      =  10         # points / bug

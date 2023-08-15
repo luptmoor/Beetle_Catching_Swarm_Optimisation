@@ -33,9 +33,11 @@ A_DRONE_MAX          =  165                                        # px / s^2, 3
 
 # Simulation parameters
 DT                   =    0.1                                       # s, timestep per tick
-T_MAX                =    1 * 60                                    # s, 10min, maximum simulation duration
+T_MAX                =    3                                    # s, 10min, maximum simulation duration
 VISUALISE            =  True                                        # Boolean deciding if simulation shall be visualised
 REALTIME             =  False                                       # Boolean deciding if visuals shall be real-time
+VIEW                 =    0                                         # Variable for different views in visualisation
+
 
 # RGB colours for visualisation
 GREEN                = (0, 130, 20)

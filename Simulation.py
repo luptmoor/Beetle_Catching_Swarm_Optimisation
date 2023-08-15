@@ -7,92 +7,97 @@ from settings import *
 
 
 def F_time(x):
+    """
+    Mathematical transfer function for time criterion.
+    :param x: (float) function argument.
+    :return: (float) partial fitness.
+    """
     return 1 - 0.3 * x ** 2
 
 
 def F_bugs(x):
+    """
+    Mathematical transfer function for "bugs killed" criterion.
+    :param x: (float) function argument.
+    :return: (float) partial fitness.
+    """
     a = 0.3
     # return a ** 2 / ((1 - x) ** 2 + a ** 2)
     return x ** 2
 
 
 def F_drones(x):
+    """
+    Mathematical transfer function for "drones died" criterion.
+    :param x: (float) function argument.
+    :return: (float) partial fitness.
+    """
     a = 0.08
     return a ** 2 / (x ** 2 + a ** 2)
 
 
+def check_collision(obj1, obj2, margin=0):
+    if obj1 is None or obj2 is None:
+        return False
+
+    if obj1.name == obj2.name:
+        return False
+
+    if np.sqrt((obj1.x - obj2.x) ** 2 + (obj1.y - obj2.y) ** 2) <= obj1.r_col + obj2.r_col + margin:
+        return True
+    else:
+        return False
+
+
+
+
+
+def check_drone_vision(active, passive):
+    if active is None or passive is None:
+        return False
+
+    if active.name == passive.name:
+        return False
+
+    dx = np.abs(active.x - passive.x)
+    dy = np.abs(active.y - passive.y)
+    dx = min(dx, WIDTH - dx)
+    dy = min(dy, HEIGHT - dy)
+
+    d = np.sqrt(dx**2 + dy**2)
+    obstructed = False
+    if passive.type == 'bug' and passive.tree is not None:
+        d_obs = np.sqrt((active.x - passive.tree.x) ** 2 + (active.y - passive.tree.y) ** 2)
+        if d_obs < d:
+            obstructed = True
+
+
+    if d <= active.r_vis[passive.type] + passive.r_col and not obstructed:
+        return True
+    else:
+        return False
+
+
 class Simulation:
+    """
+    Class holding all the functions and parameters for a single simulation instance.
+    """
     def __init__(self, params, seed=42, visualise=False):
         self.score = 0
         self.t = 0
 
-        # Lists
+        # Lists holding simulated entities
         self.entities = []
         self.trees = []
         self.drones = []
         self.bugs = []
 
-        self.params = params
-        self.seed = seed
-        self.visualise = visualise
+        self.params = params  # tunable parameters chosen for this particular simulation to be evaluated
+        self.seed = seed  # seed for random number generator
+        self.visualise = visualise  # boolean determining if visualisation should be shown
+
         if visualise:
             self.visuals = Visuals(WIDTH, HEIGHT, DT)
-
-    def check_collision(self, obj1, obj2, margin=0):
-        if obj1 is None or obj2 is None:
-            return False
-
-        if obj1.name == obj2.name:
-            return False
-
-        if np.sqrt((obj1.x - obj2.x) ** 2 + (obj1.y - obj2.y) ** 2) <= obj1.r_col + obj2.r_col + margin:
-            return True
-        else:
-            return False
-
-    def check_bug_vision(self, active, passive):
-        if active is None or passive is None:
-            return False
-
-        if active.name == passive.name:
-            return False
-
-        dx = np.abs(active.x - passive.x)
-        dy = np.abs(active.y - passive.y)
-        dx = min(dx, WIDTH - dx)
-        dy = min(dy, HEIGHT - dy)
-
-        d = np.sqrt(dx ** 2 + dy ** 2)
-
-        if d <= active.r_vis + passive.r_col:
-            return True
-        else:
-            return False
-
-    def check_drone_vision(self, active, passive):
-        if active is None or passive is None:
-            return False
-
-        if active.name == passive.name:
-            return False
-
-        dx = np.abs(active.x - passive.x)
-        dy = np.abs(active.y - passive.y)
-        dx = min(dx, WIDTH - dx)
-        dy = min(dy, HEIGHT - dy)
-        
-        d = np.sqrt(dx**2 + dy**2)
-        obstructed = False
-        if passive.type == 'bug' and passive.tree is not None:
-            d_obs = np.sqrt((active.x - passive.tree.x) ** 2 + (active.y - passive.tree.y) ** 2)
-            if d_obs < d:
-                obstructed = True
-
-
-        if d <= active.r_vis[passive.type] + passive.r_col and not obstructed:
-            return True
-        else:
-            return False
 
     def load_environment(self):
 
@@ -104,7 +109,7 @@ class Simulation:
                 y = np.random.random() * (HEIGHT - 2 * TREE_MIN_DIST) + TREE_MIN_DIST // 1
 
                 newtree = Entity('Tree ' + str(i), 'tree', x, y, round(np.random.normal(R_TREE_AVG, R_TREE_STD), 0))
-                if not any([self.check_collision(newtree, entity, TREE_MIN_DIST) for entity in self.entities]):
+                if not any([check_collision(newtree, entity, TREE_MIN_DIST) for entity in self.entities]):
                     self.entities.append(newtree)
                     self.trees.append(newtree)
                     # print(newtree.name, 'placed!')
@@ -119,7 +124,7 @@ class Simulation:
                 y = (np.random.random() * HEIGHT) // 1
 
                 newbug = Bug('Bug ' + str(j), x, y)
-                if not any([self.check_collision(newbug, entity) for entity in self.entities]):
+                if not any([check_collision(newbug, entity) for entity in self.entities]):
                     self.entities.append(newbug)
                     self.bugs.append(newbug)
                     # print(newbug.name, 'placed!')
@@ -134,7 +139,7 @@ class Simulation:
                 y = (np.random.random() * HEIGHT * LAUNCHPAD_FRAC) // 1
 
                 newdrone = Drone('Drone ' + str(k), 'drone', x, y, self.params)
-                if not any([self.check_collision(newdrone, entity, DRONE_MIN_DIST) for entity in self.entities]):
+                if not any([check_collision(newdrone, entity, DRONE_MIN_DIST) for entity in self.entities]):
                     self.entities.append(newdrone)
                     self.drones.append(newdrone)
                     # print(newdrone.name, 'placed!')
@@ -146,7 +151,7 @@ class Simulation:
         score = F_drones(len(self.drones) / N_DRONES) * F_bugs(1 - len(self.bugs) / N_BUGS) * F_time(self.t / T_MAX)
         return score
 
-    # if __name__ == 'main' and True:
+
     def run(self):
         np.random.seed(self.seed)
         self.load_environment()
@@ -165,16 +170,16 @@ class Simulation:
                 for drone in self.drones:
                     # if not any([check_vision(bug, drone) for drone in drones]):
                     #     bug.processVisual('none')
-                    if self.check_bug_vision(bug, drone):
+                    if bug.check_vision(drone):
                         bug.processVisual(drone)
 
                 bug.advance(DT / 2)
 
                 for tree in self.trees:
-                    if self.check_collision(bug, tree):
+                    if check_collision(bug, tree):
                         bug.mode = 'tree'
                         bug.tree = tree
-                    if self.check_bug_vision(bug, tree):
+                    if bug.check_vision(tree):
                         bug.processVisual(tree)
 
                 bug.advance(DT / 2)
@@ -184,7 +189,7 @@ class Simulation:
             for drone in self.drones:
                 for entity in self.entities:
                     # Check collisions
-                    if self.check_collision(drone, entity):
+                    if check_collision(drone, entity):
                         # print('Collision between ', drone.name, 'and', entity.name)
                         if entity in self.drones:
                             self.drones.remove(drone)
@@ -199,9 +204,9 @@ class Simulation:
                             self.entities.remove(drone)
 
                     # Maintain list of visible entities
-                    if self.check_drone_vision(drone, entity) and entity not in drone.visible_entities:
+                    if check_drone_vision(drone, entity) and entity not in drone.visible_entities:
                         drone.visible_entities.append(entity)
-                    if not self.check_drone_vision(drone, entity) and entity in drone.visible_entities:
+                    if not check_drone_vision(drone, entity) and entity in drone.visible_entities:
                         drone.visible_entities.remove(entity)
 
                     for entity in drone.visible_entities:

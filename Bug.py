@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-from PhysicalObject import *
+from Entity import *
 from settings import *
 import numpy as np
 
@@ -8,7 +8,7 @@ import numpy as np
 
 
 
-class Bug(PhysicalObject):
+class Bug(Entity):
     def __init__(self, name, x, y, speed=V_BUG, r_vis=R_VIS_BUG, mode='idle'):
         """
         Simulated Bug
@@ -30,11 +30,24 @@ class Bug(PhysicalObject):
 
         #print(self.name, 'in', self.mode, 'mode created')
 
-    def setSpeed(self, speed):
-        self.speed = speed
+    def check_vision(self, entity):
+        if entity is None:
+            return False
 
-    def setHeading(self, heading):
-        self.heading = heading
+        if entity == self:
+            return False
+
+        dx = np.abs(self.x - entity.x)
+        dy = np.abs(self.y - entity.y)
+        dx = min(dx, WIDTH - dx)
+        dy = min(dy, HEIGHT - dy)
+
+        d = np.sqrt(dx ** 2 + dy ** 2)
+
+        if d <= self.r_vis + entity.r_col:
+            return True
+        else:
+            return False
 
     def advance(self, dt):
         """

@@ -52,8 +52,8 @@ class Bug(Entity):
     def advance(self, dt):
         """
         performs the integration of the bug's behaviour according to its current mode
-        :param dt:
-        :return: void
+        :param dt: timestep size, is variable because bugs perform half the step size twice
+        :return: None
         """
         # Bug idles and changes direction randomly
         if self.mode == 'idle':
@@ -69,7 +69,7 @@ class Bug(Entity):
             self.heading = np.arctan2(self.y - self.tree.y, self.x - self.tree.x)  # bug faces away from tree
 
             # Bug randomly takes off from tree
-            if np.random.random() < TAKEOFF_PROB:
+            if np.random.random() < TAKEOFF_PROB * dt:
                 self.speed = V_BUG
                 self.tree = None
                 self.mode = 'idle'
@@ -82,19 +82,16 @@ class Bug(Entity):
         # Heading periodicity
         self.heading = self.heading % (2 * np.pi)
 
-        # Motion
+        # Motion integration
         self.x = int(round(self.x + self.speed * np.cos(self.heading) * dt, 0)) % WIDTH
         self.y = int(round(self.y + self.speed * np.sin(self.heading) * dt, 0)) % HEIGHT
 
-        #print(self.name, '@', self.x, self.y, '(heading: ', round(self.heading * 57.3, 1), ') in mode:', self.mode)
-
     def processVisual(self, cue):
-
-        # Bug sees a new tree only while idling
+        # Bug sees a new tree only while idling and goes to land mode
         if self.mode == 'idle' and cue.type == 'tree' and np.random.random() < TREE_LAND_PROB * DT:
             self.mode = 'land'
 
-        # Bug sees a tree already identified (v)
+        # Bug sees a tree already identified
         elif self.mode == 'land' and cue.type == 'tree':
             dx = cue.x - self.x
             dy = cue.y - self.y
@@ -106,11 +103,7 @@ class Bug(Entity):
             self.heading = np.arctan2(dy, dx)  # attracting heading
 
 
-        elif cue is None:
-            self.mode = 'idle'
-
-
-        # Bug sees a new drone while idling or landing (v)
+        # Bug sees a new drone while idling or landing (
         elif (self.mode == 'idle' or self.mode == 'land') and cue.type == 'drone' and np.random.random() < ESCAPE_PROB * DT:
             self.mode = 'escape'
 
@@ -139,37 +132,3 @@ class Bug(Entity):
                 dy = HEIGHT - dy
 
             self.heading = np.arctan2(dy, dx)  # attracting heading
-
-
-
-
-######## Verification ###############
-#
-# tree = PhysicalObject('Tree', 10, 10, 20)
-# bug = Bug("Bug", 50, 50, 1, mode='tree')
-# dt = 1
-# xs = []
-# ys = []
-# running = True
-#
-# while running:
-#     bug.advance(dt)
-#     xs.append(bug.x)
-#     ys.append(bug.y)
-#     cue = str(input('Cue: '))
-#
-#     if cue =='q':
-#         running = False
-#     elif not cue == 'c':
-#         x = int(input('x: '))
-#         y = int(input('y: '))
-#
-#         bug.processVisual(cue, x, y)
-#     else:
-#         pass
-#
-# plt.scatter(xs, ys)
-# plt.show()
-#
-#
-#

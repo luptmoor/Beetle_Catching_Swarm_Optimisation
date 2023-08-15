@@ -36,23 +36,24 @@ def F_drones(x):
     return a ** 2 / (x ** 2 + a ** 2)
 
 
-def check_collision(obj1, obj2, margin=0):
-    if obj1 is None or obj2 is None:
+def check_collision(entity1, entity2, margin=0):
+    """
+    checks if entities 1 and 2 have intersecting pixels.
+    :param entity1: Entity 1
+    :param entity2: Entity 2
+    :param margin: (float) minimum distance between the two entities to return False (no collision)
+    :return: (boolean) True if Entities collide, False if Entities do not collide.
+    """
+    if entity1 is None or entity2 is None:
         return False
 
-    if obj1.name == obj2.name:
+    if entity1.name == entity2.name:
         return False
 
-    if np.sqrt((obj1.x - obj2.x) ** 2 + (obj1.y - obj2.y) ** 2) <= obj1.r_col + obj2.r_col + margin:
+    if np.sqrt((entity1.x - entity2.x) ** 2 + (entity1.y - entity2.y) ** 2) <= entity1.r_col + entity2.r_col + margin:
         return True
     else:
         return False
-
-
-
-
-
-
 
 
 class Simulation:
@@ -60,8 +61,8 @@ class Simulation:
     Class holding all the functions and parameters for a single simulation instance.
     """
     def __init__(self, params, seed=42, visualise=False):
-        self.score = 0
-        self.t = 0
+        self.score = 0  # Initialisation of fitness score for this particular simulation
+        self.t = 0      # Initialisation of time [s]
 
         # Lists holding simulated entities
         self.entities = []
@@ -77,8 +78,11 @@ class Simulation:
             self.visuals = Visuals(WIDTH, HEIGHT, DT)
 
     def load_environment(self):
-
-        # Place trees
+        """
+        loads simulated environment by placing trees, bugs and drones.
+        :return: None
+        """
+        # Initial random placement of trees on map
         for i in range(N_TREES):
             placing = True
             while placing:
@@ -93,7 +97,7 @@ class Simulation:
                     placing = False
 
 
-        # Place bugs
+        # Initial random placement of bugs on map
         for j in range(N_BUGS):
             placing = True
             while placing:
@@ -108,7 +112,7 @@ class Simulation:
                     placing = False
 
 
-        # Place drones
+        # Initial random placement of drones on launchpad (fraction of total map)
         for k in range(N_DRONES):
             placing = True
             while placing:
@@ -123,54 +127,39 @@ class Simulation:
                     placing = False
 
 
-
     def evaluate(self):
+        """
+        called when simulation is over to evaluate the fitness of a solution using three transfer functions: one for each criterion.
+        :return: (float) score for this particular simulation, lies in interval [0, 1].
+        """
         score = F_drones(len(self.drones) / N_DRONES) * F_bugs(1 - len(self.bugs) / N_BUGS) * F_time(self.t / T_MAX)
         return score
 
 
     def run(self):
+        """
+        loads environment, starts simulation loop and finally calls evaluation function.
+        :return: (float) score for this particular simulation, lies in interval [0, 1].
+        """
         np.random.seed(self.seed)
         self.load_environment()
         running = True
 
         while running:
-
+            # Print time and seed every 10s
             if int(round(self.t, 0)) % 10 == 0 and abs(int(round(self.t, 0)) - self.t) < 0.001:
                 print('Seed:', self.seed, 'Time:', round(self.t, 0), 's')
-
-            # Guarantee this always holds (good candidate for removal if too slow)
-            self.entities = self.trees + self.bugs + self.drones
-
-            # Bug simulation
-            for bug in self.bugs:
-                for drone in self.drones:
-                    # if not any([check_vision(bug, drone) for drone in drones]):
-                    #     bug.processVisual('none')
-                    if bug.sees(drone):
-                        bug.processVisual(drone)
-
-                bug.advance(DT / 2)
-
-                for tree in self.trees:
-                    if check_collision(bug, tree):
-                        bug.mode = 'tree'
-                        bug.tree = tree
-                    if bug.sees(tree):
-                        bug.processVisual(tree)
-
-                bug.advance(DT / 2)
 
 
             # Drone simulation
             for drone in self.drones:
+                # Check collisions
                 for entity in self.entities:
-                    # Check collisions
                     if check_collision(drone, entity):
                         # print('Collision between ', drone.name, 'and', entity.name)
                         if entity in self.drones:
-                            self.drones.remove(drone)
-                            self.drones.remove(entity)
+                            self.drones.remove(drone)  # must be true
+                            self.drones.remove(entity) # must be true
                             self.entities.remove(drone)
                             self.entities.remove(entity)
                         elif entity in self.bugs:
@@ -180,29 +169,50 @@ class Simulation:
                             self.drones.remove(drone)
                             self.entities.remove(drone)
 
-                    # Maintain list of visible entities
+                # Maintain list of visible entities
+                for entity in self.entities:
                     if drone.sees(entity) and entity not in drone.visible_entities:
                         drone.visible_entities.append(entity)
                     if not drone.sees(entity) and entity in drone.visible_entities:
                         drone.visible_entities.remove(entity)
 
-                    for entity in drone.visible_entities:
-                        if entity not in self.entities:
-                            drone.visible_entities.remove(entity)
-
-
                 drone.codrones = [otherdrone for otherdrone in self.drones if not otherdrone == drone]
-
                 drone.advance()
 
+                # for entity in drone.visible_entities:
+                #     if entity not in self.entities:
+                #         drone.visible_entities.remove(entity)
+
+                # Bug simulation
+
+            # Bug simulation
+            for bug in self.bugs:
+                # 1. Check if drones nearby
+                for drone in self.drones:
+                    if bug.sees(drone):
+                        bug.processVisual(drone)
+                # First half step
+                bug.advance(DT / 2)
+
+                # 2. Check if landed on tree or tree nearby
+                for tree in self.trees:
+                    if check_collision(bug, tree):
+                        bug.mode = 'tree'
+                        bug.tree = tree
+                    if bug.sees(tree):
+                        bug.processVisual(tree)
+                # Second half step
+                bug.advance(DT / 2)
 
 
+            # Update screen if requested
             if self.visualise:
                 self.visuals.update(self.trees, self.bugs, self.drones)
 
+            # Add time step
             self.t += DT
 
-            #End conditions
+            # End conditions: 80% of drones dead, all bugs dead or time up.
             if len(self.drones) / N_DRONES < 0.2 or not self.bugs or self.t >= T_MAX:
                 running = False
                 self.score = self.evaluate()

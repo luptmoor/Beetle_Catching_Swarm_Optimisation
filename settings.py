@@ -44,7 +44,7 @@ CHARGE_RATE         = 100 / CHARGING_TIME
 # Simulation parameters
 
 DT                  = 0.1        # s
-T_MAX               = 10 * 60    # s (10min)
+T_MAX               = 1 * 60    # s (10min)
 
 # Colours for visualisation
 GREEN               = (0, 130, 20)
@@ -61,74 +61,80 @@ BUG_COLOURS = {'idle': RED, 'land': ORANGE, 'tree': YELLOW, 'escape': PINK}
 TYPE_COLOURS = {'drone': GREY, 'tree': BROWN, 'bug': RED}
 
 # CMA-ES parameter settings
-
 # Parameter 0
-MIN_R_VIS_BUG           =  50
-MAX_R_VIS_BUG           = 200
-MU_R_VIS_BUG            = (MAX_R_VIS_BUG + MIN_R_VIS_BUG) / 2
-RANGE_R_VIS_BUG         = MAX_R_VIS_BUG - MIN_R_VIS_BUG
-
-# Parameter 1
-MIN_R_VIS_NEARDRONE         = int(round(1.1 * R_DRONE, 0))
-MAX_R_VIS_NEARDRONE         = 150
-MU_R_VIS_NEARDRONE          = (MAX_R_VIS_NEARDRONE + MIN_R_VIS_NEARDRONE) / 2
-RANGE_R_VIS_NEARDRONE       = MAX_R_VIS_NEARDRONE - MIN_R_VIS_NEARDRONE
-
-# Parameter 2
 MIN_R_VIS_TREE          = int(round(1.1 * R_DRONE, 0))
 MAX_R_VIS_TREE          = 150
 MU_R_VIS_TREE           = (MAX_R_VIS_TREE + MIN_R_VIS_TREE) / 2
 RANGE_R_VIS_TREE        = MAX_R_VIS_TREE - MIN_R_VIS_TREE
 
-# Parameter 3
+# Parameter 1
 MIN_K_TREE              =   0
 MAX_K_TREE              = 150
 MU_K_TREE               = (MAX_K_TREE + MIN_K_TREE) / 2
 RANGE_K_TREE            = MAX_K_TREE - MIN_K_TREE
 
-# Parameter 4
-MIN_K_NEARDRONE         =   0
-MAX_K_NEARDRONE         = 150
-MU_K_NEARDRONE          = (MAX_K_NEARDRONE + MIN_K_NEARDRONE) / 2
-RANGE_K_NEARDRONE       = MAX_K_NEARDRONE - MIN_K_NEARDRONE
 
-# Parameter 5
+# Parameter 2
+MIN_R_VIS_BUG           =  50
+MAX_R_VIS_BUG           = 200
+MU_R_VIS_BUG            = (MAX_R_VIS_BUG + MIN_R_VIS_BUG) / 2
+RANGE_R_VIS_BUG         = MAX_R_VIS_BUG - MIN_R_VIS_BUG
+
+# Parameter 3
 MIN_K_BUG               =   -5
 MAX_K_BUG               =    0
 MU_K_BUG                = (MAX_K_BUG + MIN_K_BUG) / 2
 RANGE_K_BUG             = MAX_K_BUG - MIN_K_BUG
 
-# Parameter 6
-MIN_K_FARDRONE          =  -20e-4
-MAX_K_FARDRONE          =   20e-4
-MU_K_FARDRONE           = (MAX_K_FARDRONE + MIN_K_FARDRONE) / 2
-RANGE_K_FARDRONE        = MAX_K_FARDRONE - MIN_K_FARDRONE
+# Parameter 4
+MIN_R_VIS_NEARDRONE         = int(round(1.1 * R_DRONE, 0))
+MAX_R_VIS_NEARDRONE         = 150
+MU_R_VIS_NEARDRONE          = (MAX_R_VIS_NEARDRONE + MIN_R_VIS_NEARDRONE) / 2
+RANGE_R_VIS_NEARDRONE       = MAX_R_VIS_NEARDRONE - MIN_R_VIS_NEARDRONE
 
-# Parameter 7
+# Parameter 5
+MIN_K_NEARDRONE         =   0
+MAX_K_NEARDRONE         = 150
+MU_K_NEARDRONE          = (MAX_K_NEARDRONE + MIN_K_NEARDRONE) / 2
+RANGE_K_NEARDRONE       = MAX_K_NEARDRONE - MIN_K_NEARDRONE
+
+# Parameter 6
 MIN_R_VIS_FARDRONE          =  MAX_K_NEARDRONE
-MAX_R_VIS_FARDRONE          =  300
+MAX_R_VIS_FARDRONE          =  400
 MU_R_VIS_FARDRONE           = (MAX_R_VIS_FARDRONE + MIN_R_VIS_FARDRONE) / 2
 RANGE_R_VIS_FARDRONE        = MAX_R_VIS_FARDRONE - MIN_R_VIS_FARDRONE
 
+# Parameter 7
+MIN_K_FARDRONE          =  -20e-3
+MAX_K_FARDRONE          =   20e-3
+MU_K_FARDRONE           = (MAX_K_FARDRONE + MIN_K_FARDRONE) / 2
+RANGE_K_FARDRONE        = MAX_K_FARDRONE - MIN_K_FARDRONE
+
 # Parameter 8
-MIN_K_ACTIVITY          =  -20e-4
-MAX_K_ACTIVITY          =   20e-4
+MIN_R_ACTIVITY          =  MIN_R_VIS_FARDRONE
+MAX_R_ACTIVITY          =  MAX_R_VIS_FARDRONE
+MU_R_ACTIVITY           = (MAX_R_ACTIVITY + MIN_R_ACTIVITY) / 2
+RANGE_R_ACTIVITY        = MAX_R_ACTIVITY - MIN_R_ACTIVITY
+
+# Parameter 9
+MIN_K_ACTIVITY          =  -20e-3
+MAX_K_ACTIVITY          =   20e-3
 MU_K_ACTIVITY           = (MAX_K_ACTIVITY + MIN_K_ACTIVITY) / 2
 RANGE_K_ACTIVITY        = MAX_K_ACTIVITY - MIN_K_ACTIVITY
 
-# Parameter 9
+# Parameter 10
 MIN_V_MIN               =    0
 MAX_V_MIN               =   15
 MU_V_MIN                = (MAX_V_MIN + MIN_V_MIN) / 2
 RANGE_V_MIN             = MAX_V_MIN - MIN_V_MIN
 
-# Parameter 10
+# Parameter 11
 MIN_V_MAX               =   MIN_V_MIN
 MAX_V_MAX               =  V_DRONE_MAX
 MU_V_MAX                = (MAX_V_MAX + MIN_V_MAX) / 2
 RANGE_V_MAX             = MAX_V_MAX - MIN_V_MAX
 
-# Parameter 11
+# Parameter 12
 MIN_CAREFULNESS         =   0
 MAX_CAREFULNESS         =   1
 MU_CAREFULNESS          = (MAX_CAREFULNESS + MIN_CAREFULNESS) / 2

@@ -8,28 +8,32 @@ class Drone(PhysicalObject):
         super().__init__(name, type, x, y, r_col)
 
         # Tunable Parameters, negative ks mean attraction, positive means repulsion
-        self.r_vis_bug = int(round(params[0] * RANGE_R_VIS_BUG / 2 + MU_R_VIS_BUG, 0))
-        self.r_vis_neardrone = int(round(params[1] * RANGE_R_VIS_NEARDRONE / 2 + MU_R_VIS_NEARDRONE))
-        self.r_vis_tree = int(round(params[2] * RANGE_R_VIS_TREE / 2 + MU_R_VIS_TREE))
-        self.r_vis = {'tree': self.r_vis_tree, 'drone': self.r_vis_neardrone, 'bug': self.r_vis_bug}
+        self.r_vis_tree = int(round(params[0] * RANGE_R_VIS_TREE / 2 + MU_R_VIS_TREE))
+        self.k_tree = params[1] * RANGE_K_TREE / 2 + MU_K_TREE
 
-        self.k_tree = params[3] * RANGE_K_TREE / 2 + MU_K_TREE
-        self.k_neardrone = params[4] * RANGE_K_NEARDRONE / 2 + MU_K_NEARDRONE
-        self.k_bug = params[5] * RANGE_K_BUG / 2 + MU_K_BUG
+        self.r_vis_bug = int(round(params[2] * RANGE_R_VIS_BUG / 2 + MU_R_VIS_BUG, 0))
+        self.k_bug = params[3] * RANGE_K_BUG / 2 + MU_K_BUG
+
+        self.r_vis_neardrone = int(round(params[4] * RANGE_R_VIS_NEARDRONE / 2 + MU_R_VIS_NEARDRONE))
+        self.k_neardrone = params[5] * RANGE_K_NEARDRONE / 2 + MU_K_NEARDRONE
+
+        self.r_vis = {'tree': self.r_vis_tree, 'drone': self.r_vis_neardrone, 'bug': self.r_vis_bug}
         self.gains = {'tree': self.k_tree, 'drone': self.k_neardrone, 'bug': self.k_bug}
 
         self.r_fardrone = params[6] * RANGE_R_VIS_FARDRONE / 2 + MU_R_VIS_FARDRONE
         self.k_fardrone = params[7] * RANGE_K_FARDRONE / 2 + MU_K_FARDRONE
-        self.k_activity = params[8]  * RANGE_K_ACTIVITY / 2 + MU_K_ACTIVITY
 
-        self.v_min = min(V_DRONE_MAX, max(0, params[9] * RANGE_V_MIN / 2 + MU_V_MIN))
-        self.v_max = min(V_DRONE_MAX, max(self.v_min, params[10] * RANGE_V_MAX / 2 + MU_V_MAX))
+        self.r_activity = params[8] * RANGE_R_ACTIVITY / 2 + MU_R_ACTIVITY
+        self.k_activity = params[9]  * RANGE_K_ACTIVITY / 2 + MU_K_ACTIVITY
 
-        self.carefulness = params[11] * RANGE_CAREFULNESS / 2 + MU_CAREFULNESS
+        self.v_min = min(V_DRONE_MAX, max(0, params[10] * RANGE_V_MIN / 2 + MU_V_MIN))
+        self.v_max = min(V_DRONE_MAX, max(self.v_min, params[11] * RANGE_V_MAX / 2 + MU_V_MAX))
+
+        self.carefulness = params[12] * RANGE_CAREFULNESS / 2 + MU_CAREFULNESS
 
 
+        # Initialisation
         self.activity = 0
-
         self.visible_phobjects = []
         self.codrones = []
         self.speed = self.v_min
@@ -42,7 +46,11 @@ class Drone(PhysicalObject):
         axs = []
         ays = []
 
+        self.activity = 0
         for phobject in self.visible_phobjects:
+            if phobject.type == 'bug':
+                self.activity += 1
+
             # Distance
             dx = np.abs(self.x - phobject.x)
             dy = np.abs(self.y - phobject.y)
@@ -86,9 +94,6 @@ class Drone(PhysicalObject):
         ay = sum(ays)
         a = min(np.sqrt(ay ** 2 + ax ** 2), A_DRONE_MAX)
 
-        if a <= 5:
-            self.speed = (1 - self.carefulness) * self.speed
-
         angle = np.arctan2(ay, ax)
 
         self.ax = a * np.cos(angle)
@@ -100,6 +105,9 @@ class Drone(PhysicalObject):
         self.heading = np.arctan2(vy, vx) % (2 * np.pi)
         self.speed = max(min(np.sqrt(vy**2 + vx**2), self.v_max), self.v_min)
 
+        if a <= 0.05 * A_DRONE_MAX:
+            self.speed = max((1 - self.carefulness) * self.speed, self.speed - A_DRONE_MAX * DT)
+
 
         # Integration
         self.x = int(round(self.x + self.speed * np.cos(self.heading) * DT, 0)) % WIDTH
@@ -107,8 +115,6 @@ class Drone(PhysicalObject):
 
 
         #print(self.name, '@', self.x, self.y, '(heading: ', round(self.heading * 57.3, 1))
-
-        self.activity = min(50, max(-50, self.activity - ACTIVITY_DECAY * DT))
 
 
 

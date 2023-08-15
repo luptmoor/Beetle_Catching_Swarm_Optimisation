@@ -141,13 +141,6 @@ class Simulation:
                     placing = False
 
 
-    # def collision_loop():
-    #     """
-    #     loops over drones and checks for collisions with other phobjects.
-    #     note: instances need to be the same in drones list and phobjects list!
-    #     :return: void
-    #     """
-    #
 
     def evaluate(self):
         score = F_drones(len(self.drones) / N_DRONES) * F_bugs(1 - len(self.bugs) / N_BUGS) * F_time(self.t / T_MAX)
@@ -189,19 +182,7 @@ class Simulation:
 
             # Drone simulation
             for drone in self.drones:
-                drone.codrones = [otherdrone for otherdrone in self.drones if not otherdrone == drone]
-
                 for phobject in self.phobjects:
-                    # Maintain list of visible phobjects
-                    if self.check_drone_vision(drone, phobject) and phobject not in drone.visible_phobjects:
-                        drone.visible_phobjects.append(phobject)
-                    if not self.check_drone_vision(drone, phobject) and phobject in drone.visible_phobjects:
-                        drone.visible_phobjects.remove(phobject)
-
-                for phobject in drone.visible_phobjects:
-                    if phobject not in self.phobjects:
-                        drone.visible_phobjects.remove(phobject)
-
                     # Check collisions
                     if self.check_collision(drone, phobject):
                         # print('Collision between ', drone.name, 'and', phobject.name)
@@ -213,10 +194,29 @@ class Simulation:
                         elif phobject in self.bugs:
                             self.bugs.remove(phobject)
                             self.phobjects.remove(phobject)
-                            drone.activity += ACTIVITY_AWARD
                         elif phobject in self.trees:
                             self.drones.remove(drone)
                             self.phobjects.remove(drone)
+
+                    # Maintain list of visible phobjects
+                    if self.check_drone_vision(drone, phobject) and phobject not in drone.visible_phobjects:
+                        drone.visible_phobjects.append(phobject)
+                    if not self.check_drone_vision(drone, phobject) and phobject in drone.visible_phobjects:
+                        drone.visible_phobjects.remove(phobject)
+
+                    for phobject in drone.visible_phobjects:
+                        if phobject not in self.phobjects:
+                            drone.visible_phobjects.remove(phobject)
+
+
+                drone.codrones = [otherdrone for otherdrone in self.drones if not otherdrone == drone]
+
+
+
+
+
+
+
 
                 drone.advance()
 

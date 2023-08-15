@@ -81,8 +81,10 @@ class Visuals:
 
             if view == 2:
                 #pygame.draw.line(self.screen, BLUE, (drone.x, drone.y), (drone.x + drone.ax * 20, drone.y + drone.ay * 20), 1)
+                pygame.draw.circle(self.screen, WHITE, (drone.x, drone.y), drone.r_fardrone, 1)
+                pygame.draw.circle(self.screen, WHITE, (drone.x, drone.y), drone.r_activity, 2)
 
-                text_surface, text_rect = self.font.render(str(round(drone.speed / V_DRONE_MAX * 100, 0)), (0, 0, 0))
+                text_surface, text_rect = self.font.render(str(round(drone.activity, 0)), (0, 0, 0))
                 text_rect.center = (drone.x, drone.y)
                 self.screen.blit(text_surface, text_rect)
             # for phobject in drone.visible_phobjects:
@@ -96,6 +98,6 @@ class Visuals:
 
 
         pygame.display.flip()
-        # self.clock.tick(self.FPS)
+        self.clock.tick(self.FPS)
 
 

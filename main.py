@@ -11,27 +11,49 @@ import pandas as pd
 def log(g, mean, sigma, solutions, fitness_values):
     solutions.append(mean)
 
-    df = pd.DataFrame(solutions, index=[i for i in range(len(solutions)-1)] + ['Underlying Mean'], columns=['r_vis_bug', 'r_vis_fardrone', 'r_vis_tree', 'k_tree', 'k_neardrone', 'k_bug', 'k_fardrone', 'r_vis_fardrone', 'k_activity', 'v_min', 'v_max', 'carefulness'])
+    df = pd.DataFrame(solutions, index=[i for i in range(len(solutions)-1)] + ['Underlying Mean'],
+                      columns=['r_vis_tree',
+                               'k_tree',
+                               'r_vis_bug',
+                               'k_bug',
+                               'r_vis_neardrone',
+                               'k_neardrone',
+                               'r_vis_fardrone',
+                               'k_fardrone',
+                               'r_activity',
+                               'k_activity',
+                               'v_min',
+                               'v_max',
+                               'carefulness'])
+
     df['Fitness 1'] = pd.Series([value[0] for value in fitness_values])
     df['Fitness 2'] = pd.Series([value[1] for value in fitness_values])
     df['Fitness 3'] = pd.Series([value[2] for value in fitness_values])
     df['Average Fitness'] = pd.Series([np.mean(value) for value in fitness_values])
-    df['Sigma'] = pd.Series(10 * [sigma])
+    df['Sigma'] = pd.Series(13 * [sigma])
 
     # Coordinate shift
-    df['r_vis_bug'] = round(df['r_vis_bug'] * RANGE_R_VIS_BUG / 2 + MU_R_VIS_BUG, 0)
-    df['r_vis_fardrone'] = round(df['r_vis_fardrone'] * RANGE_R_VIS_FARDRONE / 2 + MU_R_VIS_FARDRONE)
     df['r_vis_tree'] = round(df['r_vis_tree'] * RANGE_R_VIS_TREE / 2 + MU_R_VIS_TREE)
     df['k_tree'] = df['k_tree'] * RANGE_K_TREE / 2 + MU_K_TREE
-    df['k_neardrone'] = df['k_neardrone'] * RANGE_K_NEARDRONE / 2 + MU_K_NEARDRONE
+
     df['k_bug'] = df['k_bug'] * RANGE_K_BUG / 2 + MU_K_BUG
+    df['r_vis_bug'] = round(df['r_vis_bug'] * RANGE_R_VIS_BUG / 2 + MU_R_VIS_BUG, 0)
+
+    df['r_vis_neardrone'] = df['r_vis_neardrone'] * RANGE_R_VIS_NEARDRONE / 2 + MU_R_VIS_NEARDRONE
+    df['k_neardrone'] = df['k_neardrone'] * RANGE_K_NEARDRONE / 2 + MU_K_NEARDRONE
+
+    df['r_vis_fardrone'] = round(df['r_vis_fardrone'] * RANGE_R_VIS_FARDRONE / 2 + MU_R_VIS_FARDRONE)
     df['k_fardrone'] = df['k_fardrone'] * RANGE_K_FARDRONE / 2 + MU_K_FARDRONE
+
+    df['r_activity'] = df['r_activity'] * RANGE_R_ACTIVITY / 2 + MU_R_ACTIVITY
     df['k_activity'] = df['k_activity'] * RANGE_K_ACTIVITY / 2 + MU_K_ACTIVITY
+
     df['v_min'] = df['v_min'] * RANGE_V_MIN / 2 + MU_V_MIN
     df['v_max'] = df['v_max'] * RANGE_V_MAX / 2 + MU_V_MAX
     df['carefulness'] = df['carefulness'] * RANGE_CAREFULNESS / 2 + MAX_CAREFULNESS
 
     df = df.sort_values(by='Average Fitness', ascending=False)
+    df.index = [i for i in range(len(solutions)-1)] + ['Underlying Mean']
     df.to_csv('logs/Gen' + str(g) + '.csv')
 
 
@@ -61,7 +83,7 @@ options = {
 }
 
 # Run the CMA-ES optimization
-es = cma.CMAEvolutionStrategy(12 * [0], 0.35, options)
+es = cma.CMAEvolutionStrategy(13 * [0], 0.35, options)
 fitnesses = []
 g = 1
 
@@ -73,7 +95,9 @@ while not es.stop():
     fitness_values = [fitness(x) for x in solutions]  # list of fitnesses (n_pop x RUNS_PER_SOLUTION)
     log(g, es.mean, es.sigma, solutions.copy(), fitness_values)
     average_fitnesses = [np.mean(fitness_value) for fitness_value in fitness_values] # list of avg fitnesses (n_pop x 1)
-    es.tell(solutions, average_fitnesses)
+
+    cost = [-x for x in average_fitnesses]
+    es.tell(solutions, cost)
     best_solution = es.best.get()[0]  # list of params of best solution (1 x n_param)
     fitnesses.append(fitness(best_solution))
     es.disp()

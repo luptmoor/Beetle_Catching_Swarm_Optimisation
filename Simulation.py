@@ -52,30 +52,7 @@ def check_collision(obj1, obj2, margin=0):
 
 
 
-def check_drone_vision(active, passive):
-    if active is None or passive is None:
-        return False
 
-    if active.name == passive.name:
-        return False
-
-    dx = np.abs(active.x - passive.x)
-    dy = np.abs(active.y - passive.y)
-    dx = min(dx, WIDTH - dx)
-    dy = min(dy, HEIGHT - dy)
-
-    d = np.sqrt(dx**2 + dy**2)
-    obstructed = False
-    if passive.type == 'bug' and passive.tree is not None:
-        d_obs = np.sqrt((active.x - passive.tree.x) ** 2 + (active.y - passive.tree.y) ** 2)
-        if d_obs < d:
-            obstructed = True
-
-
-    if d <= active.r_vis[passive.type] + passive.r_col and not obstructed:
-        return True
-    else:
-        return False
 
 
 class Simulation:
@@ -170,7 +147,7 @@ class Simulation:
                 for drone in self.drones:
                     # if not any([check_vision(bug, drone) for drone in drones]):
                     #     bug.processVisual('none')
-                    if bug.check_vision(drone):
+                    if bug.sees(drone):
                         bug.processVisual(drone)
 
                 bug.advance(DT / 2)
@@ -179,7 +156,7 @@ class Simulation:
                     if check_collision(bug, tree):
                         bug.mode = 'tree'
                         bug.tree = tree
-                    if bug.check_vision(tree):
+                    if bug.sees(tree):
                         bug.processVisual(tree)
 
                 bug.advance(DT / 2)
@@ -204,9 +181,9 @@ class Simulation:
                             self.entities.remove(drone)
 
                     # Maintain list of visible entities
-                    if check_drone_vision(drone, entity) and entity not in drone.visible_entities:
+                    if drone.sees(entity) and entity not in drone.visible_entities:
                         drone.visible_entities.append(entity)
-                    if not check_drone_vision(drone, entity) and entity in drone.visible_entities:
+                    if not drone.sees(entity) and entity in drone.visible_entities:
                         drone.visible_entities.remove(entity)
 
                     for entity in drone.visible_entities:
@@ -215,13 +192,6 @@ class Simulation:
 
 
                 drone.codrones = [otherdrone for otherdrone in self.drones if not otherdrone == drone]
-
-
-
-
-
-
-
 
                 drone.advance()
 

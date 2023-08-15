@@ -41,6 +41,29 @@ class Drone(Entity):
         self.ay = 0
         self.heading = np.random.random() * 2 * np.pi
 
+    def sees(self, entity):
+        if entity is None:
+            return False
+
+        if entity == self:
+            return False
+
+        dx = np.abs(self.x - entity.x)
+        dy = np.abs(self.y - entity.y)
+        dx = min(dx, WIDTH - dx)
+        dy = min(dy, HEIGHT - dy)
+
+        d = np.sqrt(dx ** 2 + dy ** 2)
+        obstructed = False
+        if entity.type == 'bug' and entity.tree is not None:
+            d_obs = np.sqrt((self.x - entity.tree.x) ** 2 + (self.y - entity.tree.y) ** 2)
+            if d_obs < d:
+                obstructed = True
+
+        if d <= self.r_vis[entity.type] + entity.r_col and not obstructed:
+            return True
+        else:
+            return False
 
     def advance(self):
         axs = []

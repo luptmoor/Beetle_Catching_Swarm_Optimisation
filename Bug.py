@@ -30,7 +30,7 @@ class Bug(Entity):
 
         #print(self.name, 'in', self.mode, 'mode created')
 
-    def check_vision(self, entity):
+    def sees(self, entity):
         if entity is None:
             return False
 

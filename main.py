@@ -74,7 +74,7 @@ def fitness(params):
     """
     scores = []
     for i in range(RUNS_PER_SOLUTION):
-        sim = Simulation(params, seed=i, visualise=True)
+        sim = Simulation(params, seed=i)
         # print('STARTING SIMULATION WITH SEED', i, 'AND PARAMETERS:')
         # print('r_vis_bug:', int(round(params[0] * RANGE_R_VIS_BUG / 2 + MU_R_VIS_BUG, 0)))
         # print('r_vis_neardrone:', int(round(params[1] * RANGE_r_vis_neardrone / 2 + MU_r_vis_neardrone)))

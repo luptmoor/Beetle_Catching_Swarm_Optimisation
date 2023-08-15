@@ -98,6 +98,8 @@ class Visuals:
 
 
         pygame.display.flip()
-        self.clock.tick(self.FPS)
+
+        if REALTIME:
+            self.clock.tick(self.FPS)
 
 

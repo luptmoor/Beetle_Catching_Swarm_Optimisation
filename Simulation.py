@@ -60,7 +60,7 @@ class Simulation:
     """
     Class holding all the functions and parameters for a single simulation instance.
     """
-    def __init__(self, params, seed=42, visualise=False):
+    def __init__(self, params, seed=42):
         self.score = 0  # Initialisation of fitness score for this particular simulation
         self.t = 0      # Initialisation of time [s]
 
@@ -72,9 +72,8 @@ class Simulation:
 
         self.params = params  # tunable parameters chosen for this particular simulation to be evaluated
         self.seed = seed  # seed for random number generator
-        self.visualise = visualise  # boolean determining if visualisation should be shown
 
-        if visualise:
+        if VISUALISE:
             self.visuals = Visuals(WIDTH, HEIGHT, DT)
 
     def load_environment(self):
@@ -206,7 +205,7 @@ class Simulation:
 
 
             # Update screen if requested
-            if self.visualise:
+            if VISUALISE:
                 self.visuals.update(self.trees, self.bugs, self.drones)
 
             # Add time step

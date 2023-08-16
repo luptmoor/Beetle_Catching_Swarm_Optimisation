@@ -33,8 +33,8 @@ A_DRONE_MAX          =  165                                        # px / s^2, 3
 
 # Simulation parameters
 DT                   =    0.1                                       # s, timestep per tick
-T_MAX                =    0.5 * 60                                    # s, 10min, maximum simulation duration
-VISUALISE            =  False                                        # Boolean deciding if simulation shall be visualised
+T_MAX                =    8                                   # s, 10min, maximum simulation duration
+VISUALISE            =  True                                        # Boolean deciding if simulation shall be visualised
 REALTIME             =  False                                       # Boolean deciding if visuals shall be real-time
 VIEW                 =    0                                         # Variable for different views in visualisation
 
@@ -57,6 +57,7 @@ TYPE_COLOURS = {'drone': GREY, 'tree': BROWN, 'bug': RED}
 # CMA-ES settings
 RUNS_PER_SOLUTION     =    3                                        # -, for how many conditions each solution is tested
 N_GENERATIONS         =  100                                        # -, number of generations in CMA-ES
+N_POP                 =   16                                        # -, number of genotypes per generation
 
 # Parameter 0
 MIN_R_VIS_TREE        =   10
@@ -77,7 +78,7 @@ MU_R_VIS_BUG          = (MAX_R_VIS_BUG + MIN_R_VIS_BUG) / 2
 RANGE_R_VIS_BUG       = MAX_R_VIS_BUG - MIN_R_VIS_BUG
 
 # Parameter 3
-MIN_K_BUG             =   -5
+MIN_K_BUG             =   -150
 MAX_K_BUG             =    0
 MU_K_BUG              = (MAX_K_BUG + MIN_K_BUG) / 2
 RANGE_K_BUG           = MAX_K_BUG - MIN_K_BUG
@@ -101,8 +102,8 @@ MU_R_VIS_FARDRONE     = (MAX_R_VIS_FARDRONE + MIN_R_VIS_FARDRONE) / 2
 RANGE_R_VIS_FARDRONE  = MAX_R_VIS_FARDRONE - MIN_R_VIS_FARDRONE
 
 # Parameter 7
-MIN_K_FARDRONE        =   -0.2
-MAX_K_FARDRONE        =    0.2
+MIN_K_FARDRONE        =   -0.5
+MAX_K_FARDRONE        =    0.5
 MU_K_FARDRONE         = (MAX_K_FARDRONE + MIN_K_FARDRONE) / 2
 RANGE_K_FARDRONE      = MAX_K_FARDRONE - MIN_K_FARDRONE
 
@@ -113,19 +114,19 @@ MU_R_ACTIVITY         = (MAX_R_ACTIVITY + MIN_R_ACTIVITY) / 2
 RANGE_R_ACTIVITY      = MAX_R_ACTIVITY - MIN_R_ACTIVITY
 
 # Parameter 9
-MIN_K_ACTIVITY        =   -0.2
-MAX_K_ACTIVITY        =    0.2
+MIN_K_ACTIVITY        =   -0.5
+MAX_K_ACTIVITY        =    0.5
 MU_K_ACTIVITY         = (MAX_K_ACTIVITY + MIN_K_ACTIVITY) / 2
 RANGE_K_ACTIVITY      = MAX_K_ACTIVITY - MIN_K_ACTIVITY
 
 # Parameter 10
 MIN_V_MIN             =    0
-MAX_V_MIN             =   15
+MAX_V_MIN             =   20
 MU_V_MIN              = (MAX_V_MIN + MIN_V_MIN) / 2
 RANGE_V_MIN           = MAX_V_MIN - MIN_V_MIN
 
 # Parameter 11
-MIN_V_MAX             =   MIN_V_MIN
+MIN_V_MAX             =   MAX_V_MIN
 MAX_V_MAX             =  V_DRONE_MAX
 MU_V_MAX              = (MAX_V_MAX + MIN_V_MAX) / 2
 RANGE_V_MAX           = MAX_V_MAX - MIN_V_MAX

@@ -9,7 +9,7 @@ from settings import *
 def F_time(x):
     """
     Mathematical transfer function for time criterion.
-    :param x: (float) function argument.
+    :param x: (float) function argument,
     :return: (float) partial fitness.
     """
     return 1 - 0.3 * x ** 2
@@ -212,7 +212,7 @@ class Simulation:
             self.t += DT
 
             # End conditions: 80% of drones dead, all bugs dead or time up.
-            if (1 - len(self.drones) / N_DRONES) > 0.8 or not self.bugs or self.t >= T_MAX:
+            if not self.drones or not self.bugs or self.t >= T_MAX:
                 running = False
                 self.score = self.evaluate()
 

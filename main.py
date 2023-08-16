@@ -40,22 +40,22 @@ def log(g, mean, sigma, solutions, fitness_values):
 
     #  fitness_values: (n_pop x RUNS_PER_SOLUTION x 4)
     df['Fitness 1'] = pd.Series([value[0][0] for value in fitness_values])
-    df['Rem. Drones 1'] = pd.Series([value[0][1] for value in fitness_values])
+    df['Crashed Drones 1'] = pd.Series([value[0][1] for value in fitness_values])
     df['Killed Bugs 1'] = pd.Series([value[0][2] for value in fitness_values])
     df['Passed Time 1'] = pd.Series([value[0][3] for value in fitness_values])
 
     df['Fitness 2'] = pd.Series([value[1][0] for value in fitness_values])
-    df['Rem. Drones 2'] = pd.Series([value[1][1] for value in fitness_values])
+    df['Crashed Drones 2'] = pd.Series([value[1][1] for value in fitness_values])
     df['Killed Bugs 2'] = pd.Series([value[1][2] for value in fitness_values])
     df['Passed Time 2'] = pd.Series([value[1][3] for value in fitness_values])
 
     df['Fitness 3'] = pd.Series([value[2][0] for value in fitness_values])
-    df['Rem. Drones 3'] = pd.Series([value[2][1] for value in fitness_values])
+    df['Crashed Drones 3'] = pd.Series([value[2][1] for value in fitness_values])
     df['Killed Bugs 3'] = pd.Series([value[2][2] for value in fitness_values])
     df['Passed Time 3'] = pd.Series([value[2][3] for value in fitness_values])
 
     df['Average Fitness'] = df[['Fitness 1', 'Fitness 2', 'Fitness 3']].mean(axis=1)
-    df['Average Rem. Drones'] = df[['Rem. Drones 1', 'Rem. Drones 2', 'Rem. Drones 3']].mean(axis=1)
+    df['Average Crashed Drones'] = df[['Crashed Drones 1', 'Crashed Drones 2', 'Crashed Drones 3']].mean(axis=1)
     df['Average Killed Bugs'] = df[['Killed Bugs 1', 'Killed Bugs 2', 'Killed Bugs 3']].mean(axis=1)
     df['Average Passed Time'] = df[['Passed Time 1', 'Passed Time 2', 'Passed Time 3']].mean(axis=1)
 
@@ -89,7 +89,7 @@ def fitness(params):
     """
     determines fitness values for a solution using the simulation.
     :param params: (list) List of parameters, a.k.a. solution (N_pop x 1).
-    :return: scores: (List) List of fitness values (RUNS_PER_SOLUTION x 1).
+    :return: scores: (List) List of fitness values and metrics for each run (RUNS_PER_SOLUTION x 4).
     """
     scores = []
     for i in range(RUNS_PER_SOLUTION):

@@ -127,10 +127,11 @@ class Simulation:
     def evaluate(self):
         """
         called when simulation is over to evaluate the fitness of a solution using three transfer functions: one for each criterion.
-        :return: (float) score for this particular simulation, lies in interval [0, 1].
+        :return: (list): 1. score for this particular simulation, lies in interval [0, 1], 2. fraction of killed drones,
+                         3. fraction of killed bugs, 4. fraction of passed time.
         """
-        score = F_drones(len(self.drones) / N_DRONES) * F_bugs(1 - len(self.bugs) / N_BUGS) * F_time(self.t / T_MAX)
-        return [score, (len(self.drones) / N_DRONES), (1 - len(self.bugs) / N_BUGS), (self.t / T_MAX)]
+        score = F_bugs(1 - len(self.bugs) / N_BUGS) * F_time(self.t / T_MAX) * F_drones(1 - len(self.drones) / N_DRONES)
+        return [score, (1 - len(self.drones) / N_DRONES), (1 - len(self.bugs) / N_BUGS), (self.t / T_MAX)]
 
     def run(self):
         """
@@ -211,7 +212,7 @@ class Simulation:
             self.t += DT
 
             # End conditions: 80% of drones dead, all bugs dead or time up.
-            if len(self.drones) / N_DRONES < 0.2 or not self.bugs or self.t >= T_MAX:
+            if (1 - len(self.drones) / N_DRONES) > 0.8 or not self.bugs or self.t >= T_MAX:
                 running = False
                 self.score = self.evaluate()
 

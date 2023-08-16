@@ -38,7 +38,7 @@ def log(g, mean, sigma, solutions, fitness_values):
                                'v_max',
                                'c'])
 
-    df['Sigma'] = pd.Series(13 * [sigma])
+    df['Sigma'] = pd.Series(N_POP * [sigma])
 
     #  fitness_values: (n_pop x RUNS_PER_SOLUTION x 4)
     df['Fitness 1'] = pd.Series([value[0][0] for value in fitness_values])
@@ -93,6 +93,54 @@ def sim(params, seed):
     simulation = Simulation(params, seed=seed)
     return simulation.run()
 
+def resume_evolution(filename, g):
+    """
+    restarts CMA-ES by taking means and standard deviation from last reported generation
+    :param filename: (String) filename of CSV file that contains report about last generation.
+    :param g: (int) number of last reported generation, could also be extracted from filename.
+    :return: None
+    """
+    options = {
+        'maxiter': N_GENERATIONS - g,  # sets maximum number of generations
+        'popsize': N_POP,
+    }
+    global n
+
+    df = pd.read_csv(filename)
+    sigma = df['Sigma'][0]
+    means = pd.Series(df.iloc[20][1:14])
+
+    # Transform parameters back to space that is used by cma library
+    offsets = np.array([MU_R_VIS_TREE, MU_K_TREE, MU_R_VIS_BUG, MU_K_BUG, MU_R_VIS_NEARDRONE, MU_K_NEARDRONE, MU_R_VIS_FARDRONE, MU_K_FARDRONE, MU_R_ACTIVITY, MU_K_ACTIVITY, MU_V_MIN, MU_V_MAX, MU_C])
+    scales = np.array([RANGE_R_VIS_TREE, RANGE_K_TREE, RANGE_R_VIS_BUG, RANGE_K_BUG, RANGE_R_VIS_NEARDRONE, RANGE_K_NEARDRONE, RANGE_R_VIS_FARDRONE, RANGE_K_FARDRONE, RANGE_R_ACTIVITY, RANGE_K_ACTIVITY, RANGE_V_MIN, RANGE_V_MAX, RANGE_C])
+    means = means - offsets
+    means = 2 * means / scales
+    means = list(means)
+    print(means)
+    print(sigma)
+
+    es = cma.CMAEvolutionStrategy(means, sigma, options)
+
+    while not es.stop():
+        g += 1
+        n = 1
+
+        print('GENERATION:', g)
+        solutions = es.ask()  # list of lists with parameters (n_pop x n_param)
+        fitness_metrics = np.array(
+            [fitness(x) for x in solutions])  # array of fitnesses (n_pop x RUNS_PER_SOLUTION x 4)
+        log(g, es.mean, es.sigma, solutions.copy(), fitness_metrics)
+
+        # Take fitness of each run
+        fitness_values = fitness_metrics[:, :, 0]
+        average_fitnesses = np.mean(fitness_values, axis=1)
+
+        cost = [-x for x in average_fitnesses]  # es object minimises function, so negative fitness is defined as cost
+        es.tell(solutions, cost)
+        es.disp()
+
+
+
 
 def fitness_multi(params):
     """
@@ -130,13 +178,19 @@ def fitness(params):
     return scores  # list RUNS_PER_SOLUTION x 4
 
 
+
+resume_evolution('logs/Gen12_0.0161.csv', 12)
+
+
+
+
 options = {
     'maxiter': N_GENERATIONS,  # sets maximum number of generations
     'popsize': N_POP,
 }
 
 # Run the CMA-ES optimization
-es = cma.CMAEvolutionStrategy(13 * [0], 0.35, options)
+es = cma.CMAEvolutionStrategy(N_POP * [0], 0.35, options)
 fitnesses = []
 g = 1
 
@@ -157,6 +211,7 @@ while not es.stop():
 
     g += 1
     n = 1
+
 
 # Retrieve the best solution and its fitness value
 # print("Best solution:", best_solution)

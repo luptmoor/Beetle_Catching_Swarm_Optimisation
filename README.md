@@ -3,7 +3,7 @@
 This repository is part of a coding assignment for the course AE4350: Bio-Inspired Intelligence and Learning for Aerospace Engineering at Delft University of Technology,
 supervised by G.C.H.E. de Croon. Aim of this programme is optimising a simulated drone swarm in 2D
 to catch beetles, inspired by the invasive Asian Longhorned Beetle (A. glabripennis). The optimisation is conducted using CMA-ES by importing library 'cma'. Please contact
-the author for a full report about this project. To run the code, adjust settings.py to your wishes and then run main.py.
+the author Lukas Uptmoor for a full report about this project. To run the code, adjust settings.py to your wishes and then run main.py.
 
 ## settings.py
 This file contains all adjustable global parameters, marked by full capitalisation, like simulation settings, visualisation settings, CMA-ES settings and the initial parameter

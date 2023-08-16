@@ -179,9 +179,9 @@ class Simulation:
                 drone.codrones = [otherdrone for otherdrone in self.drones if not otherdrone == drone]
                 drone.advance()
 
-                # for entity in drone.visible_entities:
-                #     if entity not in self.entities:
-                #         drone.visible_entities.remove(entity)
+                for entity in drone.visible_entities:
+                    if entity not in self.entities:
+                        drone.visible_entities.remove(entity)
 
                 # Bug simulation
 

@@ -33,7 +33,7 @@ A_DRONE_MAX          =  165                                        # px / s^2, 3
 
 # Simulation parameters
 DT                   =    0.1                                       # s, timestep per tick
-T_MAX                =    8                                   # s, 10min, maximum simulation duration
+T_MAX                =    20                                   # s, 10min, maximum simulation duration
 VISUALISE            =  True                                        # Boolean deciding if simulation shall be visualised
 REALTIME             =  False                                       # Boolean deciding if visuals shall be real-time
 VIEW                 =    0                                         # Variable for different views in visualisation
@@ -57,7 +57,7 @@ TYPE_COLOURS = {'drone': GREY, 'tree': BROWN, 'bug': RED}
 # CMA-ES settings
 RUNS_PER_SOLUTION     =    3                                        # -, for how many conditions each solution is tested
 N_GENERATIONS         =  100                                        # -, number of generations in CMA-ES
-N_POP                 =   16                                        # -, number of genotypes per generation
+N_POP                 =   20                                       # -, number of genotypes per generation
 
 # Parameter 0
 MIN_R_VIS_TREE        =   10

@@ -8,6 +8,7 @@ from datetime import datetime
 from settings import *
 import os
 import pandas as pd
+n = 1
 
 
 def log(g, mean, sigma, solutions, fitness_values):
@@ -118,10 +119,14 @@ def fitness(params):
     :param params: (list) List of parameters, a.k.a. solution (N_pop x 1).
     :return: scores: (List) List of fitness values and metrics for each run (RUNS_PER_SOLUTION x 4).
     """
+    global n
+    print('Genotype: ', n)
     scores = []
     for i in range(RUNS_PER_SOLUTION):
         sim = Simulation(params, seed=i)
         scores.append(sim.run())  # list 1 x 4 (score + 3 criteria)
+    n += 1
+
     return scores  # list RUNS_PER_SOLUTION x 4
 
 
@@ -151,6 +156,7 @@ while not es.stop():
     es.disp()
 
     g += 1
+    n = 1
 
 # Retrieve the best solution and its fitness value
 # print("Best solution:", best_solution)

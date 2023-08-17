@@ -179,8 +179,55 @@ def fitness(params):
     return scores  # list RUNS_PER_SOLUTION x 4
 
 
+def analyse_sensitivity(filename):
+    """
+    analyses sensitivity of list of solutions to environmental parameters.
+    :param filename: filename of CSV containing solutions.
+    :return: None, exports results to other Sensitivity_Analysis.csv
+    """
 
-resume_evolution('80gen/Gen70_0.47067.csv', 70)
+    df = pd.read_csv(filename)
+    candidates = df.loc[0:4, 'r_vis_tree':'c']
+    print(candidates)
+    df_sa = pd.DataFrame()
+    i = 1
+    for index, params in candidates.iterrows():
+        print('Evaluating candidate', i)
+        print(params)
+
+        # Coordinate shift to normalised domain
+        offsets = np.array(
+            [MU_R_VIS_TREE, MU_K_TREE, MU_R_VIS_BUG, MU_K_BUG, MU_R_VIS_NEARDRONE, MU_K_NEARDRONE, MU_R_VIS_FARDRONE,
+             MU_K_FARDRONE, MU_R_ACTIVITY, MU_K_ACTIVITY, MU_V_MIN, MU_V_MAX, MU_C])
+        scales = np.array(
+            [RANGE_R_VIS_TREE, RANGE_K_TREE, RANGE_R_VIS_BUG, RANGE_K_BUG, RANGE_R_VIS_NEARDRONE, RANGE_K_NEARDRONE,
+             RANGE_R_VIS_FARDRONE, RANGE_K_FARDRONE, RANGE_R_ACTIVITY, RANGE_K_ACTIVITY, RANGE_V_MIN, RANGE_V_MAX,
+             RANGE_C])
+        params = params - offsets
+        params = 2 * params / scales
+        params = list(params)
+
+        scores = []
+        for seed in range(101, 151):
+            sim = Simulation(params, seed=seed)
+            scores.append(sim.run())
+        df_sa['Solution ' + str(i)] = pd.Series(scores)
+        df_sa['Avg Fitness ' + str(i)] = df_sa['Solution ' + str(i)].mean()
+        df_sa['STD ' + str(i)] = df_sa['Solution ' + str(i)].std(ddof=0)
+        i += 1
+
+    df_sa.to_csv('Sensitivity_Analysis.csv')
+
+
+
+
+analyse_sensitivity('toplist.csv')
+
+
+
+
+
+# resume_evolution('logs/Gen81_0.71635.csv', 81)
 
 
 

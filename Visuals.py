@@ -4,7 +4,7 @@ from settings import *
 
 
 class Visuals:
-    def __init__(self, width, height):
+    def __init__(self, width, height, n0_drones):
         self.FPS = 1/DT  # Determine FPS from timestep setting
         pygame.init()
         self.screen = pygame.display.set_mode((width, height))
@@ -12,6 +12,8 @@ class Visuals:
 
         self.font = pygame.freetype.Font(None, 12)
         self.clock = pygame.time.Clock()
+
+        self.n0_drones = n0_drones
 
         self.screen.fill(GREEN)
         pygame.display.flip()
@@ -51,7 +53,7 @@ class Visuals:
         text_rect.center = (60, 15)
         self.screen.blit(text_surface, text_rect)
 
-        text_surface, text_rect = self.font.render('Dead Drones: ' + str(round(N_DRONES - len(drones))), (0, 0, 0))
+        text_surface, text_rect = self.font.render('Dead Drones: ' + str(round(self.n0_drones - len(drones))), (0, 0, 0))
         text_rect.center = (180, 15)
         self.screen.blit(text_surface, text_rect)
 

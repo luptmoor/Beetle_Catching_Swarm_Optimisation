@@ -187,7 +187,7 @@ def analyse_sensitivity(filename):
     """
 
     df = pd.read_csv(filename)
-    candidates = df.loc[0:4, 'r_vis_tree':'c']
+    candidates = df.loc[5:7, 'r_vis_tree':'c']
     print(candidates)
     df_sa = pd.DataFrame()
     i = 1
@@ -208,57 +208,66 @@ def analyse_sensitivity(filename):
         params = list(params)
 
         scores = []
+        killed_bugs = []
+        passed_time = []
+        dead_drones = []
         for seed in range(101, 151):
             sim = Simulation(params, seed=seed)
-            scores.append(sim.run())
-        df_sa['Solution ' + str(i)] = pd.Series(scores)
-        df_sa['Avg Fitness ' + str(i)] = df_sa['Solution ' + str(i)].mean()
-        df_sa['STD ' + str(i)] = df_sa['Solution ' + str(i)].std(ddof=0)
+            score = sim.run()
+            scores.append(score[0])
+            killed_bugs.append(score[1])
+            passed_time.append(score[2])
+            dead_drones.append(score[3])
+
+        df_sa['Fitness ' + str(i)] = pd.Series(scores)
+        df_sa['Kiled Bugs ' + str(i)] = pd.Series(killed_bugs)
+        df_sa['Passed Time ' + str(i)] = pd.Series(passed_time)
+        df_sa['Crashed Drones ' + str(i)] = pd.Series(dead_drones)
         i += 1
 
-    df_sa.to_csv('Sensitivity_Analysis.csv')
+    df_sa.to_csv('Sensitivity_Analysis_extra.csv')
+
+
+
+#
+# analyse_sensitivity('toplist.csv')
 
 
 
 
-analyse_sensitivity('toplist.csv')
+
+resume_evolution('logs/Gen90_0.72006.csv', 90)
 
 
 
 
-
-# resume_evolution('logs/Gen81_0.71635.csv', 81)
-
-
-
-
-options = {
-    'maxiter': N_GENERATIONS,  # sets maximum number of generations
-    'popsize': N_POP,
-}
-
-# Run the CMA-ES optimization
-es = cma.CMAEvolutionStrategy(N_POP * [0], 0.35, options)
-fitnesses = []
-g = 1
-
-while not es.stop():
-    print('GENERATION:', g)
-    solutions = es.ask()  # list of lists with parameters (n_pop x n_param)
-    fitness_metrics = np.array([fitness(x) for x in solutions])  # array of fitnesses (n_pop x RUNS_PER_SOLUTION x 4)
-    log(g, es.mean, es.sigma, solutions.copy(), fitness_metrics)
-
-    # Take fitness of each run
-    fitness_values = fitness_metrics[:, :, 0]
-    average_fitnesses = np.mean(fitness_values, axis=1)
-
-    cost = [-x for x in average_fitnesses]  # es object minimises function, so negative fitness is defined as cost
-    es.tell(solutions, cost)
-    best_solution = es.best.get()[0]  # list of params of best solution (1 x n_param)
-    es.disp()
-
-    g += 1
-    n = 1
+# options = {
+#     'maxiter': N_GENERATIONS,  # sets maximum number of generations
+#     'popsize': N_POP,
+# }
+#
+# # Run the CMA-ES optimization
+# es = cma.CMAEvolutionStrategy(N_POP * [0], 0.35, options)
+# fitnesses = []
+# g = 1
+#
+# while not es.stop():
+#     print('GENERATION:', g)
+#     solutions = es.ask()  # list of lists with parameters (n_pop x n_param)
+#     fitness_metrics = np.array([fitness(x) for x in solutions])  # array of fitnesses (n_pop x RUNS_PER_SOLUTION x 4)
+#     log(g, es.mean, es.sigma, solutions.copy(), fitness_metrics)
+#
+#     # Take fitness of each run
+#     fitness_values = fitness_metrics[:, :, 0]
+#     average_fitnesses = np.mean(fitness_values, axis=1)
+#
+#     cost = [-x for x in average_fitnesses]  # es object minimises function, so negative fitness is defined as cost
+#     es.tell(solutions, cost)
+#     best_solution = es.best.get()[0]  # list of params of best solution (1 x n_param)
+#     es.disp()
+#
+#     g += 1
+#     n = 1
 
 
 # Retrieve the best solution and its fitness value

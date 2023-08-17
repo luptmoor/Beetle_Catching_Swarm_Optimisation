@@ -73,11 +73,17 @@ class Simulation:
         self.drones = []
         self.bugs = []
 
+        self.n0_drones = N_DRONES
+        self.n0_bugs = N_BUGS
+
         self.params = params  # tunable parameters chosen for this particular simulation to be evaluated
         self.seed = seed  # seed for random number generator
 
+        np.random.seed(self.seed)
+        self.load_environment()
+
         if VISUALISE:
-            self.visuals = Visuals(WIDTH, HEIGHT)
+            self.visuals = Visuals(WIDTH, HEIGHT, self.n0_drones)
 
     def load_environment(self):
         """
@@ -98,6 +104,7 @@ class Simulation:
                     # print(newtree.name, 'placed!')
                     placing = False
 
+
         # Initial random placement of bugs on map
         for j in range(int(round(N_BUGS * noise(NOISE), 0))):
             placing = True
@@ -111,6 +118,7 @@ class Simulation:
                     self.bugs.append(newbug)
                     # print(newbug.name, 'placed!')
                     placing = False
+            self.n0_bugs = len(self.bugs)
 
         # Initial random placement of drones on launchpad (fraction of total map)
         for k in range(int(round(N_DRONES * noise(NOISE), 0))):
@@ -125,6 +133,7 @@ class Simulation:
                     self.drones.append(newdrone)
                     # print(newdrone.name, 'placed!')
                     placing = False
+            self.n0_drones = len(self.drones)
 
     def evaluate(self):
         """
@@ -132,18 +141,20 @@ class Simulation:
         :return: (list): 1. score for this particular simulation, lies in interval [0, 1], 2. fraction of killed drones,
                          3. fraction of killed bugs, 4. fraction of passed time.
         """
-        score = F_bugs(1 - len(self.bugs) / N_BUGS) * F_time(self.t / T_MAX) * F_drones(1 - len(self.drones) / N_DRONES)
-        return [score, (1 - len(self.drones) / N_DRONES), (1 - len(self.bugs) / N_BUGS), (self.t / T_MAX)]
+        F1 = F_bugs(1 - len(self.bugs) / self.n0_bugs)
+        F2 = F_time(self.t / T_MAX)
+        F3 = F_drones(1 - len(self.drones) / self.n0_drones)
+        score = F1 * F2 * F3
+
+        return [score, (1 - len(self.drones) / self.n0_drones), (1 - len(self.bugs) / self.n0_bugs), (self.t / T_MAX)]
 
     def run(self):
         """
         loads environment, starts simulation loop and finally calls evaluation function.
         :return: (float) score for this particular simulation, lies in interval [0, 1].
         """
-        np.random.seed(self.seed)
-        self.load_environment()
         running = True
-
+        print(self.n0_drones, 'drones applied to ', self.n0_bugs, 'bugs.')
         while running:
             # Print time and seed every 10s
             if int(round(self.t, 0)) % 10 == 0 and abs(int(round(self.t, 0)) - self.t) < 0.001:

@@ -36,12 +36,12 @@ A_DRONE_MAX          =  165                                        # px / s^2, 3
 
 # Simulation parameters
 DT                   =    0.1                                       # s, timestep per tick
-T_MAX                =   120                                         # s, 1min, maximum simulation duration
+T_MAX                =  120                                         # s, 1min, maximum simulation duration
 VISUALISE            =  True                                        # Boolean deciding if simulation shall be visualised
 REALTIME             =  False                                       # Boolean deciding if visuals shall be real-time
 VIEW                 =    0                                         # Variable for different views in visualisation
-SENSITIVITY_ANALYSIS =  False                                       # Boolean deciding if noise should be added to certain parameters
-NOISE                = 0.15                                         # -, Noise amplitude if in sensitivity analysis
+SENSITIVITY_ANALYSIS =  False                                        # Boolean deciding if noise should be added to certain parameters
+NOISE                =    0.0                                     # -, Noise amplitude if in sensitivity analysis
 
 
 # RGB colours for visualisation
@@ -61,7 +61,7 @@ TYPE_COLOURS = {'drone': GREY, 'tree': BROWN, 'bug': RED}
 
 # CMA-ES settings
 RUNS_PER_SOLUTION     =    3                                        # -, for how many conditions each solution is tested
-N_GENERATIONS         =  100                                        # -, number of generations in CMA-ES
+N_GENERATIONS         =   90                                        # -, number of generations in CMA-ES
 N_POP                 =   20                                       # -, number of genotypes per generation
 
 # Parameter 0

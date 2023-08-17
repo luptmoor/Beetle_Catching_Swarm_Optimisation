@@ -93,6 +93,7 @@ def sim(params, seed):
     simulation = Simulation(params, seed=seed)
     return simulation.run()
 
+
 def resume_evolution(filename, g):
     """
     restarts CMA-ES by taking means and standard deviation from last reported generation
@@ -179,7 +180,7 @@ def fitness(params):
 
 
 
-resume_evolution('logs/Gen12_0.0161.csv', 12)
+resume_evolution('80gen/Gen70_0.47067.csv', 70)
 
 
 

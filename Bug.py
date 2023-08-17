@@ -69,7 +69,7 @@ class Bug(Entity):
             self.heading = np.arctan2(self.y - self.tree.y, self.x - self.tree.x)  # bug faces away from tree
 
             # Bug randomly takes off from tree
-            if np.random.random() < TAKEOFF_PROB * dt:
+            if np.random.random() < TAKEOFF_PROB * noise(NOISE) * dt:
                 self.speed = V_BUG
                 self.tree = None
                 self.mode = 'idle'
@@ -88,7 +88,7 @@ class Bug(Entity):
 
     def processVisual(self, cue):
         # Bug sees a new tree only while idling and goes to land mode
-        if self.mode == 'idle' and cue.type == 'tree' and np.random.random() < TREE_LAND_PROB * DT:
+        if self.mode == 'idle' and cue.type == 'tree' and np.random.random() < TREE_LAND_PROB * noise(NOISE) * DT:
             self.mode = 'land'
 
         # Bug sees a tree already identified
@@ -104,7 +104,7 @@ class Bug(Entity):
 
 
         # Bug sees a new drone while idling or landing (
-        elif (self.mode == 'idle' or self.mode == 'land') and cue.type == 'drone' and np.random.random() < ESCAPE_PROB * DT:
+        elif (self.mode == 'idle' or self.mode == 'land') and cue.type == 'drone' and np.random.random() < ESCAPE_PROB * noise(NOISE) * DT:
             self.mode = 'escape'
 
         # Bug sees a new drone while sitting on tree -> first goes to idle, escaping both tree and drone

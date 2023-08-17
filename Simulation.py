@@ -56,6 +56,8 @@ def check_collision(entity1, entity2, margin=0):
         return False
 
 
+
+
 class Simulation:
     """
     Class holding all the functions and parameters for a single simulation instance.
@@ -83,21 +85,21 @@ class Simulation:
         :return: None
         """
         # Initial random placement of trees on map
-        for i in range(N_TREES):
+        for i in range(int(round(N_TREES * noise(NOISE), 0))):
             placing = True
             while placing:
                 x = np.random.random() * (WIDTH - 2 * TREE_MIN_DIST) + TREE_MIN_DIST // 1
                 y = np.random.random() * (HEIGHT - 2 * TREE_MIN_DIST) + TREE_MIN_DIST // 1
 
                 newtree = Entity('Tree ' + str(i), 'tree', x, y, round(np.random.normal(R_TREE_AVG, R_TREE_STD), 0))
-                if not any([check_collision(newtree, entity, TREE_MIN_DIST) for entity in self.entities]):
+                if not any([check_collision(newtree, entity, TREE_MIN_DIST * noise(NOISE)) for entity in self.entities]):
                     self.entities.append(newtree)
                     self.trees.append(newtree)
                     # print(newtree.name, 'placed!')
                     placing = False
 
         # Initial random placement of bugs on map
-        for j in range(N_BUGS):
+        for j in range(int(round(N_BUGS * noise(NOISE), 0))):
             placing = True
             while placing:
                 x = (np.random.random() * WIDTH) // 1
@@ -111,14 +113,14 @@ class Simulation:
                     placing = False
 
         # Initial random placement of drones on launchpad (fraction of total map)
-        for k in range(N_DRONES):
+        for k in range(int(round(N_DRONES * noise(NOISE), 0))):
             placing = True
             while placing:
-                x = (np.random.random() * WIDTH * LAUNCHPAD_FRAC) // 1
-                y = (np.random.random() * HEIGHT * LAUNCHPAD_FRAC) // 1
+                x = (np.random.random() * WIDTH * LAUNCHPAD_FRAC * noise(NOISE)) // 1
+                y = (np.random.random() * HEIGHT * LAUNCHPAD_FRAC * noise(NOISE)) // 1
 
                 newdrone = Drone('Drone ' + str(k), 'drone', x, y, self.params)
-                if not any([check_collision(newdrone, entity, DRONE_MIN_DIST) for entity in self.entities]):
+                if not any([check_collision(newdrone, entity, DRONE_MIN_DIST * noise(NOISE)) for entity in self.entities]):
                     self.entities.append(newdrone)
                     self.drones.append(newdrone)
                     # print(newdrone.name, 'placed!')

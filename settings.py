@@ -1,3 +1,5 @@
+import numpy as np
+
 # Environment   scale: 1 px = 2cm
 WIDTH                = 1400                                        # px,  28 m
 HEIGHT               =  750                                        # px,  15 m
@@ -14,9 +16,10 @@ R_TREE_STD           =   (R_TREE_MAX - R_TREE_MIN) / 6             # px, standar
 TREE_MIN_DIST        =   R_TREE_MAX                                # px, 1.00 m, minimum spacing
 
 # Bugs
-N_BUGS               =   int(round(1.4 * AREA * TREE_DENSITY, 0))  # -, number of bugs
+BUG_DENSITY          =    1.4                                      # -, bugs per tree
+N_BUGS               =   int(round(BUG_DENSITY * AREA * TREE_DENSITY, 0))  # -, number of bugs
 R_BUG                =    1                                        # px, 2 cm, radius of bug
-R_VIS_BUG            =  100                                       # px, 1 m, vision radius of bug
+R_VIS_BUG            =  100                                        # px, 1 m, vision radius of bug
 BUG_RANDOMNESS       =  120 / 57.3                                 # rad / s, bugs' maximum heading change per second
 V_BUG                =   62                                        # px / s (1.24 m/s) bug velocity
 TREE_LAND_PROB       =    0.005                                    # 1 / s
@@ -26,17 +29,19 @@ TAKEOFF_PROB         =    0.001                                    # 1 / s
 # Static Drone Parameters
 BUGS_PER_DRONE       =    3                                        # -
 N_DRONES             =  int(round(N_BUGS / BUGS_PER_DRONE, 0))     # -, number of drones
-R_DRONE              =    7                                        # px, 14 cm, drone radius
+R_DRONE              =    7                                    # px, 14 cm, drone radius
 DRONE_MIN_DIST       =   40                                        # px, 80 cm, minimum initial drone spacing
 V_DRONE_MAX          =  250                                        # px / s,  5 m / s
 A_DRONE_MAX          =  165                                        # px / s^2, 3.3 m / s^2
 
 # Simulation parameters
 DT                   =    0.1                                       # s, timestep per tick
-T_MAX                =    20                                   # s, 10min, maximum simulation duration
+T_MAX                =   120                                         # s, 1min, maximum simulation duration
 VISUALISE            =  True                                        # Boolean deciding if simulation shall be visualised
 REALTIME             =  False                                       # Boolean deciding if visuals shall be real-time
 VIEW                 =    0                                         # Variable for different views in visualisation
+SENSITIVITY_ANALYSIS =  False                                       # Boolean deciding if noise should be added to certain parameters
+NOISE                = 0.15                                         # -, Noise amplitude if in sensitivity analysis
 
 
 # RGB colours for visualisation
@@ -138,4 +143,14 @@ MU_C                  = (MAX_C + MIN_C) / 2
 RANGE_C               = MAX_C - MIN_C
 
 
-
+def noise(k):
+    """
+    if sensitivity analysis setting is enabled, then a value in the interval [1-k, 1+k] is returned, otherwise 1
+    :param k: noise amplitude, should lie in [0, 1]
+    :return: noise factor
+    """
+    if SENSITIVITY_ANALYSIS:
+        randnr = np.random.random() * 2 * k  # random number between 0 and 2k
+        return 1 + randnr - k
+    else:
+        return 1

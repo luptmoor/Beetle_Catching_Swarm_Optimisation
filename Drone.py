@@ -146,13 +146,15 @@ class Drone(Entity):
         vx = self.speed * np.cos(self.heading) + self.ax * DT
         vy = self.speed * np.sin(self.heading) + self.ay * DT
 
+        # Brake if nothing big happens (check if this exceeds maximum acceleration)
+        if a <= 0.05 * A_DRONE_MAX:
+            self.speed = max((1 - self.c) * self.speed, self.speed - A_DRONE_MAX * DT)
+
         # Check if speed lies within correct range
         self.heading = np.arctan2(vy, vx) % (2 * np.pi)
         self.speed = max(min(np.sqrt(vy**2 + vx**2), self.v_max), self.v_min)
 
-        # Brake if nothing big happens (check if this exceeds maximum acceleration)
-        if a <= 0.05 * A_DRONE_MAX:
-            self.speed = max((1 - self.c) * self.speed, self.speed - A_DRONE_MAX * DT)
+
 
         # Integration
         self.x = int(round(self.x + self.speed * np.cos(self.heading) * DT, 0)) % WIDTH

@@ -11,14 +11,14 @@ class Drone(Entity):
         self.r_vis_tree = params[0] * RANGE_R_VIS_TREE / 2 + MU_R_VIS_TREE
         self.k_tree = params[1] * RANGE_K_TREE / 2 + MU_K_TREE
 
-        self.r_vis_bug = params[2] * RANGE_R_VIS_BEETLE / 2 + MU_R_VIS_BEETLE
-        self.k_bug = params[3] * RANGE_K_BEETLE / 2 + MU_K_BEETLE
+        self.r_vis_beetle = params[2] * RANGE_R_VIS_BEETLE / 2 + MU_R_VIS_BEETLE
+        self.k_beetle = params[3] * RANGE_K_BEETLE / 2 + MU_K_BEETLE
 
         self.r_vis_neardrone = params[4] * RANGE_R_VIS_NEARDRONE / 2 + MU_R_VIS_NEARDRONE
         self.k_neardrone = params[5] * RANGE_K_NEARDRONE / 2 + MU_K_NEARDRONE
 
-        self.r_vis = {'tree': self.r_vis_tree, 'drone': self.r_vis_neardrone, 'bug': self.r_vis_bug}
-        self.gains = {'tree': self.k_tree, 'drone': self.k_neardrone, 'bug': self.k_bug}
+        self.r_vis = {'tree': self.r_vis_tree, 'drone': self.r_vis_neardrone, 'beetle': self.r_vis_beetle}
+        self.gains = {'tree': self.k_tree, 'drone': self.k_neardrone, 'beetle': self.k_beetle}
 
         self.r_fardrone = params[6] * RANGE_R_VIS_FARDRONE / 2 + MU_R_VIS_FARDRONE
         self.k_fardrone = params[7] * RANGE_K_FARDRONE / 2 + MU_K_FARDRONE
@@ -64,10 +64,10 @@ class Drone(Entity):
 
 
         obstructed = False
-        # If a bug, check if it's behind a tree
-        if entity.type == 'bug' and entity.tree is not None:
+        # If a beetle, check if it's behind a tree
+        if entity.type == 'beetle' and entity.tree is not None:
             d_obs = np.sqrt((self.x - entity.tree.x) ** 2 + (self.y - entity.tree.y) ** 2)
-            # If tree is closer than bug, bug is probably not visible
+            # If tree is closer than beetle, beetle is probably not visible
             if d_obs < d:
                 obstructed = True
 
@@ -86,10 +86,10 @@ class Drone(Entity):
         axs = []
         ays = []
 
-        # Determine number of seen bugs by drone
+        # Determine number of seen beetles by drone
         self.activity = 0
         for entity in self.visible_entities:
-            if entity.type == 'bug':
+            if entity.type == 'beetle':
                 self.activity += 1
 
             # Distance calculation according to periodical domain

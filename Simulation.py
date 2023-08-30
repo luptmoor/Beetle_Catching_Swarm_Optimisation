@@ -15,9 +15,9 @@ def F_time(x):
     return 1 - 0.3 * x ** 2
 
 
-def F_bugs(x):
+def F_beetles(x):
     """
-    Mathematical transfer function for "bugs killed" criterion.
+    Mathematical transfer function for "beetles killed" criterion.
     :param x: (float) function argument.
     :return: (float) partial fitness.
     """
@@ -71,10 +71,10 @@ class Simulation:
         self.entities = []
         self.trees = []
         self.drones = []
-        self.bugs = []
+        self.beetles = []
 
         self.n0_drones = N_DRONES
-        self.n0_bugs = N_BEETLES
+        self.n0_beetles = N_BEETLES
 
         self.params = params  # tunable parameters chosen for this particular simulation to be evaluated
         self.seed = seed  # seed for random number generator
@@ -87,7 +87,7 @@ class Simulation:
 
     def load_environment(self):
         """
-        loads simulated environment by placing trees, bugs and drones.
+        loads simulated environment by placing trees, beetles and drones.
         :return: None
         """
         # Initial random placement of trees on map
@@ -105,20 +105,20 @@ class Simulation:
                     placing = False
 
 
-        # Initial random placement of bugs on map
+        # Initial random placement of beetles on map
         for j in range(int(round(N_BEETLES * noise(NOISE), 0))):
             placing = True
             while placing:
                 x = (np.random.random() * WIDTH) // 1
                 y = (np.random.random() * HEIGHT) // 1
 
-                newbug = Beetle('Bug ' + str(j), x, y)
-                if not any([check_collision(newbug, entity) for entity in self.entities]):
-                    self.entities.append(newbug)
-                    self.bugs.append(newbug)
-                    # print(newbug.name, 'placed!')
+                newbeetle = Beetle('Bug ' + str(j), x, y)
+                if not any([check_collision(newbeetle, entity) for entity in self.entities]):
+                    self.entities.append(newbeetle)
+                    self.beetles.append(newbeetle)
+                    # print(newbeetle.name, 'placed!')
                     placing = False
-            self.n0_bugs = len(self.bugs)
+            self.n0_beetles = len(self.beetles)
 
         # Initial random placement of drones on launchpad (fraction of total map)
         for k in range(int(round(N_DRONES * noise(NOISE), 0))):
@@ -139,14 +139,14 @@ class Simulation:
         """
         called when simulation is over to evaluate the fitness of a solution using three transfer functions: one for each criterion.
         :return: (list): 1. score for this particular simulation, lies in interval [0, 1], 2. fraction of killed drones,
-                         3. fraction of killed bugs, 4. fraction of passed time.
+                         3. fraction of killed beetles, 4. fraction of passed time.
         """
-        F1 = F_bugs(1 - len(self.bugs) / self.n0_bugs)
+        F1 = F_beetles(1 - len(self.beetles) / self.n0_beetles)
         F2 = F_time(self.t / T_MAX)
         F3 = F_drones(1 - len(self.drones) / self.n0_drones)
         score = F1 * F2 * F3
 
-        return [score, (1 - len(self.drones) / self.n0_drones), (1 - len(self.bugs) / self.n0_bugs), (self.t / T_MAX)]
+        return [score, (1 - len(self.drones) / self.n0_drones), (1 - len(self.beetles) / self.n0_beetles), (self.t / T_MAX)]
 
     def run(self):
         """
@@ -154,7 +154,7 @@ class Simulation:
         :return: (float) score for this particular simulation, lies in interval [0, 1].
         """
         running = True
-        print(self.n0_drones, 'drones applied to ', self.n0_bugs, 'bugs.')
+        print(self.n0_drones, 'drones applied to ', self.n0_beetles, 'beetles.')
         while running:
             # Print time and seed every 10s
             if int(round(self.t, 0)) % 10 == 0 and abs(int(round(self.t, 0)) - self.t) < 0.001:
@@ -171,10 +171,10 @@ class Simulation:
                         self.entities.remove(otherdrone)
                         self.drones.remove(otherdrone)
 
-                for bug in self.bugs:
-                    if check_collision(drone, bug):
-                        self.bugs.remove(bug)
-                        self.entities.remove(bug)
+                for beetle in self.beetles:
+                    if check_collision(drone, beetle):
+                        self.beetles.remove(beetle)
+                        self.entities.remove(beetle)
 
                 for tree in self.trees:
                     if check_collision(drone, tree, margin=0.1*R_DRONE):
@@ -194,8 +194,8 @@ class Simulation:
                 #             self.entities.remove(entity)
                 #             self.drones.remove(entity)
                 #
-                #         elif entity in self.bugs:
-                #             self.bugs.remove(entity)
+                #         elif entity in self.beetles:
+                #             self.beetles.remove(entity)
                 #             self.entities.remove(entity)
                 #         elif entity in self.trees:
 
@@ -217,33 +217,33 @@ class Simulation:
                 # Bug simulation
 
             # Bug simulation
-            for bug in self.bugs:
+            for beetle in self.beetles:
                 # 1. Check if drones nearby
                 for drone in self.drones:
-                    if bug.sees(drone):
-                        bug.processVisual(drone)
+                    if beetle.sees(drone):
+                        beetle.processVisual(drone)
                 # First half step
-                bug.advance(DT / 2)
+                beetle.advance(DT / 2)
 
                 # 2. Check if landed on tree or tree nearby
                 for tree in self.trees:
-                    if check_collision(bug, tree):
-                        bug.mode = 'tree'
-                        bug.tree = tree
-                    if bug.sees(tree):
-                        bug.processVisual(tree)
+                    if check_collision(beetle, tree):
+                        beetle.mode = 'tree'
+                        beetle.tree = tree
+                    if beetle.sees(tree):
+                        beetle.processVisual(tree)
                 # Second half step
-                bug.advance(DT / 2)
+                beetle.advance(DT / 2)
 
             # Update screen if requested
             if VISUALISE:
-                self.visuals.update(self.trees, self.bugs, self.drones)
+                self.visuals.update(self.trees, self.beetles, self.drones)
 
             # Add time step
             self.t += DT
 
-            # End conditions: 80% of drones dead, all bugs dead or time up.
-            if not self.drones or not self.bugs or self.t >= T_MAX:
+            # End conditions: 80% of drones dead, all beetles dead or time up.
+            if not self.drones or not self.beetles or self.t >= T_MAX:
                 running = False
                 self.score = self.evaluate()
 

@@ -26,8 +26,8 @@ def log(g, mean, sigma, solutions, fitness_values):
     df = pd.DataFrame(solutions, index=[i for i in range(len(solutions) - 1)] + ['Underlying Mean'],
                       columns=['r_vis_tree',
                                'k_tree',
-                               'r_vis_bug',
-                               'k_bug',
+                               'r_vis_beetle',
+                               'k_beetle',
                                'r_vis_neardrone',
                                'k_neardrone',
                                'r_vis_fardrone',
@@ -65,8 +65,8 @@ def log(g, mean, sigma, solutions, fitness_values):
     df['r_vis_tree'] = round(df['r_vis_tree'] * RANGE_R_VIS_TREE / 2 + MU_R_VIS_TREE)
     df['k_tree'] = df['k_tree'] * RANGE_K_TREE / 2 + MU_K_TREE
 
-    df['k_bug'] = df['k_bug'] * RANGE_K_BEETLE / 2 + MU_K_BEETLE
-    df['r_vis_bug'] = round(df['r_vis_bug'] * RANGE_R_VIS_BEETLE / 2 + MU_R_VIS_BEETLE, 0)
+    df['k_beetle'] = df['k_beetle'] * RANGE_K_BEETLE / 2 + MU_K_BEETLE
+    df['r_vis_beetle'] = round(df['r_vis_beetle'] * RANGE_R_VIS_BEETLE / 2 + MU_R_VIS_BEETLE, 0)
 
     df['r_vis_neardrone'] = df['r_vis_neardrone'] * RANGE_R_VIS_NEARDRONE / 2 + MU_R_VIS_NEARDRONE
     df['k_neardrone'] = df['k_neardrone'] * RANGE_K_NEARDRONE / 2 + MU_K_NEARDRONE
@@ -208,19 +208,19 @@ def analyse_sensitivity(filename):
         params = list(params)
 
         scores = []
-        killed_bugs = []
+        killed_beetles = []
         passed_time = []
         dead_drones = []
         for seed in range(101, 151):
             sim = Simulation(params, seed=seed)
             score = sim.run()
             scores.append(score[0])
-            killed_bugs.append(score[1])
+            killed_beetles.append(score[1])
             passed_time.append(score[2])
             dead_drones.append(score[3])
 
         df_sa['Fitness ' + str(i)] = pd.Series(scores)
-        df_sa['Kiled Bugs ' + str(i)] = pd.Series(killed_bugs)
+        df_sa['Kiled Bugs ' + str(i)] = pd.Series(killed_beetles)
         df_sa['Passed Time ' + str(i)] = pd.Series(passed_time)
         df_sa['Crashed Drones ' + str(i)] = pd.Series(dead_drones)
         i += 1
@@ -280,12 +280,12 @@ analyse_sensitivity('toplist.csv')
 # plt.grid(True)
 # plt.show()
 
-# parameters = [(180 - MU_R_VIS_BEETLE) * 2 / RANGE_R_VIS_BEETLE,  # 'r_vis_bug'
+# parameters = [(180 - MU_R_VIS_BEETLE) * 2 / RANGE_R_VIS_BEETLE,  # 'r_vis_beetle'
 #               (180 - MU_r_vis_neardrone) * 2 / RANGE_r_vis_neardrone,  # 'r_vis_neardrone'
 #               (50 - MU_R_VIS_TREE) * 2 / RANGE_R_VIS_TREE,  # 'r_vis_tree'
 #           300,  # 'k_tree'
 #           60,  # 'k_neardrone'
-#           -4,  # 'k_bug'
+#           -4,  # 'k_beetle'
 #           - 50e-4,  # 'k_fardrone'
 #           - 1e-4,  # 'k_activity'
 #           3,  # 'v_min'

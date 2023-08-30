@@ -21,7 +21,7 @@ class Beetle(Entity):
         :param r_vis:
         :param mode:
         """
-        super().__init__(name, 'bug', x, y, R_BEETLE)
+        super().__init__(name, 'beetle', x, y, R_BEETLE)
         self.heading = np.random.random() * 2 * np.pi
         self.speed = speed
         self.r_vis = r_vis
@@ -51,8 +51,8 @@ class Beetle(Entity):
 
     def advance(self, dt):
         """
-        performs the integration of the bug's behaviour according to its current mode
-        :param dt: timestep size, is variable because bugs perform half the step size twice
+        performs the integration of the beetle's behaviour according to its current mode
+        :param dt: timestep size, is variable because beetles perform half the step size twice
         :return: None
         """
         # Bug idles and changes direction randomly
@@ -66,14 +66,14 @@ class Beetle(Entity):
         # Bug sits on tree
         elif self.mode == 'tree':
             self.speed = 0
-            self.heading = np.arctan2(self.y - self.tree.y, self.x - self.tree.x)  # bug faces away from tree
+            self.heading = np.arctan2(self.y - self.tree.y, self.x - self.tree.x)  # beetle faces away from tree
 
             # Bug randomly takes off from tree
             if np.random.random() < TAKEOFF_PROB * noise(NOISE) * dt:
                 self.speed = V_BEETLE
                 self.tree = None
                 self.mode = 'idle'
-            # Ensure that bug always sits on the bark of tree
+            # Ensure that beetle always sits on the bark of tree
             elif np.sqrt((self.x - self.tree.x)**2 + (self.y - self.tree.y)**2) < self.tree.r_col:
                 self.x = self.tree.x + self.tree.r_col * np.cos(self.heading)
                 self.y = self.tree.y + self.tree.r_col * np.sin(self.heading)

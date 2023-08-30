@@ -16,12 +16,12 @@ R_TREE_STD           =   (R_TREE_MAX - R_TREE_MIN) / 6             # px, standar
 TREE_MIN_DIST        =   R_TREE_MAX                                # px, 1.00 m, minimum spacing
 
 # Bugs
-BEETLE_DENSITY          =    1.4                                      # -, bugs per tree
-N_BEETLES               =   int(round(BEETLE_DENSITY * AREA * TREE_DENSITY, 0))  # -, number of bugs
-R_BEETLE                =    1                                        # px, 2 cm, radius of bug
-R_VIS_BEETLE            =  100                                        # px, 1 m, vision radius of bug
-BEETLE_RANDOMNESS       =  120 / 57.3                                 # rad / s, bugs' maximum heading change per second
-V_BEETLE                =   62                                        # px / s (1.24 m/s) bug velocity
+BEETLE_DENSITY          =    1.4                                      # -, beetles per tree
+N_BEETLES               =   int(round(BEETLE_DENSITY * AREA * TREE_DENSITY, 0))  # -, number of beetles
+R_BEETLE                =    1                                        # px, 2 cm, radius of beetle
+R_VIS_BEETLE            =  100                                        # px, 1 m, vision radius of beetle
+BEETLE_RANDOMNESS       =  120 / 57.3                                 # rad / s, beetles' maximum heading change per second
+V_BEETLE                =   62                                        # px / s (1.24 m/s) beetle velocity
 TREE_LAND_PROB       =    0.005                                    # 1 / s
 ESCAPE_PROB          =    0.20                                     # 1 / s
 TAKEOFF_PROB         =    0.001                                    # 1 / s
@@ -56,7 +56,7 @@ BLUE                 = (0, 50, 255)
 WHITE                = (255, 255, 255)
 
 BEETLE_COLOURS = {'idle': RED, 'land': ORANGE, 'tree': YELLOW, 'escape': PINK}
-TYPE_COLOURS = {'drone': GREY, 'tree': BROWN, 'bug': RED}
+TYPE_COLOURS = {'drone': GREY, 'tree': BROWN, 'beetle': RED}
 
 
 # CMA-ES settings

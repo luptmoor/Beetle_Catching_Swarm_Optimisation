@@ -1,4 +1,4 @@
-# Bug_Catching_Swarm_Optimisation
+# Beetle_Catching_Swarm_Optimisation
 
 This repository is part of a coding assignment for the course AE4350: Bio-Inspired Intelligence and Learning for Aerospace Engineering at Delft University of Technology,
 supervised by prof. Guido de Croon. Aim of this programme is optimising a simulated drone swarm in 2D
@@ -20,13 +20,13 @@ be found in this file.
 If enabled in the settings, this file takes care of the graphical visualisation of the simulation, using pygame, which is helpful for verification of the simulation process.
 The simulation can be halted and resumed pressing the spacebar.
 When pressing 'v', it is cycled between 4 views.
-0: Default, 1: Drone vision radii and influenced objects, 2: Bug vision radii and attached trees, 3: Drone mid-range communication and activity levels (# of visible bugs).
+0: Default, 1: Drone vision radii and influenced objects, 2: Beetle vision radii and attached trees, 3: Drone mid-range communication and activity levels (# of visible beetles).
 
 ## Entity.py
 Parent class for all physical objects.
 
-## Bug.py
-This file contains the Bug class, which contains the bugs' dynamics according to the different modes.
+## Beetle.py
+This file contains the Beetle class, which contains the beetles' dynamics according to the different modes.
 
 ## Drone.py
 This file contains the Drone class, which controls the drones' dynamics based on the tunable parameters.

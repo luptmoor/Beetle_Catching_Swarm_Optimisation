@@ -11,8 +11,8 @@ class Drone(Entity):
         self.r_vis_tree = params[0] * RANGE_R_VIS_TREE / 2 + MU_R_VIS_TREE
         self.k_tree = params[1] * RANGE_K_TREE / 2 + MU_K_TREE
 
-        self.r_vis_bug = params[2] * RANGE_R_VIS_BUG / 2 + MU_R_VIS_BUG
-        self.k_bug = params[3] * RANGE_K_BUG / 2 + MU_K_BUG
+        self.r_vis_bug = params[2] * RANGE_R_VIS_BEETLE / 2 + MU_R_VIS_BEETLE
+        self.k_bug = params[3] * RANGE_K_BEETLE / 2 + MU_K_BEETLE
 
         self.r_vis_neardrone = params[4] * RANGE_R_VIS_NEARDRONE / 2 + MU_R_VIS_NEARDRONE
         self.k_neardrone = params[5] * RANGE_K_NEARDRONE / 2 + MU_K_NEARDRONE

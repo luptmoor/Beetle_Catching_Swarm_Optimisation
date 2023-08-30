@@ -65,8 +65,8 @@ def log(g, mean, sigma, solutions, fitness_values):
     df['r_vis_tree'] = round(df['r_vis_tree'] * RANGE_R_VIS_TREE / 2 + MU_R_VIS_TREE)
     df['k_tree'] = df['k_tree'] * RANGE_K_TREE / 2 + MU_K_TREE
 
-    df['k_bug'] = df['k_bug'] * RANGE_K_BUG / 2 + MU_K_BUG
-    df['r_vis_bug'] = round(df['r_vis_bug'] * RANGE_R_VIS_BUG / 2 + MU_R_VIS_BUG, 0)
+    df['k_bug'] = df['k_bug'] * RANGE_K_BEETLE / 2 + MU_K_BEETLE
+    df['r_vis_bug'] = round(df['r_vis_bug'] * RANGE_R_VIS_BEETLE / 2 + MU_R_VIS_BEETLE, 0)
 
     df['r_vis_neardrone'] = df['r_vis_neardrone'] * RANGE_R_VIS_NEARDRONE / 2 + MU_R_VIS_NEARDRONE
     df['k_neardrone'] = df['k_neardrone'] * RANGE_K_NEARDRONE / 2 + MU_K_NEARDRONE
@@ -112,8 +112,8 @@ def resume_evolution(filename, g):
     means = pd.Series(df.iloc[20][1:14])
 
     # Transform parameters back to space that is used by cma library
-    offsets = np.array([MU_R_VIS_TREE, MU_K_TREE, MU_R_VIS_BUG, MU_K_BUG, MU_R_VIS_NEARDRONE, MU_K_NEARDRONE, MU_R_VIS_FARDRONE, MU_K_FARDRONE, MU_R_ACTIVITY, MU_K_ACTIVITY, MU_V_MIN, MU_V_MAX, MU_C])
-    scales = np.array([RANGE_R_VIS_TREE, RANGE_K_TREE, RANGE_R_VIS_BUG, RANGE_K_BUG, RANGE_R_VIS_NEARDRONE, RANGE_K_NEARDRONE, RANGE_R_VIS_FARDRONE, RANGE_K_FARDRONE, RANGE_R_ACTIVITY, RANGE_K_ACTIVITY, RANGE_V_MIN, RANGE_V_MAX, RANGE_C])
+    offsets = np.array([MU_R_VIS_TREE, MU_K_TREE, MU_R_VIS_BEETLE, MU_K_BEETLE, MU_R_VIS_NEARDRONE, MU_K_NEARDRONE, MU_R_VIS_FARDRONE, MU_K_FARDRONE, MU_R_ACTIVITY, MU_K_ACTIVITY, MU_V_MIN, MU_V_MAX, MU_C])
+    scales = np.array([RANGE_R_VIS_TREE, RANGE_K_TREE, RANGE_R_VIS_BEETLE, RANGE_K_BEETLE, RANGE_R_VIS_NEARDRONE, RANGE_K_NEARDRONE, RANGE_R_VIS_FARDRONE, RANGE_K_FARDRONE, RANGE_R_ACTIVITY, RANGE_K_ACTIVITY, RANGE_V_MIN, RANGE_V_MAX, RANGE_C])
     means = means - offsets
     means = 2 * means / scales
     means = list(means)
@@ -197,10 +197,10 @@ def analyse_sensitivity(filename):
 
         # Coordinate shift to normalised domain
         offsets = np.array(
-            [MU_R_VIS_TREE, MU_K_TREE, MU_R_VIS_BUG, MU_K_BUG, MU_R_VIS_NEARDRONE, MU_K_NEARDRONE, MU_R_VIS_FARDRONE,
+            [MU_R_VIS_TREE, MU_K_TREE, MU_R_VIS_BEETLE, MU_K_BEETLE, MU_R_VIS_NEARDRONE, MU_K_NEARDRONE, MU_R_VIS_FARDRONE,
              MU_K_FARDRONE, MU_R_ACTIVITY, MU_K_ACTIVITY, MU_V_MIN, MU_V_MAX, MU_C])
         scales = np.array(
-            [RANGE_R_VIS_TREE, RANGE_K_TREE, RANGE_R_VIS_BUG, RANGE_K_BUG, RANGE_R_VIS_NEARDRONE, RANGE_K_NEARDRONE,
+            [RANGE_R_VIS_TREE, RANGE_K_TREE, RANGE_R_VIS_BEETLE, RANGE_K_BEETLE, RANGE_R_VIS_NEARDRONE, RANGE_K_NEARDRONE,
              RANGE_R_VIS_FARDRONE, RANGE_K_FARDRONE, RANGE_R_ACTIVITY, RANGE_K_ACTIVITY, RANGE_V_MIN, RANGE_V_MAX,
              RANGE_C])
         params = params - offsets
@@ -230,13 +230,13 @@ def analyse_sensitivity(filename):
 
 
 #
-# analyse_sensitivity('toplist.csv')
+analyse_sensitivity('toplist.csv')
 
 
 
 
 
-resume_evolution('logs/Gen90_0.72006.csv', 90)
+# resume_evolution('logs/Gen90_0.72006.csv', 90)
 
 
 
@@ -280,7 +280,7 @@ resume_evolution('logs/Gen90_0.72006.csv', 90)
 # plt.grid(True)
 # plt.show()
 
-# parameters = [(180 - MU_R_VIS_BUG) * 2 / RANGE_R_VIS_BUG,  # 'r_vis_bug'
+# parameters = [(180 - MU_R_VIS_BEETLE) * 2 / RANGE_R_VIS_BEETLE,  # 'r_vis_bug'
 #               (180 - MU_r_vis_neardrone) * 2 / RANGE_r_vis_neardrone,  # 'r_vis_neardrone'
 #               (50 - MU_R_VIS_TREE) * 2 / RANGE_R_VIS_TREE,  # 'r_vis_tree'
 #           300,  # 'k_tree'

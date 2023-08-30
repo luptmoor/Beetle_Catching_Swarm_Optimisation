@@ -8,8 +8,8 @@ import numpy as np
 
 
 
-class Bug(Entity):
-    def __init__(self, name, x, y, speed=V_BUG, r_vis=R_VIS_BUG, mode='idle'):
+class Beetle(Entity):
+    def __init__(self, name, x, y, speed=V_BEETLE, r_vis=R_VIS_BEETLE, mode='idle'):
         """
         Simulated Bug
         :param name:
@@ -21,7 +21,7 @@ class Bug(Entity):
         :param r_vis:
         :param mode:
         """
-        super().__init__(name, 'bug', x, y, R_BUG)
+        super().__init__(name, 'bug', x, y, R_BEETLE)
         self.heading = np.random.random() * 2 * np.pi
         self.speed = speed
         self.r_vis = r_vis
@@ -57,11 +57,11 @@ class Bug(Entity):
         """
         # Bug idles and changes direction randomly
         if self.mode == 'idle':
-            self.heading += (np.random.random() * 2 * BUG_RANDOMNESS - BUG_RANDOMNESS) * dt
+            self.heading += (np.random.random() * 2 * BEETLE_RANDOMNESS - BEETLE_RANDOMNESS) * dt
 
         # Bug escapes and changes direction less randomly
         elif self.mode == 'escape':
-            self.heading += (np.random.random() * 2 * 0.3 * BUG_RANDOMNESS - 0.3 * BUG_RANDOMNESS) * dt
+            self.heading += (np.random.random() * 2 * 0.3 * BEETLE_RANDOMNESS - 0.3 * BEETLE_RANDOMNESS) * dt
 
         # Bug sits on tree
         elif self.mode == 'tree':
@@ -70,7 +70,7 @@ class Bug(Entity):
 
             # Bug randomly takes off from tree
             if np.random.random() < TAKEOFF_PROB * noise(NOISE) * dt:
-                self.speed = V_BUG
+                self.speed = V_BEETLE
                 self.tree = None
                 self.mode = 'idle'
             # Ensure that bug always sits on the bark of tree
@@ -118,7 +118,7 @@ class Bug(Entity):
 
             # Bug flies half the angle between tree (its current heading) and the drone
             self.heading = (self.heading + np.arctan2(dy, dx)) / 2
-            self.speed = V_BUG
+            self.speed = V_BEETLE
             self.tree = None
             self.mode = 'idle'
 

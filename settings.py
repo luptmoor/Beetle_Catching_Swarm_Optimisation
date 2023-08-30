@@ -16,19 +16,19 @@ R_TREE_STD           =   (R_TREE_MAX - R_TREE_MIN) / 6             # px, standar
 TREE_MIN_DIST        =   R_TREE_MAX                                # px, 1.00 m, minimum spacing
 
 # Bugs
-BUG_DENSITY          =    1.4                                      # -, bugs per tree
-N_BUGS               =   int(round(BUG_DENSITY * AREA * TREE_DENSITY, 0))  # -, number of bugs
-R_BUG                =    1                                        # px, 2 cm, radius of bug
-R_VIS_BUG            =  100                                        # px, 1 m, vision radius of bug
-BUG_RANDOMNESS       =  120 / 57.3                                 # rad / s, bugs' maximum heading change per second
-V_BUG                =   62                                        # px / s (1.24 m/s) bug velocity
+BEETLE_DENSITY          =    1.4                                      # -, bugs per tree
+N_BEETLES               =   int(round(BEETLE_DENSITY * AREA * TREE_DENSITY, 0))  # -, number of bugs
+R_BEETLE                =    1                                        # px, 2 cm, radius of bug
+R_VIS_BEETLE            =  100                                        # px, 1 m, vision radius of bug
+BEETLE_RANDOMNESS       =  120 / 57.3                                 # rad / s, bugs' maximum heading change per second
+V_BEETLE                =   62                                        # px / s (1.24 m/s) bug velocity
 TREE_LAND_PROB       =    0.005                                    # 1 / s
 ESCAPE_PROB          =    0.20                                     # 1 / s
 TAKEOFF_PROB         =    0.001                                    # 1 / s
 
 # Static Drone Parameters
-BUGS_PER_DRONE       =    3                                        # -
-N_DRONES             =  int(round(N_BUGS / BUGS_PER_DRONE, 0))     # -, number of drones
+BEETLES_PER_DRONE       =    3                                        # -
+N_DRONES             =  int(round(N_BEETLES / BEETLES_PER_DRONE, 0))     # -, number of drones
 R_DRONE              =    7                                    # px, 14 cm, drone radius
 DRONE_MIN_DIST       =   40                                        # px, 80 cm, minimum initial drone spacing
 V_DRONE_MAX          =  250                                        # px / s,  5 m / s
@@ -38,7 +38,7 @@ A_DRONE_MAX          =  165                                        # px / s^2, 3
 DT                   =    0.1                                       # s, timestep per tick
 T_MAX                =  120                                         # s, 1min, maximum simulation duration
 VISUALISE            =  True                                        # Boolean deciding if simulation shall be visualised
-REALTIME             =  False                                       # Boolean deciding if visuals shall be real-time
+REALTIME             =  True                                       # Boolean deciding if visuals shall be real-time
 VIEW                 =    0                                         # Variable for different views in visualisation
 SENSITIVITY_ANALYSIS =  False                                        # Boolean deciding if noise should be added to certain parameters
 NOISE                =    0.0                                     # -, Noise amplitude if in sensitivity analysis
@@ -55,7 +55,7 @@ PINK                 = (255, 0, 255)
 BLUE                 = (0, 50, 255)
 WHITE                = (255, 255, 255)
 
-BUG_COLOURS = {'idle': RED, 'land': ORANGE, 'tree': YELLOW, 'escape': PINK}
+BEETLE_COLOURS = {'idle': RED, 'land': ORANGE, 'tree': YELLOW, 'escape': PINK}
 TYPE_COLOURS = {'drone': GREY, 'tree': BROWN, 'bug': RED}
 
 
@@ -77,16 +77,16 @@ MU_K_TREE             = (MAX_K_TREE + MIN_K_TREE) / 2
 RANGE_K_TREE          = MAX_K_TREE - MIN_K_TREE
 
 # Parameter 2
-MIN_R_VIS_BUG         =   10
-MAX_R_VIS_BUG         =  200
-MU_R_VIS_BUG          = (MAX_R_VIS_BUG + MIN_R_VIS_BUG) / 2
-RANGE_R_VIS_BUG       = MAX_R_VIS_BUG - MIN_R_VIS_BUG
+MIN_R_VIS_BEETLE         =   10
+MAX_R_VIS_BEETLE         =  200
+MU_R_VIS_BEETLE          = (MAX_R_VIS_BEETLE + MIN_R_VIS_BEETLE) / 2
+RANGE_R_VIS_BEETLE       = MAX_R_VIS_BEETLE - MIN_R_VIS_BEETLE
 
 # Parameter 3
-MIN_K_BUG             =   -150
-MAX_K_BUG             =    0
-MU_K_BUG              = (MAX_K_BUG + MIN_K_BUG) / 2
-RANGE_K_BUG           = MAX_K_BUG - MIN_K_BUG
+MIN_K_BEETLE             =   -150
+MAX_K_BEETLE             =    0
+MU_K_BEETLE              = (MAX_K_BEETLE + MIN_K_BEETLE) / 2
+RANGE_K_BEETLE           = MAX_K_BEETLE - MIN_K_BEETLE
 
 # Parameter 4
 MIN_R_VIS_NEARDRONE   =   10

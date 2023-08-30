@@ -67,11 +67,11 @@ class Visuals:
 
         # Draw all bugs
         for bug in bugs:
-            pygame.draw.circle(self.screen, BUG_COLOURS[bug.mode], (bug.x, bug.y), bug.r_col)
+            pygame.draw.circle(self.screen, BEETLE_COLOURS[bug.mode], (bug.x, bug.y), bug.r_col)
 
             if VIEW == 3:  # Bug vision and attached trees
 
-                pygame.draw.circle(self.screen, BUG_COLOURS[bug.mode], (bug.x, bug.y), bug.r_vis, 1)  # visual fields
+                pygame.draw.circle(self.screen, BEETLE_COLOURS[bug.mode], (bug.x, bug.y), bug.r_vis, 1)  # visual fields
                 if bug.tree is not None:
                     pygame.draw.line(self.screen, BLUE, (bug.x, bug.y), (bug.tree.x, bug.tree.y), 1)
 

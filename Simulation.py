@@ -1,6 +1,6 @@
 import numpy as np
 from Entity import Entity
-from Bug import Bug
+from Beetle import Beetle
 from Drone import Drone
 from Visuals import Visuals
 from settings import *
@@ -74,7 +74,7 @@ class Simulation:
         self.bugs = []
 
         self.n0_drones = N_DRONES
-        self.n0_bugs = N_BUGS
+        self.n0_bugs = N_BEETLES
 
         self.params = params  # tunable parameters chosen for this particular simulation to be evaluated
         self.seed = seed  # seed for random number generator
@@ -106,13 +106,13 @@ class Simulation:
 
 
         # Initial random placement of bugs on map
-        for j in range(int(round(N_BUGS * noise(NOISE), 0))):
+        for j in range(int(round(N_BEETLES * noise(NOISE), 0))):
             placing = True
             while placing:
                 x = (np.random.random() * WIDTH) // 1
                 y = (np.random.random() * HEIGHT) // 1
 
-                newbug = Bug('Bug ' + str(j), x, y)
+                newbug = Beetle('Bug ' + str(j), x, y)
                 if not any([check_collision(newbug, entity) for entity in self.entities]):
                     self.entities.append(newbug)
                     self.bugs.append(newbug)

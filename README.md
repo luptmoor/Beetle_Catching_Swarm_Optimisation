@@ -1,7 +1,7 @@
 # Bug_Catching_Swarm_Optimisation
 
 This repository is part of a coding assignment for the course AE4350: Bio-Inspired Intelligence and Learning for Aerospace Engineering at Delft University of Technology,
-supervised by G.C.H.E. de Croon. Aim of this programme is optimising a simulated drone swarm in 2D
+supervised by prof. Guido de Croon. Aim of this programme is optimising a simulated drone swarm in 2D
 to catch beetles, inspired by the invasive Asian Longhorned Beetle (A. glabripennis). The optimisation is conducted using CMA-ES by importing library 'cma'. Please contact
 the author Lukas Uptmoor for a full report about this project. To run the code, adjust settings.py to your wishes and then run main.py.
 

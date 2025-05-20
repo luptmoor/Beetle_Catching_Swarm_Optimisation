@@ -38,7 +38,7 @@ def load_flat_params(model, flat_params):
 
 
 def fitness_fn(params, vis, gen):
-    model = WeightedDeepSet()
+    model = SwarmAggregatorLSTM()
     load_flat_params(model, params)
     model.eval()
     sim = Simulation(vis)
@@ -67,7 +67,7 @@ if __name__ == '__main__':
     torch.manual_seed(0)
 
 
-    model = WeightedDeepSet()
+    model = SwarmAggregatorLSTM()
     x0 = flatten_params(model)
     sigma0 = 0.3
 
@@ -88,13 +88,13 @@ if __name__ == '__main__':
 
         solutions = es.ask()
         fitnesses = [fitness_fn(s, vis, gen) for s in solutions]
-        save_fitnesses(gen, es.sigma, fitnesses, "fitnesses_weighteddeepset.csv")
+        save_fitnesses(gen, es.sigma, fitnesses, "fitnesses_lstm.csv")
 
         es.tell(solutions, fitnesses)
         es.logger.add()
         es.disp()
 
-        with open("cma_state_weighteddeepset.pkl", "wb") as f:
+        with open("cma_state_lstm.pkl", "wb") as f:
             pickle.dump(es, f)
 
         gen += 1;

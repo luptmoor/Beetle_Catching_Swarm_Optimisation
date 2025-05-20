@@ -82,7 +82,7 @@ if __name__ == '__main__':
     while not es.stop():
         print(f'generation {gen}')
         
-        if gen % 200 == 0: vis = True
+        if gen % 1 == 0: vis = True
         else: vis = False
         print(f'visuals: {vis}')
 
